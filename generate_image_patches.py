@@ -20,17 +20,16 @@ def im_to_bytes(patch):
 
 
 
-def generate_patches(path: str, patch_size: int, task: int):
-    patches = []
+def generate_patches(path: str, patch_size: int, test: bool):
+    X = []
     labels = []
-    for class_name in os.listdir(path):
+    for class_name in list(set(os.listdir(path))-set(['flickr', 'google+', 'imgur', 'instagram', 'tinypic', 'twitter', 'whatsapp'])):
         # list of files in that class
-        file_list = os.listdir(f"{path}\\{class_name}")
-        
+        file_list = os.listdir(f"{path}/{class_name}")
         
         # patchify each file in the class 
         for index, file in enumerate(file_list):
-            im = np.asarray(Image.open(f"{path}\\{class_name}\\{file}", 'r'))
+            im = np.asarray(Image.open(f"{path}/{class_name}/{file}", 'r'))
             patches = patchify(im, (patch_size, patch_size, 3), step=patch_size)
 
             #convert patches to byte string and append to list along with label
@@ -39,12 +38,13 @@ def generate_patches(path: str, patch_size: int, task: int):
                     patch = patches[i, j, 0]
                     num = i * patches.shape[1] + j
 
-                    patches.append(im_to_bytes(patch))
+                    X.append(im_to_bytes(patch))
 
 
-                    labels.append(f"{class_name}") if task == 0 or task == 1 else labels.append(f"{class_name}.{index}.{num}")
+                    labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}.{num}")
     
-    return shuffle_data(patches, labels)
+    # return shuffle_data(X, labels)
+    return X, labels
 
             
 

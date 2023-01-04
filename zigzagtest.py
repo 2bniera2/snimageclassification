@@ -23,32 +23,32 @@ def zz(m):
         # first half
         if mode == "right":
             j+=1
-            print(m[i][j])
+            lis.append((i, j))
             c+=1
             mode = "leftdown"
         if mode == "leftdown":
             while (j > 0 and i < 7):
                 j-=1
                 i+=1
-                print(m[i][j])
+                lis.append((i, j))
                 c+=1
             mode = "down"
         if mode == "down":
             # print(f"i: {i} j: {j}")
             if i < 7 and j < 7:
                 i+=1
-                print(m[i][j])
+                lis.append((i, j))
                 c+=1
                 mode = "rightup"
             elif i == 7: 
                 j += 1
                 c += 1
-                print(m[i][j])
+                lis.append((i, j))
                 mode = "rightup"
             elif j == 7:
                 i += 1
                 c +=1 
-                print(m[i][j])
+                lis.append((i, j))
                 mode = "leftdown"
             # print(mode)
         if mode == "rightup":
@@ -56,13 +56,16 @@ def zz(m):
                 j+=1
                 i-=1
                 c+=1
-                print(m[i][j])
+                lis.append((i, j))
             if j < 7:
                 mode = "right"
             else: 
                 mode = "down"
+    print(lis)
         
 zz(matrix)
+
+
             
 
 
