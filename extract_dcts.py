@@ -18,7 +18,8 @@ def process(patches: List[Tuple[str, bytes]], sf_range: Tuple[int, int], histogr
         (3, 7), (4, 7), (5, 6), (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
     ]
     
-    for p in patches:
+    for num, p in enumerate(patches):
+        print(f"[patch {num + 1} / {len(patches)} patches]")
         # extract dct coefficients
         dct, _, _ = loads(p, False)
         # obtain spatial frequencies
