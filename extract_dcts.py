@@ -20,9 +20,7 @@ def process(patches: List[Tuple[str, bytes]], sf_range: Tuple[int, int], histogr
     
     for p in patches:
         # extract dct coefficients
-        dct, _, _ = loads(p)
-        print(dct[0][0])
-
+        dct, _, _ = loads(p, False)
         # obtain spatial frequencies
         coords = indexes[sf_range[0]: sf_range[1]]
 
@@ -34,7 +32,7 @@ def process(patches: List[Tuple[str, bytes]], sf_range: Tuple[int, int], histogr
 
         # iterate over each 8x8 block in a patch and build up histogram
         for x, y in product(range(c_H), range(c_W)): 
-            sf = np.array([dct[x][y][c[0]][c[1]]] for c in coords)
+            sf = np.array([dct[x][y].reshape((8,8)).T[c[0]][c[1]] for c in coords])
 
             for i, f in enumerate(sf):
                 h, b = np.histogram(f, bins=len(range(*(histogram_range))) + 1, range=histogram_range)

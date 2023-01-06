@@ -23,7 +23,7 @@ def im_to_bytes(patch):
 def generate_patches(path: str, patch_size: int, test: bool):
     X = []
     labels = []
-    for class_name in list(set(os.listdir(path))-set(['flickr', 'google+', 'imgur', 'instagram', 'tinypic', 'twitter', 'whatsapp'])):
+    for class_name in os.listdir(path):
         # list of files in that class
         file_list = os.listdir(f"{path}/{class_name}")
         
@@ -43,8 +43,7 @@ def generate_patches(path: str, patch_size: int, test: bool):
 
                     labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}.{num}")
     
-    # return shuffle_data(X, labels)
-    return X, labels
+    return shuffle_data(X, labels)
 
             
 
