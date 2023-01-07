@@ -3,35 +3,37 @@ import extract_dcts
 import os
 import random
 import numpy as np
+import sys
 
 
-train_path = f"{os.getcwd()}/dataset_1/train"
+task = {'train' : 0, 'val' : 1, 'test' : 2}
 
-val_path = f"{os.getcwd()}/dataset_1/val"
+paths = [f"{os.getcwd()}/dataset_1/train", f"{os.getcwd()}/dataset_1/val", f"{os.getcwd()}/dataset_1/test"] 
+outputs = [('X_train.npy', 'y_train.npy'), ('X_val.npy', 'y_val.npy'), ('X_test.npy', 'y_test.npy')]
+
+
+path = paths[task[sys.argv[1]]]
+output = outputs[task[sys.argv[1]]]
+
+def chunk_size(x):
+    return {
+        '8' : 8,
+        '64': 64,
+        'full': 0
+    }.get(x, 64)
+
 
 #obtain training patches and labels
-Examples, labels = generate_image_patches.generate_patches(train_path, 64, False)
-
-
-
+Examples, labels = generate_image_patches.generate_patches(path, chunk_size(sys.argv[2]), False)
 
 print(f"{len(Examples)} patches generated")
 
 # preprocessing using original hyperparameters supplied by paper
-processed_X_train = extract_dcts.process(Examples, (0,9), (-50, 50))
-y_array = np.array(labels)
+X = extract_dcts.process(Examples, (0,9), (-50, 50))
+y = np.array(labels)
 
-# # try first half of block
-# processed_X_train = extract_dcts.process(X_train, (0,35), (-50, 50))
-
-# # try second half of block
-# processed_X_train = extract_dcts.process(X_train, (27,63), (-50, 50))
-
-# # try all of block
-# processed_X_train = extract_dcts.process(X_train, (0, 63), (-50, 50))
-
-np.save('data.npy', processed_X_train)
-np.save('labels.npy', y_array)
+np.save(output[0], X)
+np.save(output[1], y)
 
 
 

@@ -23,26 +23,32 @@ def im_to_bytes(patch):
 def generate_patches(path: str, patch_size: int, test: bool):
     X = []
     labels = []
+
     for class_name in os.listdir(path):
         # list of files in that class
         file_list = os.listdir(f"{path}/{class_name}")
         
-        # patchify each file in the class 
+        # patchify each image in the class 
         for index, file in enumerate(file_list):
-            im = np.asarray(Image.open(f"{path}/{class_name}/{file}", 'r'))
-            patches = patchify(im, (patch_size, patch_size, 3), step=patch_size)
+            print(f"class: {class_name} image_no.: {index}")
+            if patch_size != 0:
+                im = np.asarray(Image.open(f"{path}/{class_name}/{file}", 'r'))
+                patches = patchify(im, (patch_size, patch_size, 3), step=patch_size)
 
-            #convert patches to byte string and append to list along with label
-            for i in range(patches.shape[0]):
-                for j in range(patches.shape[1]):
-                    patch = patches[i, j, 0]
-                    num = i * patches.shape[1] + j
+                #convert patches to byte string and append to list along with label
+                for i in range(patches.shape[0]):
+                    for j in range(patches.shape[1]):
+                        patch = patches[i, j, 0]
+                        num = i * patches.shape[1] + j
 
-                    X.append(im_to_bytes(patch))
+                        X.append(im_to_bytes(patch))
+                        labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}.{num}")
+            else:
+                with open(f"{path}/{class_name}/{file}", 'rb') as src:  buffer = src.read()
+                X.append(buffer)
+                labels.append(f"{class_name}") 
 
-
-                    labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}.{num}")
-    
+        
     return shuffle_data(X, labels)
 
             
