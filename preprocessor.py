@@ -22,9 +22,10 @@ def chunk_size(x):
         'full': 0
     }.get(x, 64)
 
+is_test = True if sys.argv[1] == 'test' else False
 
 #obtain training patches and labels
-Examples, labels = generate_image_patches.generate_patches(path, chunk_size(sys.argv[2]), False)
+Examples, labels = generate_image_patches.generate_patches(path, chunk_size(sys.argv[2]), is_test)
 
 print(f"{len(Examples)} patches generated")
 

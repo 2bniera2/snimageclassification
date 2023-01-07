@@ -6,10 +6,10 @@ from keras.utils import to_categorical
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 
-X_train = np.load('data.npy')
-y_train = np.load('labels.npy')
-x_val = np.load('val_data.npy')
-y_val = np.load('val_labels.npy')
+X_train = np.load('X_train.npy')
+y_train = np.load('y_train.npy')
+x_val = np.load('X_val.npy')
+y_val = np.load('y_val.npy')
 
 
 y_train = np.select([
