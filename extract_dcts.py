@@ -4,8 +4,6 @@ from typing import Tuple, List
 from itertools import product
 import sys
 
-np.set_printoptions(threshold=sys.maxsize)
-
 def process(patches: List[Tuple[str, bytes]], sf_range: Tuple[int, int], histogram_range: Tuple[int, int]):
     X = []
 

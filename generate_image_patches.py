@@ -4,6 +4,7 @@ from PIL import Image
 import os
 import io
 import random
+import cv2
 
 
 def shuffle_data(patches, labels): 
@@ -13,10 +14,16 @@ def shuffle_data(patches, labels):
     return patches, labels
 
 def im_to_bytes(patch):
-    patch = Image.fromarray(patch)
-    patch_bytes = io.BytesIO()
-    patch.save(patch_bytes, format="JPEG")
-    return patch_bytes.getvalue()
+    # NEW CV2 CODE
+    _, im_buf_arr = cv2.imencode(".jpeg", patch, [cv2.IMWRITE_JPEG_QUALITY, 100])
+    return im_buf_arr.tobytes()
+
+    # OLD PIL CODE
+
+    # patch = Image.fromarray(patch)
+    # patch_bytes = io.BytesIO()
+    # patch.save(patch_bytes, quality=100, subsampling=0, format="JPEG")
+    # return patch_bytes.getvalue()
 
 
 

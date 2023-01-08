@@ -21,7 +21,7 @@ y_train = np.select([
     y_train == 'tinypic', 
     y_train == 'twitter',
     y_train == 'whatsapp'
-], [0,1,2,3,4,5,6,7], y_train).astype(np.float)
+], [0,1,2,3,4,5,6,7], y_train).astype(np.uint8)
 
 
 y_val = np.select([
@@ -33,7 +33,7 @@ y_val = np.select([
     y_val == 'tinypic', 
     y_val == 'twitter',
     y_val == 'whatsapp'
-], [0,1,2,3,4,5,6,7], y_val).astype(np.float)
+], [0,1,2,3,4,5,6,7], y_val).astype(np.uint8)
 
 
 y_train = to_categorical(y_train)
@@ -67,6 +67,6 @@ print(y_val)
 print(y_train)
 
 
-model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))
+model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(x_val, y_val))
 
 model.save('models/2017_cnn')
