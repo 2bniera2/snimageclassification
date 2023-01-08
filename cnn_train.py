@@ -6,10 +6,10 @@ from keras.utils import to_categorical
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 
-X_train = np.load('X_train.npy')
-y_train = np.load('y_train.npy')
-x_val = np.load('X_val.npy')
-y_val = np.load('y_val.npy')
+X_train = np.load('processed/X_train.npy')
+y_train = np.load('processed/y_train.npy')
+x_val = np.load('processed/X_val.npy')
+y_val = np.load('processed/y_val.npy')
 
 
 y_train = np.select([
@@ -21,7 +21,7 @@ y_train = np.select([
     y_train == 'tinypic', 
     y_train == 'twitter',
     y_train == 'whatsapp'
-], [0,1,2,3,4,5,6,7], y_train).astype(np.integer)
+], [0,1,2,3,4,5,6,7], y_train).astype(np.float)
 
 
 y_val = np.select([
@@ -33,7 +33,7 @@ y_val = np.select([
     y_val == 'tinypic', 
     y_val == 'twitter',
     y_val == 'whatsapp'
-], [0,1,2,3,4,5,6,7], y_val).astype(np.integer)
+], [0,1,2,3,4,5,6,7], y_val).astype(np.float)
 
 
 y_train = to_categorical(y_train)
@@ -69,4 +69,4 @@ print(y_train)
 
 model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))
 
-model.save('2017_cnn')
+model.save('models/2017_cnn')

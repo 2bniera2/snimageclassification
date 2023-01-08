@@ -3,29 +3,33 @@ import extract_dcts
 import os
 import random
 import numpy as np
-import sys
+from sys import argv
 
 
 task = {'train' : 0, 'val' : 1, 'test' : 2}
 
 paths = [f"{os.getcwd()}/dataset_1/train", f"{os.getcwd()}/dataset_1/val", f"{os.getcwd()}/dataset_1/test"] 
-outputs = [('X_train.npy', 'y_train.npy'), ('X_val.npy', 'y_val.npy'), ('X_test.npy', 'y_test.npy')]
+
+outputs = [
+    ('processed/X_train.npy', 'processed/y_train.npy'),
+    ('processed/X_val.npy', 'processed/y_val.npy'),
+    ('processed/X_test.npy', 'processed/y_test.npy')
+]
 
 
-path = paths[task[sys.argv[1]]]
-output = outputs[task[sys.argv[1]]]
+path = paths[task[argv[1]]]
+output = outputs[task[argv[1]]]
 
 def chunk_size(x):
     return {
-        '8' : 8,
         '64': 64,
         'full': 0
     }.get(x, 64)
 
-is_test = True if sys.argv[1] == 'test' else False
+is_test = True if argv[1] == 'test' else False
 
 #obtain training patches and labels
-Examples, labels = generate_image_patches.generate_patches(path, chunk_size(sys.argv[2]), is_test)
+Examples, labels = generate_image_patches.generate_patches(path, chunk_size(argv[2]), is_test)
 
 print(f"{len(Examples)} patches generated")
 

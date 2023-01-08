@@ -6,9 +6,9 @@ from collections import defaultdict
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 # load test data and model and get predictions
-X_test = np.load('X_test.npy')
-y_test = np.load('y_test.npy')
-model = models.load_model('2017_cnn')
+X_test = np.load('processed/X_test.npy')
+y_test = np.load('processed/y_test.npy')
+model = models.load_model('models/2017_cnn')
 y_pred = model.predict(X_test)
 
 
@@ -23,6 +23,9 @@ classes_and_predictions = defaultdict(lambda: defaultdict(list))
 for label, pred in zip(y_test, yhat):    
     y = label.split('.')
     classes_and_predictions[y[0]][y[1]].append(pred)
+
+print(classes_and_predictions['facebook'])
+
 
 # obtain an accuracy for each class
 class_num = {
