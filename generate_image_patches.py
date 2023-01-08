@@ -49,7 +49,7 @@ def generate_patches(path: str, patch_size: int, test: bool):
                         num = i * patches.shape[1] + j
 
                         X.append(im_to_bytes(patch))
-                        labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}.{num}")
+                        labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}")
             else:
                 with open(f"{path}/{class_name}/{file}", 'rb') as src:  buffer = src.read()
                 X.append(buffer)
