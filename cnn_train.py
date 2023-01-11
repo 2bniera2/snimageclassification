@@ -67,6 +67,6 @@ print(y_val)
 print(y_train)
 
 
-model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(x_val, y_val))
+model.fit(X_train, y_train, epochs=40, batch_size=32, validation_data=(x_val, y_val))
 
 model.save('models/2017_cnn')

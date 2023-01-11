@@ -24,7 +24,7 @@ for label, pred in zip(y_test, yhat):
     y = label.split('.')
     classes_and_predictions[y[0]][y[1]].append(pred)
 
-print(classes_and_predictions['facebook'])
+
 
 
 # obtain an accuracy for each class

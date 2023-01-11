@@ -8,7 +8,7 @@ from sys import argv
 
 task = {'train' : 0, 'val' : 1, 'test' : 2}
 
-paths = [f"{os.getcwd()}/dataset_1/train", f"{os.getcwd()}/dataset_1/val", f"{os.getcwd()}/dataset_1/test"] 
+paths = [f"{os.getcwd()}/dataset/train", f"{os.getcwd()}/dataset/val", f"{os.getcwd()}/dataset/test"] 
 
 outputs = [
     ('processed/X_train.npy', 'processed/y_train.npy'),
