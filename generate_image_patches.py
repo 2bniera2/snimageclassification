@@ -46,7 +46,6 @@ def generate_patches(path: str, patch_size: int, test: bool):
                 for i in range(patches.shape[0]):
                     for j in range(patches.shape[1]):
                         patch = patches[i, j, 0]
-                        num = i * patches.shape[1] + j
 
                         X.append(im_to_bytes(patch))
                         labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}")

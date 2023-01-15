@@ -16,9 +16,9 @@ y_train = np.select([
     y_train == 'facebook',
     y_train == 'flickr',
     y_train == 'google+',
-    y_train == 'imgur',
     y_train == 'instagram',
-    y_train == 'tinypic', 
+    y_train == 'original',
+    y_train == 'telegram',
     y_train == 'twitter',
     y_train == 'whatsapp'
 ], [0,1,2,3,4,5,6,7], y_train).astype(np.uint8)
@@ -28,9 +28,9 @@ y_val = np.select([
     y_val == 'facebook',
     y_val == 'flickr',
     y_val == 'google+',
-    y_val == 'imgur',
     y_val == 'instagram',
-    y_val == 'tinypic', 
+    y_val == 'original',
+    y_val == 'telegram',
     y_val == 'twitter',
     y_val == 'whatsapp'
 ], [0,1,2,3,4,5,6,7], y_val).astype(np.uint8)
@@ -67,6 +67,6 @@ print(y_val)
 print(y_train)
 
 
-model.fit(X_train, y_train, epochs=40, batch_size=32, validation_data=(x_val, y_val))
+model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(x_val, y_val))
 
 model.save('models/2017_cnn')
