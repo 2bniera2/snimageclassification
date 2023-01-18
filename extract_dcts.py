@@ -2,7 +2,6 @@ from jpeg2dct.numpy import load, loads
 import numpy as np
 from typing import Tuple, List
 from itertools import product
-import sys
 
 def process(patches: List[Tuple[str, bytes]], sf_range: Tuple[int, int], histogram_range: Tuple[int, int]):
     X = []

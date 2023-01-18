@@ -1,5 +1,6 @@
 import generate_image_patches
 import extract_dcts
+import noise_extraction
 import os
 import random
 import numpy as np
@@ -11,9 +12,9 @@ task = {'train' : 0, 'val' : 1, 'test' : 2}
 paths = [f"{os.getcwd()}/dataset/train", f"{os.getcwd()}/dataset/val", f"{os.getcwd()}/dataset/test"] 
 
 outputs = [
-    ('processed/X_train.npy', 'processed/y_train.npy'),
-    ('processed/X_val.npy', 'processed/y_val.npy'),
-    ('processed/X_test.npy', 'processed/y_test.npy')
+    ('processed/X_train', 'processed/y_train'),
+    ('processed/X_val', 'processed/y_val'),
+    ('processed/X_test', 'processed/y_test')
 ]
 
 
@@ -33,12 +34,16 @@ Examples, labels = generate_image_patches.generate_patches(path, chunk_size(argv
 
 print(f"{len(Examples)} patches generated")
 
-# preprocessing using original hyperparameters supplied by paper
-X = extract_dcts.process(Examples, (0,9), (-50, 50))
-y = np.array(labels)
+X = noise_extraction.extract(Examples)
 
-np.save(output[0], X)
-np.save(output[1], y)
+
+# preprocessing using original hyperparameters supplied by paper
+# X = extract_dcts.process(Examples, (0,9), (-50, 50))
+
+# y = np.array(labels)
+
+# np.save(f'{output[0]}_{argv[2]}.npy', X)
+# np.save(f'{output[1]}_{argv[2]}.npy', y)
 
 
 

@@ -8,8 +8,11 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 X_train = np.load('processed/X_train.npy')
 y_train = np.load('processed/y_train.npy')
-x_val = np.load('processed/X_val.npy')
+X_val = np.load('processed/X_val.npy')
 y_val = np.load('processed/y_val.npy')
+
+X_train = (X_train - X_train.mean())/(X_train.std())
+X_val = (X_val - X_val.mean())/(X_val.std())
 
 
 y_train = np.select([
@@ -39,11 +42,10 @@ y_val = np.select([
 y_train = to_categorical(y_train)
 y_val = to_categorical(y_val)
 
-
 model = models.Sequential()
 model.add(layers.Conv1D(100, 3,activation='relu', input_shape=(909,1)))
 model.add(layers.MaxPooling1D())
-model.add(layers.Conv1D(100, 3,activation='relu', input_shape=(909,1)))
+model.add(layers.Conv1D(100, 3,activation='relu'))
 model.add(layers.MaxPooling1D())
 model.add(layers.Flatten())
 model.add(layers.Dense(units=256, activation='relu', ))
@@ -61,12 +63,11 @@ model.compile(
 )
 
 
-print(f"train shape {X_train.shape} train labels {y_train.shape} val shape {x_val.shape} val labels {y_val.shape}")
 
 print(y_val)
 print(y_train)
 
 
-model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(x_val, y_val))
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val))
 
 model.save('models/2017_cnn')

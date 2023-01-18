@@ -18,12 +18,7 @@ def im_to_bytes(patch):
     _, im_buf_arr = cv2.imencode(".jpeg", patch, [cv2.IMWRITE_JPEG_QUALITY, 100])
     return im_buf_arr.tobytes()
 
-    # OLD PIL CODE
-
-    # patch = Image.fromarray(patch)
-    # patch_bytes = io.BytesIO()
-    # patch.save(patch_bytes, quality=100, subsampling=0, format="JPEG")
-    # return patch_bytes.getvalue()
+   
 
 
 
@@ -54,9 +49,10 @@ def generate_patches(path: str, patch_size: int, test: bool):
                 X.append(buffer)
                 labels.append(f"{class_name}") 
 
-        
-    return shuffle_data(X, labels)
-
+    if not test:
+        return shuffle_data(X, labels)
+    else: 
+        return X, labels
             
 
 

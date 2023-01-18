@@ -72,7 +72,9 @@ dic = {
     'telegramDownload' : 'telegram',
     'original' : 'original'
 }
-        
+
+
+# copy image to their respective classes as well as rename files
 for path in image_paths.items():
     c = dic[path[0]]
     paths = path[1]
