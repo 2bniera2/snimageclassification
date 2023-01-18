@@ -4,6 +4,8 @@ from tensorflow.keras import layers, models
 from keras.utils import to_categorical
 from sys import argv
 
+EPOCH = int(argv[2])
+BATCH_SIZE = int(argv[3])
 
 
 X_train = np.load(f'processed/X_train_{argv[1]}.npy')
@@ -11,8 +13,8 @@ y_train = np.load(f'processed/y_train_{argv[1]}.npy')
 X_val = np.load(f'processed/X_val_{argv[1]}.npy')
 y_val = np.load(f'processed/y_val_{argv[1]}.npy')
 
-X_train = (X_train - X_train.mean())/(X_train.std())
-X_val = (X_val - X_val.mean())/(X_val.std())
+# X_train = (X_train - X_train.mean())/(X_train.std())
+# X_val = (X_val - X_val.mean())/(X_val.std())
 
 
 y_train = np.select([
@@ -63,11 +65,6 @@ model.compile(
 )
 
 
-
-print(y_val)
-print(y_train)
-
-
-model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val))
+model.fit(X_train, y_train, epochs=EPOCH, batch_size=BATCH_SIZE, validation_data=(X_val, y_val))
 
 model.save(f'models/cnn_{argv[1]}')

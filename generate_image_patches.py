@@ -7,20 +7,12 @@ import random
 import cv2
 
 
-def shuffle_data(patches, labels): 
-    temp = list(zip(patches, labels))
-    random.shuffle(temp)
-    patches, labels = zip(*temp) 
-    return patches, labels
+
 
 def im_to_bytes(patch):
     # NEW CV2 CODE
     _, im_buf_arr = cv2.imencode(".jpeg", patch, [cv2.IMWRITE_JPEG_QUALITY, 100])
     return im_buf_arr.tobytes()
-
-   
-
-
 
 def generate_patches(path: str, patch_size: int, test: bool):
     X = []
@@ -48,11 +40,9 @@ def generate_patches(path: str, patch_size: int, test: bool):
                 with open(f"{path}/{class_name}/{file}", 'rb') as src:  buffer = src.read()
                 X.append(buffer)
                 labels.append(f"{class_name}") 
+                
 
-    if not test:
-        return shuffle_data(X, labels)
-    else: 
-        return X, labels
+    return X, labels
             
 
 
