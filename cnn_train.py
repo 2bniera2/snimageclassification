@@ -2,14 +2,14 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.keras import layers, models
 from keras.utils import to_categorical
+from sys import argv
 
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 
-X_train = np.load('processed/X_train.npy')
-y_train = np.load('processed/y_train.npy')
-X_val = np.load('processed/X_val.npy')
-y_val = np.load('processed/y_val.npy')
+X_train = np.load(f'processed/X_train_{argv[1]}.npy')
+y_train = np.load(f'processed/y_train_{argv[1]}.npy')
+X_val = np.load(f'processed/X_val_{argv[1]}.npy')
+y_val = np.load(f'processed/y_val_{argv[1]}.npy')
 
 X_train = (X_train - X_train.mean())/(X_train.std())
 X_val = (X_val - X_val.mean())/(X_val.std())
@@ -70,4 +70,4 @@ print(y_train)
 
 model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val))
 
-model.save('models/2017_cnn')
+model.save(f'models/cnn_{argv[1]}')

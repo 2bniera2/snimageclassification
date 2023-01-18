@@ -34,18 +34,17 @@ Examples, labels = generate_image_patches.generate_patches(path, chunk_size(argv
 
 print(f"{len(Examples)} patches generated")
 
-X = noise_extraction.extract(Examples)
 
 
 # preprocessing using original hyperparameters supplied by paper
-# X = extract_dcts.process(Examples, (0,9), (-50, 50))
+X = extract_dcts.process(Examples, (0,9), (-50, 50))
 
-# y = np.array(labels)
+y = np.array(labels)
 
-# np.save(f'{output[0]}_{argv[2]}.npy', X)
-# np.save(f'{output[1]}_{argv[2]}.npy', y)
+np.save(f'{output[0]}_{argv[2]}.npy', X)
+np.save(f'{output[1]}_{argv[2]}.npy', y)
 
-
+### still need to do noise extraction
 
 
 

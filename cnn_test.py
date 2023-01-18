@@ -6,14 +6,15 @@ from collections import defaultdict
 from keras.utils import to_categorical
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import pandas as pd
+from sys import argv
 
 classes = ['facebook', 'flickr', 'google+', 'instagram', 'original', 'telegram', 'twitter', 'whatsapp']
 
 
 # load test data and model and get predictions
-X_test = np.load('processed/X_test.npy')
-y_test = np.load('processed/y_test.npy')
-model = models.load_model('models/2017_cnn')
+X_test = np.load('processed/X_test_{argv[1]}.npy')
+y_test = np.load('processed/y_test_{argv[1]}.npy')
+model = models.load_model(f'models/cnn_{argv[1]}')
 y_pred = np.argmax(model.predict(X_test), axis=1)
 
 
@@ -82,7 +83,7 @@ print("### Pathces to entire images ###")
 
 
 
-y_test = np.load('processed/y_test.npy')
+y_test = np.load(f'processed/y_test_{argv[1]}.npy')
 
 df = pd.DataFrame([y_test, y_pred_str], index=['truth', 'prediction']).T
 
