@@ -13,9 +13,9 @@ EPOCH = int(argv[2])
 BATCH_SIZE = int(argv[3])
 
 
-X_train = np.load(f'processed/X_train_{argv[1]}.npy')
+X_train = np.load(f'processed/X_DCT_train_{argv[1]}.npy')
 y_train = np.load(f'processed/y_train_{argv[1]}.npy')
-X_val = np.load(f'processed/X_val_{argv[1]}.npy')
+X_val = np.load(f'processed/X_DCT_val_{argv[1]}.npy')
 y_val = np.load(f'processed/y_val_{argv[1]}.npy')
 
 # X_train = (X_train - X_train.mean())/(X_train.std())

@@ -11,7 +11,7 @@ classes = ['facebook', 'flickr', 'google+', 'instagram', 'original', 'telegram',
 
 
 # load test data and model and get predictions
-X_test = np.load(f'processed/X_test_{argv[1]}.npy')
+X_test = np.load(f'processed/X_DCT_test_{argv[1]}.npy')
 y_test = np.load(f'processed/y_test_{argv[1]}.npy')
 model = models.load_model(f'models/cnn_{argv[1]}')
 y_pred = np.argmax(model.predict(X_test), axis=1)
