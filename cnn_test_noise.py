@@ -1,8 +1,3 @@
-'''
-Usage: python cnn_train.py {name} {EPOCH} {BATCH}
-'''
-
-
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras import layers, models, callbacks
@@ -12,14 +7,10 @@ from sys import argv
 EPOCH = int(argv[2])
 BATCH_SIZE = int(argv[3])
 
-
-X_train = np.load(f'processed/X_train_{argv[1]}.npy')
-y_train = np.load(f'processed/y_train_{argv[1]}.npy')
-X_val = np.load(f'processed/X_val_{argv[1]}.npy')
-y_val = np.load(f'processed/y_val_{argv[1]}.npy')
-
-# X_train = (X_train - X_train.mean())/(X_train.std())
-# X_val = (X_val - X_val.mean())/(X_val.std())
+X_train = np.load(f'processed/X_train_noise.npy')
+y_train = np.load(f'processed/y_train_noise.npy')
+X_val = np.load(f'processed/X_val_noise.npy')
+y_val = np.load(f'processed/y_val_noise.npy')
 
 
 y_train = np.select([
@@ -49,30 +40,36 @@ y_val = np.select([
 y_train = to_categorical(y_train)
 y_val = to_categorical(y_val)
 
+
 model = models.Sequential()
-model.add(layers.Conv1D(100, 3,activation='relu', input_shape=(909,1)))
-model.add(layers.MaxPooling1D())
-model.add(layers.Conv1D(100, 3,activation='relu'))
-model.add(layers.MaxPooling1D())
+model.add(layers.Conv2D(32, 3, 3, activation='relu', input_shape=(64,64)))
+model.add(layers.Conv2D(32, 3, 3, activation='relu'))
+model.add(layers.MaxPooling2D())
+model.add(layers.Dropout(rate=0.5))
+model.add(layers.Conv2D(64, 3, 3, activation='relu'))
+model.add(layers.Conv2D(64, 3, 3, activation='relu'))
+model.add(layers.MaxPooling2D())
+model.add(layers.Dropout(rate=0.5))
 model.add(layers.Flatten())
-model.add(layers.Dense(units=256, activation='relu', ))
 model.add(layers.Dense(units=256))
 model.add(layers.Dropout(rate=0.5))
-model.add(layers.Dense(units = 8, activation='softmax'))
-
+model.add(layers.Dense(units=8, activation='softmax'))
 
 model.summary()
 
 callback = callbacks.EarlyStopping(monitor='val_loss', patience=5)
 
+
 model.compile(
     loss='categorical_crossentropy',
     optimizer='AdaDelta',
-    metrics=['accuracy'],
-    jit_compile=True
+    metrics=['accuracy']
 )
 
 
 model.fit(X_train, y_train, epochs=EPOCH, batch_size=BATCH_SIZE, callbacks=[callback], validation_data=(X_val, y_val))
 
-model.save(f'models/cnn_{argv[1]}')
+model.save(f'models/cnn_noise')
+
+
+

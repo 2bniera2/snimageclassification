@@ -2,7 +2,6 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras import models
-from collections import defaultdict
 from keras.utils import to_categorical
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import pandas as pd
@@ -18,9 +17,8 @@ model = models.load_model(f'models/cnn_{argv[1]}')
 y_pred = np.argmax(model.predict(X_test), axis=1)
 
 
-print(y_test)
 
-
+# standardise
 X_test = (X_test - X_test.mean()) / (X_test.std())
 
 # convert labels with image index to just regular labels (to test on patch level)
@@ -77,12 +75,13 @@ cm = confusion_matrix(
 
 cm_display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
 
-cm_display.plot()
-plt.show()
+fig, ax = plt.subplots(figsize=(10,10))
+cm_display.plot(ax=ax)
+plt.savefig(f'results/{argv[2]}_patches.png')
 
 
 
-print("### Pathces to entire images ###")
+print("### Patches to entire images ###\n\n")
 
 
 
@@ -110,6 +109,6 @@ cm = confusion_matrix(
 )
 
 cm_display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-
-cm_display.plot()
-plt.show()
+fig, ax = plt.subplots(figsize=(10, 10))
+cm_display.plot(ax=ax)
+plt.savefig(f'results/{argv[2]}_whole.png')

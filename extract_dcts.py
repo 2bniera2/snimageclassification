@@ -1,11 +1,12 @@
-from jpeg2dct.numpy import load, loads
+from jpeg2dct.numpy import loads
 import numpy as np
-from typing import Tuple, List
-from itertools import product
+import time as t
+from numba import jit, njit
 
-def process(patches: List[Tuple[str, bytes]], sf_range: Tuple[int, int], histogram_range: Tuple[int, int]):
-    X = []
 
+
+@jit(nopython=True)
+def histogram_builder(dct, sf_range, his_range):
     # indexes to all AC coefficients
     indexes = [
         (0, 1), (1, 0), (2, 0), (1, 1), (0, 2), (0, 3), (1, 2), (2, 1), (3, 0), (4, 0), (3, 1), (2, 2), (1, 3),
@@ -14,32 +15,41 @@ def process(patches: List[Tuple[str, bytes]], sf_range: Tuple[int, int], histogr
         (3, 5), (2, 6), (1, 7), (2, 7), (3, 6), (4, 5), (5, 4), (6, 3), (7, 2), (7, 3), (6, 4), (5, 5), (4, 6),
         (3, 7), (4, 7), (5, 6), (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
     ]
-    
-    for num, p in enumerate(patches):
-        print(f"[patch {num + 1} / {len(patches)} patches]")
-        # extract dct coefficients
-        dct, _, _ = loads(p, False)
-        # obtain spatial frequencies
-        coords = indexes[sf_range[0]: sf_range[1]]
 
-        # build histogram
-        his = np.zeros((len(coords), len(range(*(histogram_range))) + 1))
+    # obtain spatial frequencies
+    coords = indexes[sf_range[0]: sf_range[1]]
 
-        c_H = len(dct)
-        c_W = len(dct[0])
+    # build histogram
+    his = np.zeros((len(coords), len(range(*(his_range))) + 1))
 
-        # iterate over each 8x8 block in a patch and build up histogram
-        for x, y in product(range(c_H), range(c_W)): 
-            sf = np.array([dct[x][y].reshape((8,8)).T[c[0]][c[1]] for c in coords])
+    c_H = len(dct)
+    c_W = len(dct[0])
+
+    # iterate over each 8x8 block in a patch and build up histogram
+    for x in range(c_H):
+        for y in range(c_W):
+            sf = np.array([dct[x][y].reshape((8, 8)).T[c[0]][c[1]]
+                           for c in coords])
 
             for i, f in enumerate(sf):
-                h, b = np.histogram(f, bins=len(range(*(histogram_range))) + 1, range=histogram_range)
+                h, b = np.histogram(f, bins=len(
+                    range(*(his_range))) + 1, range=his_range)
                 his[i] += h
 
-        
-        X.append(his.flatten())
+    return his.flatten()
 
-    return np.array(X)
+def process(patches, sf_range, his_range):
+    # final array of examples
+    X = np.empty((len(patches), 909))
+    i = 0
+
+    
+    for p in patches:
+        # extract dct coefficients
+        dct, _, _ =  loads(p, False)        
+        X[i] = histogram_builder(dct, sf_range, his_range)
+        i+=1
+    return X
 
 
 

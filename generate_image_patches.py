@@ -16,6 +16,7 @@ def im_to_bytes(patch):
 
 def generate_patches(path: str, patch_size: int, test: bool):
     X = []
+    X_i = []
     labels = []
 
     for class_name in os.listdir(path):
@@ -33,16 +34,17 @@ def generate_patches(path: str, patch_size: int, test: bool):
                 for i in range(patches.shape[0]):
                     for j in range(patches.shape[1]):
                         patch = patches[i, j, 0]
-
+                        X_i.append(patch)
                         X.append(im_to_bytes(patch))
                         labels.append(f"{class_name}") if not test else labels.append(f"{class_name}.{index}")
             else:
+                # this is going to die on full images
                 with open(f"{path}/{class_name}/{file}", 'rb') as src:  buffer = src.read()
                 X.append(buffer)
                 labels.append(f"{class_name}") 
                 
 
-    return X, labels
+    return X, X_i, labels
             
 
 
