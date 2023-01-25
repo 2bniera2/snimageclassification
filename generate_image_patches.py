@@ -27,7 +27,11 @@ def generate_patches(path: str, patch_size: int, test: bool):
         for index, file in enumerate(file_list):
             print(f"class: {class_name} image_no.: {index}")
             if patch_size != 0:
-                im = np.asarray(Image.open(f"{path}/{class_name}/{file}", 'r'))
+                # open image and convert to RGB
+                im = cv2.imread(f"{path}/{class_name}/{file}")
+                im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+
+                # patchify
                 patches = patchify(im, (patch_size, patch_size, 3), step=patch_size)
 
                 #convert patches to byte string and append to list along with label
