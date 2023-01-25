@@ -1,43 +1,46 @@
 '''
-run program using:
-python preprocessor.py {task} {chunk_size} {name}
 
-{task} = 'train' | 'val' | 'val'
-
-{chunk_size} = '64' | 'full'
-
-{name} = short name for output file
 '''
-
-
-import generate_image_patches as generate_image_patches
+import load_images as load_images
+import make_patches as make_patches
 import extract_dcts as extract_dcts
-import noise_extraction as noise_extraction
+import extract_noise as extract_noise
+from sklearn.model_selection import train_test_split
 import os
 import numpy as np
 from sys import argv
 
 
-task = {'train' : 0, 'val' : 1, 'test' : 2}
-
 path = f"{os.getcwd()}/dataset"
 
-outputs = [
-    ('processed/X_train', 'processed/y_train'),
-    ('processed/X_val', 'processed/y_val'),
-    ('processed/X_test', 'processed/y_test')
-]
+# load iamages
+images, labels = load_images.load_images(path)
 
 
-output = outputs[task[argv[1]]]
+#split data
+images_train, images_test, labels_train, labels_test = train_test_split(
+    images, labels, test_size=0.2, random_state=1)
 
-def chunk_size(x):
-    return {
-        '64': 64,
-        'full': 0
-    }.get(x, 64)
+images_test, labels_test, images_val, labels_val = train_test_split(
+    images_test, labels_test, test_size = 0.5, random_state=1)
 
-is_test = True if argv[1] == 'test' else False
+# make patches
+train_patches_bytes, train_patches, labels_train = make_patches()
+val_patches_bytes, val_patches, labels_val =
+test_patches_bytes, test_patches, labels_val = 
+
+
+# preprocess 
+
+
+
+X_train = X = extract_dcts.process(, (0,9), (-50, 50))
+X_val = X = extract_dcts.process(Examples_bytes, (0,9), (-50, 50))
+X_test = X = extract_dcts.process(Examples_bytes, (0,9), (-50, 50))
+
+
+
+
 
 #obtain training patches and labels
 Examples_bytes, Examples, labels = generate_image_patches.generate_patches(path, chunk_size(argv[2]), is_test)
