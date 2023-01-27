@@ -1,9 +1,8 @@
 import cv2
+from PIL import Image
 import numpy as np
-from numba import jit
-import time as time
+import time 
 
-@jit(nopython=True)
 def extract_noise_residual(i, d):
     
     n_r = i - d
@@ -11,7 +10,6 @@ def extract_noise_residual(i, d):
 
     return n_r
 
-@jit(nopython=True)
 def make_patches(residual, size):
     patches = []
     for i in range(0, residual.shape[0]-size[0]+1, size[0]):
@@ -20,21 +18,21 @@ def make_patches(residual, size):
             patches.append(patch)
     return patches
 
-def extract(images, size):
+def extract(paths, size):
     
     X = []
     size = (size, size)
 
-    for i in images:
-        start = time.time()
-        d = cv2.fastNlMeansDenoisingColored(i)
+    for p in paths:
+        i = np.array(Image.open(p).convert('L'))
+
+        d = cv2.fastNlMeansDenoising(i)
 
         residual = extract_noise_residual(i, d)
         patches = make_patches(residual, size)
-        print(f'{time.time() - start}')
         X.extend(patches)
 
 
-    return X
+    return np.array(X)
 
 

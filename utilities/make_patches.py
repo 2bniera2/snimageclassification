@@ -1,5 +1,5 @@
 import numpy as np
-from patchify import patchify
+# from patchify import patchify
 import cv2
 
 def im_to_bytes(patch):
@@ -7,23 +7,26 @@ def im_to_bytes(patch):
     _, im_buf_arr = cv2.imencode(".jpeg", patch, [cv2.IMWRITE_JPEG_QUALITY, 100])
     return im_buf_arr.tobytes()
 
+def make_patches(im, size):
+    patches = []
+    for i in range(0, im.shape[0]-size+1, size):
+        for j in range(0, im.shape[1]-size+1, size):
+            patches.append(im[i:i+size, j:j+size])
+    return patches
 
-
-def make_patches(images, labels, size, test):
+def builder(paths, labels, size, test):
     X_b = []
     y = []
 
 
-    for index, (image, label) in enumerate(zip(images, labels)):
-        patches = patchify(image, (size, size, 3), step=size)
+    for index, (path, label) in enumerate(zip(paths, labels)):
+        image = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+        patches = make_patches(image, size)
 
         #iterate over all patches
-        for i in range(patches.shape[0]):
-            for j in range(patches.shape[1]):
-                patch = patches[i, j, 0]
-                
-                X_b.append(im_to_bytes(patch))
-                y.append(f"{label}.{index}" if test else label)
+        for patch in patches:
+            X_b.append(im_to_bytes(patch))
+            y.append(f"{label}.{index}" if test else label)
     
     return X_b, y
                 

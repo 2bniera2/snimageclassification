@@ -1,7 +1,7 @@
 from jpeg2dct.numpy import loads
 import numpy as np
 import time as t
-from numba import jit, njit
+from numba import jit
 
 
 

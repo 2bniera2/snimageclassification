@@ -1,3 +1,10 @@
+'''
+Usage: python cnn_test.py {file to load} {save results}
+'''
+
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,15 +18,15 @@ classes = ['facebook', 'flickr', 'google+', 'instagram', 'original', 'telegram',
 
 
 # load test data and model and get predictions
-X_test = np.load(f'processed/X_DCT_test_{argv[1]}.npy')
+X_test = np.load(f'processed/X_test_{argv[1]}.npy')
 y_test = np.load(f'processed/y_test_{argv[1]}.npy')
 model = models.load_model(f'models/cnn_{argv[1]}')
 y_pred = np.argmax(model.predict(X_test), axis=1)
 
+print(len(X_test))
 
-
-# standardise
-X_test = (X_test - X_test.mean()) / (X_test.std())
+# # standardise
+# X_test = (X_test - X_test.mean()) / (X_test.std())
 
 # convert labels with image index to just regular labels (to test on patch level)
 for i, y in enumerate(y_test): 

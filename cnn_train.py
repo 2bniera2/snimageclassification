@@ -2,7 +2,8 @@
 Usage: python cnn_train.py {name} {EPOCH} {BATCH}
 '''
 
-
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras import layers, models, callbacks
@@ -13,9 +14,10 @@ EPOCH = int(argv[2])
 BATCH_SIZE = int(argv[3])
 
 
-X_train = np.load(f'processed/X_DCT_train_{argv[1]}.npy')
+X_train = np.load(f'processed/X_train_{argv[1]}.npy')
 y_train = np.load(f'processed/y_train_{argv[1]}.npy')
-X_val = np.load(f'processed/X_DCT_val_{argv[1]}.npy')
+
+X_val = np.load(f'processed/X_val_{argv[1]}.npy')
 y_val = np.load(f'processed/y_val_{argv[1]}.npy')
 
 # X_train = (X_train - X_train.mean())/(X_train.std())
@@ -45,9 +47,22 @@ y_val = np.select([
     y_val == 'whatsapp'
 ], [0,1,2,3,4,5,6,7], y_val).astype(np.uint8)
 
+# print(len(y_train))
+# print(len(y_val))
+
+# print(len(X_train))
+# print(len(X_val))
+
+
+# print(y_train[0])
+# print(y_val[0])
+
 
 y_train = to_categorical(y_train)
 y_val = to_categorical(y_val)
+
+print(len(y_train[0]))
+print(len(y_val[0]))
 
 model = models.Sequential()
 model.add(layers.Conv1D(100, 3,activation='relu', input_shape=(909,1)))
@@ -68,8 +83,7 @@ callback = callbacks.EarlyStopping(monitor='val_loss', patience=5)
 model.compile(
     loss='categorical_crossentropy',
     optimizer='AdaDelta',
-    metrics=['accuracy'],
-    jit_compile=True
+    metrics=['accuracy']
 )
 
 
