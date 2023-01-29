@@ -1,5 +1,4 @@
 import numpy as np
-# from patchify import patchify
 import cv2
 
 def im_to_bytes(patch):

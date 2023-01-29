@@ -1,6 +1,8 @@
 import cv2
 from PIL import Image
+import h5py
 import numpy as np
+import utilities.make_patches as make_patches
 import time 
 
 def extract_noise_residual(i, d):
@@ -10,29 +12,29 @@ def extract_noise_residual(i, d):
 
     return n_r
 
-def make_patches(residual, size):
-    patches = []
-    for i in range(0, residual.shape[0]-size[0]+1, size[0]):
-        for j in range(0, residual.shape[1]-size[1]+1, size[1]):
-            patch = residual[i:i+size[0], j:j+size[1]]
-            patches.append(patch)
-    return patches
 
-def extract(paths, size):
-    
-    X = []
-    size = (size, size)
+def extract(paths, size, name):
+    with h5py.File(f'processed/noise_{name}.h5', 'w') as f:
+        dset = f.create_dataset('images', shape=(1, size, size), maxshape=(None, size, size))
 
     for p in paths:
-        i = np.array(Image.open(p).convert('L'))
+        with h5py.File(f'processed/noise_{name}.h5', 'a') as f:
 
-        d = cv2.fastNlMeansDenoising(i)
+            i = np.array(Image.open(p).convert('L'))
 
-        residual = extract_noise_residual(i, d)
-        patches = make_patches(residual, size)
-        X.extend(patches)
+            d = cv2.fastNlMeansDenoising(i)
+
+            residual = extract_noise_residual(i, d)
+            patches = make_patches.make_patches(residual, size)
+
+            dset = f['images']
+
+            dset.resize((dset.shape[0] + len(patches), size, size))
+
+            dset[-len(patches):] = patches 
+        
 
 
-    return np.array(X)
+
 
 
