@@ -76,13 +76,13 @@ def patch_truth(labels, predictions, classes):
     # }
 
     
-    patch_truth = []
+    patch_truth = [label.decode('UTF-8').split('.')[0] for labels in label]
 
-    # convert labels with image index to just regular labels (to test on patch level)
-    for label in labels:
-        l = label.decode('UTF-8')
-        truth = l.split('.')
-        patch_truth.append(truth[0])
+    # # convert labels with image index to just regular labels (to test on patch level)
+    # for label in labels:
+    #     l = label.decode('UTF-8')
+    #     truth = l.split('.')
+    #     patch_truth.append(truth[0])
 
     print(classification_report(patch_truth, predictions, target_names=classes))
 
