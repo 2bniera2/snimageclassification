@@ -31,10 +31,10 @@ def main():
 
     # split data
     images_train, images_test, labels_train, labels_test = train_test_split(
-        images, labels, test_size=0.2, random_state=1, stratify=labels)
+        images, labels, test_size=0.2, random_state=42, stratify=labels)
 
     images_val, images_test, labels_val, labels_test = train_test_split(
-        images_test, labels_test, test_size=0.5, random_state=1, stratify=labels_test)
+        images_test, labels_test, test_size=0.5, random_state=42, stratify=labels_test)
 
     t4 = time.time()
 
@@ -64,6 +64,10 @@ def main():
     print(f'DCT extraction time: {t8 - t7}')
 
     print(f'Total time taken {(t8-t7)+(t6-t5)+(t4-t3)+(t2-t1)}')
+
+if __name__ == "__main__":
+    main()
+
 
 
 # print("Noise extraction start")

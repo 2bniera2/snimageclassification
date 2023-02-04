@@ -2,6 +2,8 @@
 Usage: python cnn_test.py {file to load} {save results}
 '''
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup messages
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras import models
@@ -10,8 +12,6 @@ from sklearn.metrics import classification_report, confusion_matrix, ConfusionMa
 import pandas as pd
 from sys import argv
 import h5py
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup messages
 
 
 # get the length for the dataset, used for generator function and to calculate steps_per_epoch
