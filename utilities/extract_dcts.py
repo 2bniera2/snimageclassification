@@ -2,6 +2,7 @@ from jpeg2dct.numpy import loads
 import numpy as np
 import time as t
 from numba import jit
+import h5py
 
 
 
@@ -38,26 +39,18 @@ def histogram_builder(dct, sf_range, his_range):
 
     return his.flatten()
 
-def process(patches, sf_range, his_range):
-    # final array of examples
-    X = np.empty((len(patches), 909))
-    i = 0
+def process(patches, sf_range, his_range, task, name):
+    with h5py.File(f'processed/DCT_{task}_{name}.h5', 'w') as f:
+        dset = f.create_dataset('DCT', shape=(0, 909), maxshape=(None, 909))
+
+  
 
     
     for p in patches:
-        # extract dct coefficients
-        dct, _, _ =  loads(p, False)        
-        X[i] = histogram_builder(dct, sf_range, his_range)
-        i+=1
-    return X
-
-
-
-
-
+        with h5py.File(f'processed/DCT_{task}_{name}.h5', 'a') as f:
+            # extract dct coefficients
+            dct, _, _ =  loads(p, False)        
+            dset = f['DCT']
+            dset.resize((dset.shape[0] + 1, 909))
+            dset[-1] = histogram_builder(dct, sf_range, his_range)
             
-
-
-
-
-        

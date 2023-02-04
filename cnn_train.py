@@ -2,83 +2,76 @@
 Usage: python cnn_train.py {name} {EPOCH} {BATCH}
 '''
 
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-import tensorflow as tf
-import numpy as np
 from tensorflow.keras import layers, models, callbacks
-from keras.utils import to_categorical
+from sklearn import utils
+import numpy as np
+import h5py
 from sys import argv
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+# user defined variables
+name = argv[1]
 EPOCH = int(argv[2])
 BATCH_SIZE = int(argv[3])
 
-
-X_train = np.load(f'processed/X_train_{argv[1]}.npy')
-y_train = np.load(f'processed/y_train_{argv[1]}.npy')
-
-X_val = np.load(f'processed/X_val_{argv[1]}.npy')
-y_val = np.load(f'processed/y_val_{argv[1]}.npy')
-
-# X_train = (X_train - X_train.mean())/(X_train.std())
-# X_val = (X_val - X_val.mean())/(X_val.std())
+# obtain dataset lengths
+with h5py.File(f'processed/DCT_train_{name}.h5', 'r') as t, h5py.File(f'processed/DCT_val_{name}.h5', 'r') as v:
+    train_len = len(t['DCT'])
+    val_len = len(v['DCT'])
 
 
-y_train = np.select([
-    y_train == 'facebook',
-    y_train == 'flickr',
-    y_train == 'google+',
-    y_train == 'instagram',
-    y_train == 'original',
-    y_train == 'telegram',
-    y_train == 'twitter',
-    y_train == 'whatsapp'
-], [0,1,2,3,4,5,6,7], y_train).astype(np.uint8)
+# generator function to feed data to model in batches
+def generator(batch_size, num_examples, task, name):
+
+    label_map = {
+        'facebook': 0,
+        'flickr': 1,
+        'google+': 2,
+        'instagram': 3,
+        'original': 4,
+        'telegram': 5,
+        'twitter': 6,
+        'whatsapp': 7
+    }
+    with h5py.File(f'processed/DCT_{task}_{name}.h5', 'r') as X, h5py.File(f'processed/labels_{task}_{name}.h5', 'r') as y:
+        examples = X['DCT']
+        labels = y['labels']
+
+        while True:
+
+            for i in range(0, num_examples, batch_size):
+
+                # prevents exceeding bounds of list
+                batch_X = examples[i: min(i + batch_size, num_examples)]
+                batch_y = labels[i: min(i + batch_size, num_examples)]
+
+                batch_labels = []
+                # one hot encode labels
+                for l in batch_y:
+                    one_hot_label = np.zeros(len(label_map))
+                    one_hot_label[label_map[l.decode('UTF-8')]] = 1
+                    batch_labels.append(one_hot_label)
+                # shuffle
+                X_batch, y_batch = utils.shuffle(
+                    batch_X, np.array(batch_labels))
+
+                yield (np.array(X_batch), np.array(y_batch))
 
 
-y_val = np.select([
-    y_val == 'facebook',
-    y_val == 'flickr',
-    y_val == 'google+',
-    y_val == 'instagram',
-    y_val == 'original',
-    y_val == 'telegram',
-    y_val == 'twitter',
-    y_val == 'whatsapp'
-], [0,1,2,3,4,5,6,7], y_val).astype(np.uint8)
-
-# print(len(y_train))
-# print(len(y_val))
-
-# print(len(X_train))
-# print(len(X_val))
-
-
-# print(y_train[0])
-# print(y_val[0])
-
-
-y_train = to_categorical(y_train)
-y_val = to_categorical(y_val)
-
-print(len(y_train[0]))
-print(len(y_val[0]))
-
+# layers
 model = models.Sequential()
-model.add(layers.Conv1D(100, 3,activation='relu', input_shape=(909,1)))
+model.add(layers.Conv1D(100, 3, activation='relu', input_shape=(909, 1)))
 model.add(layers.MaxPooling1D())
-model.add(layers.Conv1D(100, 3,activation='relu'))
+model.add(layers.Conv1D(100, 3, activation='relu'))
 model.add(layers.MaxPooling1D())
 model.add(layers.Flatten())
 model.add(layers.Dense(units=256, activation='relu', ))
 model.add(layers.Dense(units=256))
 model.add(layers.Dropout(rate=0.5))
-model.add(layers.Dense(units = 8, activation='softmax'))
-
+model.add(layers.Dense(units=8, activation='softmax'))
 
 model.summary()
-
-callback = callbacks.EarlyStopping(monitor='val_loss', patience=5)
 
 model.compile(
     loss='categorical_crossentropy',
@@ -86,7 +79,18 @@ model.compile(
     metrics=['accuracy']
 )
 
+# early stopping to prevent doing unnecessary epochs
+callback = callbacks.EarlyStopping(monitor='val_loss', patience=5)
 
-model.fit(X_train, y_train, epochs=EPOCH, batch_size=BATCH_SIZE, callbacks=[callback], validation_data=(X_val, y_val))
+# train
+model.fit(
+    generator(BATCH_SIZE, train_len, 'train', name),
+    steps_per_epoch=np.ceil(train_len / BATCH_SIZE),
+    epochs=EPOCH,
+    callbacks=[callback],
+    validation_data=(generator(BATCH_SIZE, val_len, 'val', name)),
+    validation_steps=np.ceil(val_len / BATCH_SIZE),
+)
 
+# save
 model.save(f'models/cnn_{argv[1]}')
