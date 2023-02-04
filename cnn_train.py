@@ -2,24 +2,40 @@
 Usage: python cnn_train.py {name} {EPOCH} {BATCH}
 '''
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
 from tensorflow.keras import layers, models, callbacks
 from sklearn import utils
 import numpy as np
 import h5py
 from sys import argv
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-# user defined variables
-name = argv[1]
-EPOCH = int(argv[2])
-BATCH_SIZE = int(argv[3])
+
 
 # obtain dataset lengths
-with h5py.File(f'processed/DCT_train_{name}.h5', 'r') as t, h5py.File(f'processed/DCT_val_{name}.h5', 'r') as v:
-    train_len = len(t['DCT'])
-    val_len = len(v['DCT'])
+def get_dset_len(path, dset):
+    with h5py.File(path, 'r') as f:
+        return f[dset].shape[0]
 
+
+def model_architecture(model):
+    model.add(layers.Conv1D(100, 3, activation='relu', input_shape=(909, 1)))
+    model.add(layers.MaxPooling1D())
+    model.add(layers.Conv1D(100, 3, activation='relu'))
+    model.add(layers.MaxPooling1D())
+    model.add(layers.Flatten())
+    model.add(layers.Dense(units=256, activation='relu', ))
+    model.add(layers.Dense(units=256))
+    model.add(layers.Dropout(rate=0.5))
+    model.add(layers.Dense(units=8, activation='softmax'))
+
+    model.summary()
+
+    model.compile(
+        loss='categorical_crossentropy',
+        optimizer='AdaDelta',
+        metrics=['accuracy']
+    )
 
 # generator function to feed data to model in batches
 def generator(batch_size, num_examples, task, name):
@@ -59,38 +75,36 @@ def generator(batch_size, num_examples, task, name):
                 yield (np.array(X_batch), np.array(y_batch))
 
 
-# layers
-model = models.Sequential()
-model.add(layers.Conv1D(100, 3, activation='relu', input_shape=(909, 1)))
-model.add(layers.MaxPooling1D())
-model.add(layers.Conv1D(100, 3, activation='relu'))
-model.add(layers.MaxPooling1D())
-model.add(layers.Flatten())
-model.add(layers.Dense(units=256, activation='relu', ))
-model.add(layers.Dense(units=256))
-model.add(layers.Dropout(rate=0.5))
-model.add(layers.Dense(units=8, activation='softmax'))
 
-model.summary()
 
-model.compile(
-    loss='categorical_crossentropy',
-    optimizer='AdaDelta',
-    metrics=['accuracy']
-)
+def main():
+    # user defined variables
+    name = argv[1]
+    EPOCH = int(argv[2])
+    BATCH_SIZE = int(argv[3])
 
-# early stopping to prevent doing unnecessary epochs
-callback = callbacks.EarlyStopping(monitor='val_loss', patience=5)
+    train_dset_len = get_dset_len(f'processed/DCT_train_{name}.h5', 'DCT')
+    val_dset_len =  get_dset_len(f'processed/DCT_val_{name}.h5', 'DCT')
 
-# train
-model.fit(
-    generator(BATCH_SIZE, train_len, 'train', name),
-    steps_per_epoch=np.ceil(train_len / BATCH_SIZE),
-    epochs=EPOCH,
-    callbacks=[callback],
-    validation_data=(generator(BATCH_SIZE, val_len, 'val', name)),
-    validation_steps=np.ceil(val_len / BATCH_SIZE),
-)
+    # layers
+    model = models.Sequential()
+    model_architecture(model)
 
-# save
-model.save(f'models/cnn_{argv[1]}')
+    # early stopping to prevent doing unnecessary epochs
+    callback = callbacks.EarlyStopping(monitor='val_loss', patience=5)
+
+    # train
+    model.fit(
+        generator(BATCH_SIZE, train_dset_len, 'train', name),
+        steps_per_epoch=np.ceil(train_dset_len / BATCH_SIZE),
+        epochs=EPOCH,
+        callbacks=[callback],
+        validation_data=(generator(BATCH_SIZE, val_dset_len, 'val', name)),
+        validation_steps=np.ceil(val_dset_len / BATCH_SIZE),
+    )
+
+    # save
+    model.save(f'models/cnn_{argv[1]}')
+
+if __name__ == "__main__":
+    main()

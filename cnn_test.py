@@ -15,7 +15,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup
 
 
 # get the length for the dataset, used for generator function and to calculate steps_per_epoch
-def return_dset_len(path, dset):
+def get_dset_len(path, dset):
     with h5py.File(path, 'r') as f:
         return f[dset].shape[0]
 
@@ -109,7 +109,7 @@ def main():
                'original', 'telegram', 'twitter', 'whatsapp']
 
     # get the number of examples for the generator and steps
-    num_examples = return_dset_len(f'processed/DCT_test_{name}.h5', 'DCT')
+    num_examples = get_dset_len(f'processed/DCT_test_{name}.h5', 'DCT')
 
     # predictions represented as integer representation of classes
     predictions = get_predictions(name, model, num_examples)
