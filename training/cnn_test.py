@@ -10,7 +10,7 @@ from tensorflow.keras import models
 from keras.utils import to_categorical
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import pandas as pd
-from sys import argv
+from sys import argv, path
 import h5py
 
 
@@ -83,25 +83,26 @@ def image_truth(labels, predictions, classes):
 
     df = pd.DataFrame([y_test_im, predictions],
                       index=['truth', 'prediction']).T
+
     # group by class and image number
     grouped_df = df.groupby('truth', as_index=False)[
         'prediction'].agg(pd.Series.mode)
+    # print(grouped_df.to_string())
 
     # split into respective image number
     grouped_df['truth'] = grouped_df['truth'].str.split('.').str[0]
+    
+    # get rid of non string values
+    grouped_df = grouped_df[grouped_df['prediction'].apply(lambda x: isinstance(x, str))]
 
-    image_truth = grouped_df['truth'].to_numpy()
-    image_predictions = grouped_df['prediction'].to_numpy()
+    image_truth = grouped_df['truth'].tolist()
+    image_predictions = grouped_df['prediction'].tolist()
+   
+    print(classification_report(image_truth, image_predictions, target_names=classes))
 
-    print(classification_report(image_truth,
-          image_predictions, target_names=classes))
 
-
-def main():
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+def main(name, results):
     # user defined variables
-    name = argv[1]
-    results = argv[2] # name to save results to
 
     model = models.load_model(f'models/cnn_{argv[1]}')
 
@@ -109,7 +110,7 @@ def main():
                'original', 'telegram', 'twitter', 'whatsapp']
 
     # get the number of examples for the generator and steps
-    num_examples = get_dset_len(f'processed/DCT_test_{name}.h5', 'DCT')
+    num_examples = get_dset_len(f'{path[0]}/processed/DCT_test_{name}.h5', 'DCT')
 
     # predictions represented as integer representation of classes
     predictions = get_predictions(name, model, num_examples)

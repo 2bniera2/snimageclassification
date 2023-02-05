@@ -2,27 +2,20 @@
 Usage:
 python preprocessor.py {size} {name}
 '''
-import utilities.load_images as load_images
-import utilities.make_patches as make_patches
-import utilities.extract_dcts as extract_dcts
-import utilities.extract_noise as extract_noise
+from utils.load_images import load_images
+from utils.make_patches import builder
+from utils.extract_dcts import process
 from sklearn.model_selection import train_test_split
-import os
-import numpy as np
-from sys import argv
 import time as time
+import os
 
 
-def main():
-
-    # user defined variables
-    size = -1 if argv[1] == 'full' else 64
-    path = f"{os.getcwd()}/dataset"
-    name = argv[2]
+def main(patch_size, name, his_range, sf_range):
+    path = f'{os.getcwd()}/dataset'
 
     t1 = time.time()
     # load images
-    images, labels = load_images.load_images(path)
+    images, labels = load_images(path)
     t2 = time.time()
 
     print(f'Load image time: {t2 - t1}')
@@ -42,12 +35,12 @@ def main():
 
     t5 = time.time()
     # # make patches
-    train_patches = make_patches.builder(
-        images_train, labels_train, size, 'train', name)
-    val_patches = make_patches.builder(
-        images_val, labels_val, size, 'val', name)
-    test_patches = make_patches.builder(
-        images_test, labels_test, size, 'test', name)
+    train_patches = builder(
+        images_train, labels_train, patch_size, 'train', name)
+    val_patches = builder(
+        images_val, labels_val, patch_size, 'val', name)
+    test_patches = builder(
+        images_test, labels_test, patch_size, 'test', name)
 
     t6 = time.time()
 
@@ -55,9 +48,9 @@ def main():
 
     t7 = time.time()
     # # dct
-    extract_dcts.process(train_patches, (0, 9), (-50, 50), 'train', name)
-    extract_dcts.process(val_patches, (0, 9), (-50, 50), 'val', name)
-    extract_dcts.process(test_patches, (0, 9), (-50, 50), 'test', name)
+    process(train_patches, sf_range, his_range, 'train', name)
+    process(val_patches, sf_range, his_range, 'val', name)
+    process(test_patches, sf_range, his_range, 'test', name)
 
     t8 = time.time()
 

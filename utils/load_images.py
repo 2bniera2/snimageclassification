@@ -1,8 +1,4 @@
-import cv2
 import os
-
-
-
 
 # append paths to images into a list
 def load_images(path):  

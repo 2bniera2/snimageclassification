@@ -8,7 +8,7 @@ from tensorflow.keras import layers, models, callbacks
 from sklearn import utils
 import numpy as np
 import h5py
-from sys import argv
+from sys import argv, path 
 
 
 
@@ -20,9 +20,9 @@ def get_dset_len(path, dset):
 
 def model_architecture(model):
     model.add(layers.Conv1D(100, 3, activation='relu', input_shape=(909, 1)))
-    model.add(layers.MaxPooling1D())
+    model.add(layers.AveragePooling1D())
     model.add(layers.Conv1D(100, 3, activation='relu'))
-    model.add(layers.MaxPooling1D())
+    model.add(layers.AveragePooling1D())
     model.add(layers.Flatten())
     model.add(layers.Dense(units=256)) 
     model.add(layers.Dropout(rate=0.5))
@@ -51,7 +51,7 @@ def generator(batch_size, num_examples, task, name):
         'twitter': 6,
         'whatsapp': 7
     }
-    with h5py.File(f'processed/DCT_{task}_{name}.h5', 'r') as X, h5py.File(f'processed/labels_{task}_{name}.h5', 'r') as y:
+    with h5py.File(f'{path[0]}/processed/DCT_{task}_{name}.h5', 'r') as X, h5py.File(f'{path[0]}/processed/labels_{task}_{name}.h5', 'r') as y:
         examples = X['DCT']
         labels = y['labels']
 
@@ -78,14 +78,10 @@ def generator(batch_size, num_examples, task, name):
 
 
 
-def main():
-    # user defined variables
-    name = argv[1]
-    EPOCH = int(argv[2])
-    BATCH_SIZE = int(argv[3])
+def main(name, epoch, batch_size):
 
-    train_dset_len = get_dset_len(f'processed/DCT_train_{name}.h5', 'DCT')
-    val_dset_len =  get_dset_len(f'processed/DCT_val_{name}.h5', 'DCT')
+    train_dset_len = get_dset_len(f'{path[0]}/processed/DCT_train_{name}.h5', 'DCT')
+    val_dset_len =  get_dset_len(f'{path[0]}/processed/DCT_val_{name}.h5', 'DCT')
 
     # layers
     model = models.Sequential()
@@ -96,12 +92,12 @@ def main():
 
     # train
     model.fit(
-        generator(BATCH_SIZE, train_dset_len, 'train', name),
-        steps_per_epoch=np.ceil(train_dset_len / BATCH_SIZE),
-        epochs=EPOCH,
+        generator(batch_size, train_dset_len, 'train', name),
+        steps_per_epoch=np.ceil(train_dset_len / batch_size),
+        epochs=epoch,
         callbacks=[callback],
-        validation_data=(generator(BATCH_SIZE, val_dset_len, 'val', name)),
-        validation_steps=np.ceil(val_dset_len / BATCH_SIZE),
+        validation_data=(generator(batch_size, val_dset_len, 'val', name)),
+        validation_steps=np.ceil(val_dset_len / batch_size),
     )
 
     # save

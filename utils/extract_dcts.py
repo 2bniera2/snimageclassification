@@ -8,6 +8,7 @@ import h5py
 
 @jit(nopython=True)
 def histogram_builder(dct, sf_range, his_range):
+    bin_num = len(range(his_range[0], his_range[1])) + 1
     # indexes to all AC coefficients
     indexes = [
         (0, 1), (1, 0), (2, 0), (1, 1), (0, 2), (0, 3), (1, 2), (2, 1), (3, 0), (4, 0), (3, 1), (2, 2), (1, 3),
@@ -18,10 +19,9 @@ def histogram_builder(dct, sf_range, his_range):
     ]
 
     # obtain spatial frequencies
-    coords = indexes[sf_range[0]: sf_range[1]]
-
+    coords = indexes[0: sf_range]
     # build histogram
-    his = np.zeros((len(coords), len(range(*(his_range))) + 1))
+    his = np.zeros((len(coords),bin_num))
 
     c_H = len(dct)
     c_W = len(dct[0])
@@ -33,15 +33,16 @@ def histogram_builder(dct, sf_range, his_range):
                            for c in coords])
 
             for i, f in enumerate(sf):
-                h, b = np.histogram(f, bins=len(
-                    range(*(his_range))) + 1, range=his_range)
+                h, b = np.histogram(f, bins=bin_num, range=(his_range[0], his_range[1]))
                 his[i] += h
 
     return his.flatten()
 
 def process(patches, sf_range, his_range, task, name):
+    his_size = (len(range(his_range[0], his_range[1])) + 1) * sf_range
+
     with h5py.File(f'processed/DCT_{task}_{name}.h5', 'w') as f:
-        dset = f.create_dataset('DCT', shape=(0, 909), maxshape=(None, 909))
+        dset = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
 
   
 
@@ -51,6 +52,6 @@ def process(patches, sf_range, his_range, task, name):
             # extract dct coefficients
             dct, _, _ =  loads(p, False)        
             dset = f['DCT']
-            dset.resize((dset.shape[0] + 1, 909))
-            dset[-1] = histogram_builder(dct, sf_range, his_range)
+            dset.resize((dset.shape[0] + 1, his_size))
+            dset[-1] = histogram_builder(dct, sf_range, (his_range[0], his_range[1]))
             
