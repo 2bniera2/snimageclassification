@@ -1,10 +1,12 @@
+from sys import argv, path
+import os
+path.append(f'{os.getcwd()}/training')
+path.append(f'{os.getcwd()}/utils')
+
 import json
 from preprocessor import main as preprocess
-from training.cnn_train import main as train
-from training.cnn_test import main as test
-# import training.cnn_train as cnn_train
-# import training.cnn_test  as cnn_test
-from sys import argv
+from cnn_train import main as train
+from cnn_test import main as test
 
 
 def main():
@@ -18,9 +20,10 @@ def main():
     sf_range = args['sf_range']
     epochs = args['epochs']
     batch_size = args['batch_size']
+    architecture = args['architecture']
 
     # preprocess(patch_size, name, his_range, sf_range)
-    # train(name, epochs, batch_size)
+    train(name, epochs, batch_size, architecture)
     test(name, '')
 
 
