@@ -38,7 +38,7 @@ def get_labels(name):
 # get predictions and convert numerical values to class name
 def get_predictions(name, model, num_examples):
     predictions = np.argmax(model.predict(
-        generator(name, 5000, num_examples), steps=np.ceil(num_examples/5000)), axis=1)
+        generator(name, 32, num_examples), steps=np.ceil(num_examples/32)), axis=1)
 
     return np.select(
         [

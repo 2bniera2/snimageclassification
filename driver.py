@@ -23,9 +23,11 @@ def main():
     architecture = args['architecture']
 
     # preprocess(patch_size, name, his_range, sf_range)
-    train(name, epochs, batch_size, architecture)
+    train(name, epochs, batch_size, architecture, his_range, sf_range)
     test(name, '')
 
 
 if __name__ == "__main__":
     main()
+
+

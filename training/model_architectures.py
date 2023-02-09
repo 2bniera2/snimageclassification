@@ -1,7 +1,8 @@
 from tensorflow.keras import layers, models
 
-def dct_cnn_2017(model):
-    model.add(layers.Conv1D(100, 3, activation='relu', padding="valid", input_shape=(909, 1)))
+def dct_cnn_2017(model, input_shape):
+    
+    model.add(layers.Conv1D(100, 3, activation='relu', padding="valid", input_shape=input_shape))
     model.add(layers.MaxPooling1D())
     model.add(layers.Conv1D(100, 3, activation='relu', padding="valid"))
     model.add(layers.MaxPooling1D())
@@ -19,8 +20,8 @@ def dct_cnn_2017(model):
         metrics=['accuracy']
     )
 
-def dct_cnn_2017_padding(model):
-    model.add(layers.Conv1D(100, 3, activation='relu', padding="same", input_shape=(909, 1)))
+def dct_cnn_2017_padding(model, input_shape):
+    model.add(layers.Conv1D(100, 3, activation='relu', padding="same", input_shape=input_shape))
     model.add(layers.MaxPooling1D())
     model.add(layers.Conv1D(100, 3, activation='relu', padding="same"))
     model.add(layers.MaxPooling1D())
@@ -40,8 +41,8 @@ def dct_cnn_2017_padding(model):
 
 
 
-def dct_cnn_2019(model):
-    model.add(layers.Conv1D(100, 3, activation='relu', input_shape=(909, 1)))
+def dct_cnn_2019(model, input_shape):
+    model.add(layers.Conv1D(100, 3, activation='relu', input_shape=input_shape))
     model.add(layers.MaxPooling1D())
     model.add(layers.Conv1D(100, 3, activation='relu'))
     model.add(layers.MaxPooling1D())
@@ -60,8 +61,8 @@ def dct_cnn_2019(model):
         metrics=['accuracy']
     )
 
-def dct_cnn_2019_padding(model):
-    model.add(layers.Conv1D(100, 3, activation='relu', padding="same", input_shape=(909, 1)))
+def dct_cnn_2019_padding(model, input_shape):
+    model.add(layers.Conv1D(100, 3, activation='relu', padding="same", input_shape=input_shape))
     model.add(layers.MaxPooling1D())
     model.add(layers.Conv1D(100, 3, activation='relu', padding="same"))
     model.add(layers.MaxPooling1D())

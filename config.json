@@ -1,10 +1,10 @@
 {
     "name" : "new",
     "patch_size" : 64,
-    "sf_range": 9,
-    "epochs": 20,
-    "his_range" : [-50, 50],
+    "sf_range": 28,
+    "epochs": 10,
+    "his_range" : [-128, 128],
     "batch_size": 32,
     "results" : "new",
-    "architecture" : "dct_cnn_2017_padding"
+    "architecture" : "dct_cnn_2017"
 }
