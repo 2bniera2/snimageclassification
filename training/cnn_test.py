@@ -98,8 +98,6 @@ def image_truth(labels, predictions, classes):
     image_truth = grouped_df['truth'].tolist()
     image_predictions = grouped_df['prediction'].tolist()
 
-    print(image_truth)
-    print(image_predictions)
    
     print(classification_report(image_truth, image_predictions, target_names=classes))
 

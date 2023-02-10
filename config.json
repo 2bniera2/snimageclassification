@@ -2,7 +2,7 @@
     "name" : "new",
     "patch_size" : 64,
     "sf_range": 9,
-    "epochs": 20,
+    "epochs": 10,
     "his_range" : [-50, 50],
     "batch_size": 32,
     "results" : "new",

@@ -35,15 +35,19 @@ def one_hot_encode(label):
 
 
 # generator function to feed data to model in batches
-def generator(batch_size, num_examples, task, name):
+def generator(batch_size, num_examples, task, name, shuffle):
 
     with h5py.File(f'{path[0]}/processed/DCT_{task}_{name}.h5', 'r') as Examples, h5py.File(f'{path[0]}/processed/labels_{task}_{name}.h5', 'r') as Labels:
         D_X = Examples['DCT']
         D_y = Labels['labels']
 
+        length = D_X.shape[0]
 
         while True:
-            for i in np.random.permutation([i for i in range(0, num_examples, batch_size)]):
+            indices = [i for i in range(0, num_examples, batch_size)]
+            if shuffle:
+                indices = np.random.permutation(indices)
+            for i in indices:
                 # prevents exceeding bounds of list
                 Examples_batch = D_X[i: min(i + batch_size, num_examples)]
                 Labels_batch = D_y[i: min(i + batch_size, num_examples)]
@@ -78,11 +82,11 @@ def main(name, epoch, batch_size, architecture, his_range, sf_range):
 
     # train
     history = model.fit(
-        generator(batch_size, train_dset_len, 'train', name),
+        generator(batch_size, train_dset_len, 'train', name, True),
         steps_per_epoch=np.ceil(train_dset_len / batch_size),
         epochs=epoch,
         callbacks=[callback],
-        validation_data=(generator(batch_size, val_dset_len, 'val', name)),
+        validation_data=(generator(batch_size, val_dset_len, 'val', name, False)),
         validation_steps=np.ceil(val_dset_len / batch_size),
     )
 
