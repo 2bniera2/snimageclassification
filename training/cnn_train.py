@@ -11,6 +11,7 @@ import numpy as np
 import h5py
 import model_architectures
 from matplotlib import pyplot as plt
+import random
 
 
 # obtain dataset lengths
@@ -41,23 +42,24 @@ def generator(batch_size, num_examples, task, name, shuffle):
         D_X = Examples['DCT']
         D_y = Labels['labels']
 
-        length = D_X.shape[0]
 
         while True:
-            indices = [i for i in range(0, num_examples, batch_size)]
+            i = 0
+            Examples_batch = []
+            Labels_batch = []
+            indices = [i for i in range(num_examples)]
+
             if shuffle:
-                indices = np.random.permutation(indices)
-            for i in indices:
-                # prevents exceeding bounds of list
-                Examples_batch = D_X[i: min(i + batch_size, num_examples)]
-                Labels_batch = D_y[i: min(i + batch_size, num_examples)]
+                random.shuffle(indices)
 
-                one_hot_labels = []
-                # one hot encode labels
-                for label in Labels_batch:
-                    one_hot_labels.append(one_hot_encode(label))
 
-                yield (np.array(Examples_batch), np.array(one_hot_labels))
+            while indices:
+                while i < batch_size and indices:
+                    idx = indices.pop()
+                    Examples_batch.append(D_X[idx])
+                    Labels_batch.append(one_hot_encode(D_y[idx]))
+                    i += 1
+                yield (np.array(Examples_batch), np.array(Labels_batch))
 
 
 
