@@ -5,33 +5,21 @@ python preprocessor.py {size} {name}
 from utils.load_images import load_images
 from utils.make_patches import builder
 from utils.extract_dcts import process
-from sklearn.model_selection import train_test_split
 import time as time
 import os
 
 
 def main(patch_size, name, his_range, sf_range):
-    path = f'{os.getcwd()}/dataset'
+    path = f'{os.getcwd()}'
 
     t1 = time.time()
-    # load images
-    images, labels = load_images(path)
+    # load images and split data
+    images_train, images_val, images_test, labels_train, labels_val, labels_test = load_images(path)
     t2 = time.time()
 
     print(f'Load image time: {t2 - t1}')
 
-    t3 = time.time()
-
-    # split data
-    images_train, images_test, labels_train, labels_test = train_test_split(
-        images, labels, test_size=0.2, random_state=42, stratify=labels)
-
-    images_val, images_test, labels_val, labels_test = train_test_split(
-        images_test, labels_test, test_size=0.5, random_state=42, stratify=labels_test)
-
-    t4 = time.time()
-
-    print(f'Split time: {t4 - t3}')
+    
 
     t5 = time.time()
     # # make patches
@@ -56,7 +44,7 @@ def main(patch_size, name, his_range, sf_range):
 
     print(f'DCT extraction time: {t8 - t7}')
 
-    print(f'Total time taken {(t8-t7)+(t6-t5)+(t4-t3)+(t2-t1)}')
+    print(f'Total time taken {(t8-t7)+(t6-t5)+(t2-t1)}')
 
 if __name__ == "__main__":
     main()
