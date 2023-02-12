@@ -21,8 +21,8 @@ def get_dset_len(path, dset):
 
 
 # generator function
-def generator(name, batch_size, num_examples):
-    with h5py.File(f'processed/DCT_test_{name}.h5', 'r') as f:
+def generator(dataset_name, batch_size, num_examples):
+    with h5py.File(f'processed/DCT_test_{dataset_name}.h5', 'r') as f:
         X = f['DCT']
         while True:
             for i in range(0, num_examples, batch_size):
@@ -36,9 +36,9 @@ def get_labels(name):
 
 
 # get predictions and convert numerical values to class name
-def get_predictions(name, model, num_examples):
+def get_predictions(dataset_name, model, num_examples):
     predictions = np.argmax(model.predict(
-        generator(name, 32, num_examples), steps=np.ceil(num_examples/32)), axis=1)
+        generator(dataset_name, 32, num_examples), steps=np.ceil(num_examples/32)), axis=1)
 
     return np.select(
         [
@@ -102,19 +102,19 @@ def image_truth(labels, predictions, classes):
     print(classification_report(image_truth, image_predictions, target_names=classes))
 
 
-def main(name, results):
+def main(name, dataset_name, results):
     # user defined variables
 
-    model = models.load_model(f'models/cnn_{argv[1]}')
+    model = models.load_model(f'models/cnn_{name}')
 
     classes = ['facebook', 'flickr', 'google+', 'instagram',
                'original', 'telegram', 'twitter', 'whatsapp']
 
     # get the number of examples for the generator and steps
-    num_examples = get_dset_len(f'{path[0]}/processed/DCT_test_{name}.h5', 'DCT')
+    num_examples = get_dset_len(f'{path[0]}/processed/DCT_test_{dataset_name}.h5', 'DCT')
 
     # predictions represented as integer representation of classes
-    predictions = get_predictions(name, model, num_examples)
+    predictions = get_predictions(dataset_name, model, num_examples)
 
     # labels with string name and image indexes
     labels = get_labels(name)

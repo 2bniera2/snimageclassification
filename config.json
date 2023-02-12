@@ -1,10 +1,11 @@
 {
-    "name" : "new",
+    "name" : "dct_cnn_2017_no_change_20-32",
+    "dataset_name" : "64_-50_50_9_1D", 
     "patch_size" : 64,
     "sf_range": 9,
     "epochs": 20,
     "his_range" : [-50, 50],
     "batch_size": 32,
-    "results" : "new",
+    "results" : "dct_cnn_2017_no_change_20-32",
     "architecture" : "dct_cnn_2017"
 }

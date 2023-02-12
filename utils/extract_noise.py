@@ -13,12 +13,12 @@ def extract_noise_residual(i, d):
     return n_r
 
 
-def extract(paths, size, task, name):
-    with h5py.File(f'processed/noise_{task}_{name}.h5', 'w') as f:
+def extract(paths, size, task, dataset_name):
+    with h5py.File(f'processed/noise_{task}_{dataset_name}.h5', 'w') as f:
         dset = f.create_dataset('noise', shape=(0, size, size), maxshape=(None, size, size))
 
     for p in paths:
-        with h5py.File(f'processed/noise_{task}_{name}.h5', 'a') as f:
+        with h5py.File(f'processed/noise_{task}_{dataset_name}.h5', 'a') as f:
 
             i = np.array(Image.open(p).convert('L'))
 

@@ -9,7 +9,7 @@ import time as time
 import os
 
 
-def main(patch_size, name, his_range, sf_range):
+def main(patch_size, dataset_name, his_range, sf_range):
     path = f'{os.getcwd()}'
 
     t1 = time.time()
@@ -24,11 +24,11 @@ def main(patch_size, name, his_range, sf_range):
     t5 = time.time()
     # # make patches
     train_patches = builder(
-        images_train, labels_train, patch_size, 'train', name)
+        images_train, labels_train, patch_size, 'train', dataset_name)
     val_patches = builder(
-        images_val, labels_val, patch_size, 'val', name)
+        images_val, labels_val, patch_size, 'val', dataset_name)
     test_patches = builder(
-        images_test, labels_test, patch_size, 'test', name)
+        images_test, labels_test, patch_size, 'test', dataset_name)
 
     t6 = time.time()
 
@@ -36,9 +36,9 @@ def main(patch_size, name, his_range, sf_range):
 
     t7 = time.time()
     # # dct
-    process(train_patches, sf_range, his_range, 'train', name)
-    process(val_patches, sf_range, his_range, 'val', name)
-    process(test_patches, sf_range, his_range, 'test', name)
+    process(train_patches, sf_range, his_range, 'train', dataset_name)
+    process(val_patches, sf_range, his_range, 'val', dataset_name)
+    process(test_patches, sf_range, his_range, 'test', dataset_name)
 
     t8 = time.time()
 
