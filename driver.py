@@ -15,7 +15,6 @@ def main():
         args = json.load(f)
 
     
-    dataset_name = args['dataset_name']
     patch_size = args['patch_size']
     his_range = args['his_range']
     sf_range = args['sf_range']
