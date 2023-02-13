@@ -1,6 +1,4 @@
 {
-    "name" : "dct_cnn_2017_no_change_20-32",
-    "dataset_name" : "64_-50_50_9_1D", 
     "patch_size" : 64,
     "sf_range": 9,
     "epochs": 20,
