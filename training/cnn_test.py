@@ -10,7 +10,7 @@ from tensorflow.keras import models
 from keras.utils import to_categorical
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import pandas as pd
-from sys import argv, path
+from sys import path
 import h5py
 
 
@@ -30,8 +30,8 @@ def generator(dataset_name, batch_size, num_examples):
                 yield (batch_X)
 
 
-def get_labels(name):
-    with h5py.File(f'processed/labels_test_{name}.h5', 'r') as f:
+def get_labels(dataset_name):
+    with h5py.File(f'processed/labels_test_{dataset_name}.h5', 'r') as f:
         return np.array(f['labels'][()])
 
 
@@ -117,7 +117,7 @@ def main(name, dataset_name, results):
     predictions = get_predictions(dataset_name, model, num_examples)
 
     # labels with string name and image indexes
-    labels = get_labels(name)
+    labels = get_labels(dataset_name)
 
     patch_truth(labels, predictions, classes)
 

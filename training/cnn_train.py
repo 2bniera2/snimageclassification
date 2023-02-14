@@ -41,8 +41,7 @@ def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_rang
         f'{path[0]}/processed/DCT_val_{dataset_name}.h5',
         f'{path[0]}/processed/labels_val_{dataset_name}.h5',
         val_len,
-        batch_size,
-        False
+        batch_size
     )
 
 

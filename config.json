@@ -1,7 +1,7 @@
 {
     "patch_size" : 64,
-    "sf_range": 9,
-    "epochs": 20,
+    "sf_range": 26,
+    "epochs": 10,
     "his_range" : [-50, 50],
     "batch_size": 32,
     "results" : "dct_cnn_2017_no_change_20-32",

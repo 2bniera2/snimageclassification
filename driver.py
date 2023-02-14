@@ -24,7 +24,7 @@ def main():
 
     dataset_name = f'p:{patch_size}_his:{his_range[0]},{his_range[1]}_sf_range:{sf_range}'
     model_name = f'{architecture}_e:{epochs}_bs:{batch_size}'
-
+    print('preprocessing')
     preprocess(patch_size, dataset_name, his_range, sf_range)
     train(model_name, dataset_name, epochs, batch_size, architecture, his_range, sf_range)
     test(model_name, dataset_name, '')
