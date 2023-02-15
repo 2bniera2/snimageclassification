@@ -21,25 +21,12 @@ def builder(paths, labels, size, task, dataset_name, sf_range, his_range):
 
     # initialise y datasets
     with h5py.File(f'processed/labels_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('facebook', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-        dset = f.create_dataset('flickr', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-        dset = f.create_dataset('google+', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-        dset = f.create_dataset('instagram', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-        dset = f.create_dataset('original', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-        dset = f.create_dataset('telegram', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-        dset = f.create_dataset('twitter', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-        dset = f.create_dataset('whatsapp', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-
+        dset = f.create_dataset('DCT', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
+   
     # initialise X datasets 
     with h5py.File(f'processed/DCT_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('facebook', shape=(0, his_size), maxshape=(None, his_size))
-        dset = f.create_dataset('flickr', shape=(0, his_size), maxshape=(None, his_size))
-        dset = f.create_dataset('google+', shape=(0, his_size), maxshape=(None, his_size))
-        dset = f.create_dataset('instagram', shape=(0, his_size), maxshape=(None, his_size))
-        dset = f.create_dataset('original', shape=(0, his_size), maxshape=(None, his_size))
-        dset = f.create_dataset('telegram', shape=(0, his_size), maxshape=(None, his_size))
-        dset = f.create_dataset('twitter', shape=(0, his_size), maxshape=(None, his_size))
-        dset = f.create_dataset('whatsapp', shape=(0, his_size), maxshape=(None, his_size))
+        dset = f.create_dataset('labels', shape=(0, his_size), maxshape=(None, his_size))
+      
         
 
     # generate patches from an image and extract the dcts from each patch and store in dataset
@@ -51,22 +38,19 @@ def builder(paths, labels, size, task, dataset_name, sf_range, his_range):
             patches = make_patches(image, size)
 
             # extract dct histograms from each patch 
-            patch_histograms = extract_dcts(patches, sf_range, his_range, task, dataset_name)
+            patch_histograms = extract_dcts.process(patches, sf_range, his_range)
 
 
             #iterate over all patches
             for patch_histogram in patch_histograms:
 
-                labels_dset = Labels[label]
-                dct_dset = DCTs[label]
+                dct_dset = DCTs['DCT']
+                dct_dset.resize((dct_dset.shape[0] + 1, his_size))
+                dct_dset[-1] = patch_histogram
 
+                labels_dset = Labels['labels']
                 labels_dset.resize(labels_dset.shape[0] + 1, axis=0)
-                dct_dset.resize((dset.shape[0] + 1, his_size))
-
-                dset[-1] = patch_histogram
-
-
-                dset[-1] = f"{label}.{index}" if task == 'test' else label
+                labels_dset[-1] = f"{label}.{index}" if task == 'test' else label
 
 
 

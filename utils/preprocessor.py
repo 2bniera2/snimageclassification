@@ -12,39 +12,32 @@ import os
 def main(patch_size, dataset_name, his_range, sf_range):
     path = f'{os.getcwd()}'
 
-    t1 = time.time()
+   
     # load images and split data
     images_train, images_val, images_test, labels_train, labels_val, labels_test = load_images(path)
-    t2 = time.time()
+    
 
-    print(f'Load image time: {t2 - t1}')
 
     
 
-    t5 = time.time()
+   
     # # make patches
-    train_patches = builder(
-        images_train, labels_train, patch_size, 'train', dataset_name)
-    val_patches = builder(
-        images_val, labels_val, patch_size, 'val', dataset_name)
-    test_patches = builder(
-        images_test, labels_test, patch_size, 'test', dataset_name)
+    builder(
+        images_train, labels_train, patch_size, 'train', dataset_name, sf_range, his_range)
+    builder(
+        images_val, labels_val, patch_size, 'val', dataset_name, sf_range, his_range)
+    builder(
+        images_test, labels_test, patch_size, 'test', dataset_name, sf_range, his_range)
 
-    t6 = time.time()
+   
+    # # # dct
+    # process(train_patches, sf_range, his_range, 'train', dataset_name)
+    # process(val_patches, sf_range, his_range, 'val', dataset_name)
+    # process(test_patches, sf_range, his_range, 'test', dataset_name)
 
-    print(f'Making patches time: {t6 - t5}')
+   
 
-    t7 = time.time()
-    # # dct
-    process(train_patches, sf_range, his_range, 'train', dataset_name)
-    process(val_patches, sf_range, his_range, 'val', dataset_name)
-    process(test_patches, sf_range, his_range, 'test', dataset_name)
-
-    t8 = time.time()
-
-    print(f'DCT extraction time: {t8 - t7}')
-
-    print(f'Total time taken {(t8-t7)+(t6-t5)+(t2-t1)}')
+  
 
 if __name__ == "__main__":
     main()

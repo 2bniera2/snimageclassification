@@ -25,6 +25,8 @@ class data_generator(Sequence):
             for i in batch_indices:
                 X.append(X_dset_['DCT'][i])
                 y.append(self.one_hot_encode(y_dset_['labels'][i]))
+                
+
 
         return np.array(X), np.array(y)
 

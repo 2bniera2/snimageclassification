@@ -32,25 +32,21 @@ def histogram_builder(dct, sf_range, his_range):
             sf = np.array([dct[x][y].reshape((8, 8))[c[0]][c[1]] for c in coords])
 
             for i, f in enumerate(sf):
-                h, b = np.histogram(f, bins=bin_num, range=(his_range[0], his_range[1]))
+                h, _ = np.histogram(f, bins=bin_num, range=(his_range[0], his_range[1]))
                 his[i] += h
 
     return his.flatten()
 
-def process(patches, sf_range, his_range, task, dataset_name):
-    his_size = (len(range(his_range[0], his_range[1])) + 1) * sf_range
-
-    with h5py.File(f'processed/DCT_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
-
-  
-
+def process(patches, sf_range, his_range):
+    histograms = []
     
     for p in patches:
-        with h5py.File(f'processed/DCT_{task}_{dataset_name}.h5', 'a') as f:
             # extract dct coefficients
             dct, _, _ =  loads(p, False)        
-            dset = f['DCT']
-            dset.resize((dset.shape[0] + 1, his_size))
-            dset[-1] = histogram_builder(dct, sf_range, (his_range[0], his_range[1]))
+            histograms.append(histogram_builder(dct, sf_range, (his_range[0], his_range[1])))
+
+    return histograms
+
+
+   
             

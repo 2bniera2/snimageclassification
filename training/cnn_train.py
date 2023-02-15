@@ -18,19 +18,20 @@ from data_generator import data_generator
 #     with h5py.File(path, 'r') as f:
 #         return f[dset].shape[0]
 
-def load_dset(path, dset):
+def get_dset_len(path):
     with h5py.File(path, 'r') as f:
-        return f[dset], f[dset].shape[0]
+        return f['DCT'].shape[0]
+
 
 
 def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_range):
 
     
-    _, train_len = load_dset(f'{path[0]}/processed/DCT_train_{dataset_name}.h5', 'DCT')
-    _, val_len = load_dset(f'{path[0]}/processed/DCT_val_{dataset_name}.h5', 'DCT')
+    train_len = get_dset_len(f'{path[0]}/processed/DCT_train_{dataset_name}.h5')
+    val_len = get_dset_len(f'{path[0]}/processed/DCT_val_{dataset_name}.h5')
 
     
-
+    print(train_len)
     train_gen = data_generator(
         f'{path[0]}/processed/DCT_train_{dataset_name}.h5',
         f'{path[0]}/processed/labels_train_{dataset_name}.h5',
