@@ -19,9 +19,9 @@ def histogram_builder(dct, sf_range, his_range):
     ]
 
     # # obtain spatial frequencies
-    coords = indexes[0: sf_range]
+    coords = indexes[sf_range[0]: sf_range[1]]
     # build histogram
-    his = np.zeros((sf_range,bin_num))
+    his = np.zeros((sf_range[1] - sf_range[0], bin_num))
 
     c_H = len(dct)
     c_W = len(dct[0])
@@ -43,7 +43,7 @@ def process(patches, sf_range, his_range):
     for p in patches:
             # extract dct coefficients
             dct, _, _ =  loads(p, False)        
-            histograms.append(histogram_builder(dct, sf_range, (his_range[0], his_range[1])))
+            histograms.append(histogram_builder(dct, (sf_range[0], sf_range[1]), (his_range[0], his_range[1])))
 
     return histograms
 

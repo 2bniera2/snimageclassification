@@ -13,10 +13,7 @@ import model_architectures
 from matplotlib import pyplot as plt
 from data_generator import data_generator
 
-# obtain dataset lengths
-# def get_dset_len(path, dset):
-#     with h5py.File(path, 'r') as f:
-#         return f[dset].shape[0]
+
 
 def get_dset_len(path):
     with h5py.File(path, 'r') as f:
@@ -50,7 +47,7 @@ def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_rang
     # layers
     model = models.Sequential()
 
-    input_shape = ((his_range[1]*2 + 1) * sf_range, 1)
+    input_shape = ((his_range[1]*2 + 1) * (sf_range[1] - sf_range[0]), 1)
 
     getattr(model_architectures, architecture)(model, input_shape)
 
@@ -65,7 +62,7 @@ def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_rang
         epochs = epoch,
         validation_data=val_gen,
         use_multiprocessing=True,
-        workers=16
+        workers=6
     )
     
     model.save(f'models/cnn_{name}')

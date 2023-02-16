@@ -17,15 +17,16 @@ def make_patches(im, size):
     return patches
 
 def builder(paths, labels, size, task, dataset_name, sf_range, his_range):
-    his_size = (len(range(his_range[0], his_range[1])) + 1) * sf_range
+    his_size = (len(range(his_range[0], his_range[1])) + 1) * (sf_range[1] - sf_range[0])
 
-    # initialise y datasets
-    with h5py.File(f'processed/labels_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('DCT', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-   
     # initialise X datasets 
     with h5py.File(f'processed/DCT_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('labels', shape=(0, his_size), maxshape=(None, his_size))
+        dset = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
+    
+    # initialise y datasets
+    with h5py.File(f'processed/labels_{task}_{dataset_name}.h5', 'w') as f:
+        dset = f.create_dataset('labels', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
+   
       
         
 
