@@ -1,6 +1,6 @@
 {
     "patch_size" : 64,
-    "sf_range": [0, 9],
+    "sf_range": [1, 10],
     "epochs": 10,
     "his_range" : [-50, 50],
     "batch_size": 32,
