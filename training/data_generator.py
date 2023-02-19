@@ -3,10 +3,11 @@ import h5py
 import numpy as np
 
 class data_generator(Sequence):
-    def __init__(self, X_dset, y_dset, dset_len, batch_size=32, shuffle=True):
+    def __init__(self, X_dset_path, y_dset_path, dset_name, dset_len, batch_size=32, shuffle=True):
         self.batch_size = batch_size
-        self.X_dset = X_dset
-        self.y_dset = y_dset
+        self.X_dset_path = X_dset_path
+        self.y_dset_path = y_dset_path
+        self.dset_name = dset_name
         self.dset_len = dset_len
         self.indices = [i for i in range(dset_len)]
         self.shuffle = shuffle
@@ -21,9 +22,9 @@ class data_generator(Sequence):
         y = []
 
 
-        with h5py.File(self.X_dset) as X_dset_, h5py.File(self.y_dset) as y_dset_:
+        with h5py.File(self.X_dset_path) as X_dset_, h5py.File(self.y_dset_path) as y_dset_:
             for i in batch_indices:
-                X.append(X_dset_['DCT'][i])
+                X.append(X_dset_[self.dset_name][i])
                 y.append(self.one_hot_encode(y_dset_['labels'][i]))
                 
 

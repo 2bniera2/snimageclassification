@@ -6,7 +6,7 @@ path.append(f'{os.getcwd()}/noiseprint2')
 
 import json
 from preprocessor import main as preprocess
-from cnn_train import main as train
+from dct_train import main as train
 from cnn_test import main as test
 
 
@@ -29,8 +29,8 @@ def main():
     print("Preprocessing")
     preprocess(patch_size, dataset_name, his_range, sf_range)
 
-    # print("Training")
-    # train(model_name, dataset_name, epochs, batch_size, architecture, his_range, sf_range)
+    print("Training")
+    train(model_name, dataset_name, epochs, batch_size, architecture, his_range, sf_range)
 
     # print("Testing")
     # test(model_name, dataset_name, '')

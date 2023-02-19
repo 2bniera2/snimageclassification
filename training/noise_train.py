@@ -1,13 +1,7 @@
-'''
-Usage: python cnn_train.py {name} {EPOCH} {BATCH}
-'''
-
-from sys import argv, path 
+from sys import path 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
 from tensorflow.keras import models, callbacks
-from sklearn import utils
-import numpy as np
 import h5py
 import model_architectures
 from matplotlib import pyplot as plt
@@ -17,26 +11,26 @@ from data_generator import data_generator
 
 def get_dset_len(path):
     with h5py.File(path, 'r') as f:
-        return f['DCT'].shape[0]
+        return f['Noise'].shape[0]
 
 
 
-def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_range):
+def main(name, dataset_name, epoch, batch_size, architecture, patch_size):
 
     
-    train_len = get_dset_len(f'{path[0]}/processed/DCT_train_{dataset_name}.h5')
-    val_len = get_dset_len(f'{path[0]}/processed/DCT_val_{dataset_name}.h5')
+    train_len = get_dset_len(f'{path[0]}/processed/Noise_train_{dataset_name}.h5')
+    val_len = get_dset_len(f'{path[0]}/processed/Noise_val_{dataset_name}.h5')
 
     
     print(train_len)
     train_gen = data_generator(
-        f'{path[0]}/processed/DCT_train_{dataset_name}.h5',
+        f'{path[0]}/processed/Noise_train_{dataset_name}.h5',
         f'{path[0]}/processed/labels_train_{dataset_name}.h5',
         train_len,
         batch_size,
     )
     val_gen = data_generator(
-        f'{path[0]}/processed/DCT_val_{dataset_name}.h5',
+        f'{path[0]}/processed/Noise_val_{dataset_name}.h5',
         f'{path[0]}/processed/labels_val_{dataset_name}.h5',
         val_len,
         batch_size
@@ -47,7 +41,7 @@ def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_rang
     # layers
     model = models.Sequential()
 
-    input_shape = ((his_range[1]*2 + 1) * (sf_range[1] - sf_range[0]), 1)
+    input_shape = (patch_size, patch_size, 1)
 
     getattr(model_architectures, architecture)(model, input_shape)
 

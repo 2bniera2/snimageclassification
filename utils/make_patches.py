@@ -19,7 +19,7 @@ def make_patches(im, size, to_bytes=True):
             patches.append(image)
     return patches
 
-def builder(paths, labels, size, task, dataset_name, sf_range, his_range):
+def builder(paths, labels, patch_size, task, dataset_name, sf_range, his_range):
     his_size = (len(range(his_range[0], his_range[1])) + 1) * (sf_range[1] - sf_range[0])
 
     # initialise X datasets 
@@ -39,7 +39,8 @@ def builder(paths, labels, size, task, dataset_name, sf_range, his_range):
 
             # get patches from images
             image = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
-            patches = make_patches(image, size)
+            if patch_size:
+                patches = make_patches(image, patch_size)
 
             # extract dct histograms from each patch 
             patch_histograms = extract_dcts.process(patches, sf_range, his_range)
