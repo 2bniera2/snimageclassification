@@ -2,12 +2,11 @@ from jpeg2dct.numpy import loads
 import numpy as np
 import time as t
 from numba import jit
-import h5py
 
 
 
 @jit(nopython=True)
-def histogram_builder(dct, sf_range, his_range):
+def hist_1D(dct, sf_range, his_range):
     bin_num = len(range(his_range[0], his_range[1])) + 1
     # indexes to DC and all AC coefficients
     indexes = [
@@ -40,13 +39,16 @@ def histogram_builder(dct, sf_range, his_range):
 
     return his.flatten()
 
+
+
+
 def process(patches, sf_range, his_range):
     histograms = []
     
     for p in patches:
             # extract dct coefficients
             dct, _, _ =  loads(p, False)        
-            histograms.append(histogram_builder(dct, (sf_range[0], sf_range[1]), (his_range[0], his_range[1])))
+            histograms.append(hist_1D(dct, (sf_range[0], sf_range[1]), (his_range[0], his_range[1])))
 
     return histograms
 

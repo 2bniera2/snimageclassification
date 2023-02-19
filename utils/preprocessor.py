@@ -8,19 +8,31 @@ from utils.dataset_builder import noise_extractor
 
 
 
-def main(patch_size, dataset_name, his_range, sf_range):
+def main(patch_size, dataset_name, his_range, sf_range, use_subbands):
     path = f'{os.getcwd()}'
 
     # load images and split data
     images_train, images_val, images_test, labels_train, labels_val, labels_test = load_images(path)
 
+    tasks = {
+        'train': [images_train, labels_train],
+        'val': [images_val, labels_val],
+        'test': [images_test, labels_test]
+    }
+    
+
+    for task in tasks.items():
     # make patches and extract dct coefficients
-    builder(
-        images_train, labels_train, patch_size, 'train', dataset_name, sf_range, his_range)
-    builder(
-        images_val, labels_val, patch_size, 'val', dataset_name, sf_range, his_range)
-    builder(
-        images_test, labels_test, patch_size, 'test', dataset_name, sf_range, his_range)
+        builder(
+            task[1][0],
+            task[1][1],
+            patch_size, 
+            task[0],
+            dataset_name,
+            sf_range, 
+            his_range
+        )
+
 
         
     # # noise
