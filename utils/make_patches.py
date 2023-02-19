@@ -8,12 +8,15 @@ def im_to_bytes(patch):
     _, im_buf_arr = cv2.imencode(".jpeg", patch, [cv2.IMWRITE_JPEG_QUALITY, 100])
     return im_buf_arr.tobytes()
 
-def make_patches(im, size):
+def make_patches(im, size, to_bytes=True):
     patches = []
     for i in range(0, im.shape[0]-size+1, size):
         for j in range(0, im.shape[1]-size+1, size):
             # append byte form of images
-            patches.append(im_to_bytes(im[i:i+size, j:j+size]))
+            image = im[i:i+size, j:j+size]
+            if to_bytes:
+                image = im_to_bytes(image)
+            patches.append(image)
     return patches
 
 def builder(paths, labels, size, task, dataset_name, sf_range, his_range):
