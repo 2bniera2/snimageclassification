@@ -1,8 +1,13 @@
 {
+    "downscale_factor" : 1,
+    "grayscale" : true,
     "patch_size" : 64,
     "sf_range": [1, 10],
-    "epochs": 10,
+    "sf_lo": [0, 9],
+    "sf_mid": [10, 20],
+    "sf_hi": [20, 30],
     "his_range" : [-50, 50],
+    "epochs": 10,
     "batch_size": 32,
     "results" : "dct_cnn_2017_no_change_20-32",
     "architecture" : "dct_cnn_2017"
