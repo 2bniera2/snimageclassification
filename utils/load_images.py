@@ -62,4 +62,4 @@ def load_images(path):
         val_y += [CLASS for i in range(len(labels_val))]
         test_y += [CLASS for i in range(len(labels_test))]
 
-    return train_X, val_X, test_X, train_y, val_y, test_y
+    return {'train': (train_X, train_y), 'val': (val_X, val_y), 'test': (test_X, test_y)}

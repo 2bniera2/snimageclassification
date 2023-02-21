@@ -3,13 +3,9 @@
     "grayscale" : true,
     "dct_rep" : "1DHist",
     "patch_size" : 64,
-    "use_subbands" : "sf_lo",
+    "bands" : 0, 
     "sf_lo": [1, 10],
     "sf_mid": [11, 20],
     "sf_hi": [20, 30],
-    "his_range" : [-50, 50],
-    "epochs": 10,
-    "batch_size": 32,
-    "results" : "dct_cnn_2017_no_change_20-32",
-    "architecture" : "dct_cnn_2017"
+    "his_range" : [-50, 50]
 }

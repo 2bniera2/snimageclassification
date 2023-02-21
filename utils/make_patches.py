@@ -19,31 +19,32 @@ def make_patches(im, size, to_bytes=True):
             patches.append(image)
     return patches
 
-def builder(paths, labels, patch_size, task, dataset_name, sf_range, his_range):
-    his_size = (len(range(his_range[0], his_range[1])) + 1) * (sf_range[1] - sf_range[0])
+def resize(image, downscale_factor):
+    return cv2.resize(image, image.shape[0] / downscale_factor, image.shape[0] / downscale_factor) if downscale_factor > 1 else image
 
+
+def builder(input, task, examples, labels):
+    his_size = input.his_size
     # initialise X datasets 
-    with h5py.File(f'processed/DCT_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
+    with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'w') as f:
+        _  = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
     
     # initialise y datasets
-    with h5py.File(f'processed/labels_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('labels', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
+    with h5py.File(f'processed/labels_{task}_{input.dset_name}.h5', 'w') as f:
+        _ = f.create_dataset('labels', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
    
-      
-        
-
     # generate patches from an image and extract the dcts from each patch and store in dataset
-    for index, (path, label) in enumerate(zip(paths, labels)):
-        with h5py.File(f'processed/DCT_{task}_{dataset_name}.h5', 'a') as DCTs , h5py.File(f'processed/labels_{task}_{dataset_name}.h5', 'a') as Labels:
+    for index, (path, label) in enumerate(zip(examples, labels)):
+        with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'a') as DCTs , h5py.File(f'processed/labels_{task}_{input.dset_name}.h5', 'a') as Labels:
 
-            # get patches from images
-            image = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
-            if patch_size:
-                patches = make_patches(image, patch_size)
+            image = cv2.cvtColor(cv2.imread(path), input.colour_space)
+            image = resize(image, input.downscale_factor)
+          
+            if input.patch_size:
+                patches = make_patches(image, input.patch_size)
 
             # extract dct histograms from each patch 
-            patch_histograms = extract_dcts.process(patches, sf_range, his_range)
+            patch_histograms = extract_dcts.process(patches, input)
 
 
             #iterate over all patches

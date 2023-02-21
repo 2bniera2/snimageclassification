@@ -6,7 +6,7 @@ from numba import jit
 
 
 @jit(nopython=True)
-def hist_1D(dct, sf_range, his_range):
+def hist_1D(dct, sf_range, his_range, bands):
     bin_num = len(range(his_range[0], his_range[1])) + 1
     # indexes to DC and all AC coefficients
     indexes = [
@@ -21,6 +21,12 @@ def hist_1D(dct, sf_range, his_range):
     ]
 
     # # obtain spatial frequencies
+    if bands == 3:
+
+        coords = [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)]
+    else:
+        coords = indexes[sf_range[bands][0]: sf_range[bands][1]]
+
     coords = indexes[sf_range[0]: sf_range[1]]
     # build histogram
     his = np.zeros((sf_range[1] - sf_range[0], bin_num))
@@ -42,13 +48,14 @@ def hist_1D(dct, sf_range, his_range):
 
 
 
-def process(patches, sf_range, his_range):
+def process(patches, input):
     histograms = []
     
     for p in patches:
             # extract dct coefficients
             dct, _, _ =  loads(p, False)        
-            histograms.append(hist_1D(dct, (sf_range[0], sf_range[1]), (his_range[0], his_range[1])))
+            histogram = getattr(input.dct_rep)(dct, input.sf_range, input.his_range, input.bands)
+            histograms.append(histogram)
 
     return histograms
 

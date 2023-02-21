@@ -1,70 +1,64 @@
-from sys import path
+import json
 import os
+import cv2
+from sys import path
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
-
-import json
-from preprocessor import main as preprocess
-from dct_train import main as train
-from cnn_test import main as test
-
-# calculate the number of spatial frequencies being used
-def num_of_sf(sf_range, use_subbands):
-    if use_subbands is "all":
-        return sum([sf[1] - sf[0] for sf in sf_range])
-    else:
-        return sf_range[1] - sf_range[0]
+# from cnn_test import main as test
+# from dct_train import main as train
+from preprocessor import Preprocessor
 
 
-def main():
+class Input:
+    def __init__(self, downscale_factor, grayscale, dct_rep, patch_size, bands, sf_lo, sf_mid, sf_hi, his_range):
+        self.downscale_factor = downscale_factor
+        self.colour_space = self.get_colour_space(grayscale)
+        self.dct_rep = dct_rep
+        self.patch_size = patch_size
+        self.bands = bands
+        self.sf_range = [sf_lo, sf_mid, sf_hi]
+        self.his_range = his_range
 
-    with open('config.json') as f:
-        args = json.load(f)
+        self.sf_num = self.num_of_sf(self.sf_range, bands)
+        self.dset_name = self.get_dset_name(grayscale)
+        self.his_size = self.get_his_range()
 
-    # dictates transformations applied to image before generating patches
-    downscale_factor = args['downscale_factor']
-    grayscale = args['grayscale']
+    def num_of_sf(self):
+        if self.multibands == 3:
+            return sum([sf[1] - sf[0] for sf in self.sf_range])
+        else:
+            return self.sf_range[self.bands][1] - self.sf_range[self.bands][0]
+       
+    def get_dset_name(self, grayscale):
+        return f'g:{grayscale}p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sf_num:{self.sf_num}_subbands:{self.bands}'
 
-    patch_size = args['patch_size']
+    def get_colour_space(self, grayscale):
+        return cv2.COLOR_BGR2GRAY if grayscale else cv2.COLOR_BGR2RGB
 
-    # determines what the cnn input should be
-    dct_representation = args['dct_rep']
-    his_range = args['his_range']
-    # determines whether to use all subbands or just one
-    use_subbands = args['use_subbands']
-
-    if use_subbands is "all":
-        sf_range = [args['sf_lo'], args['sf_mid'], args['sf_hi']]
-    else: 
-        sf_range = args[use_subbands]
-
-    
-    sf_num = num_of_sf(sf_range, use_subbands)
-
-    dataset_name = f'g:{grayscale}p:{patch_size}_his:{his_range[0]},{his_range[1]}_sf_num:{sf_num}_subbands:{use_subbands}'
-
-    preprocess(
-        patch_size,
-        dataset_name,
-        his_range,
-        sf_range,
-        use_subbands,
-        downscale_factor,
-        grayscale
-    )
+    def get_his_range(self):
+        return (len(range(self.his_range[0], self.his_range[1])) + 1) * self.sf_num
 
 
-    epochs = args['epochs']
-    batch_size = args['batch_size']
-    architecture = args['architecture']
-    model_name = f'{architecture}_e:{epochs}_bs:{batch_size}'
-    train(model_name, dataset_name, epochs, batch_size, architecture, his_range, sf_num)
 
-    # test(model_name, dataset_name, '')
+# # calculate the number of spatial frequencies being used
 
 
 if __name__ == "__main__":
-    main()
+    with open('config.json') as f:
+        args = json.load(f)
+
+    input = Input(**args)
+
+    preprocessor = Preprocessor(input, os.getcwd())
+    
+    preprocessor.dct_builder()
+
+    # epochs = args['epochs']
+    # batch_size = args['batch_size']
+    # architecture = args['architecture']
+    # train(dataset_name, epochs, batch_size, architecture, his_range, sf_num)
+
+
 
 

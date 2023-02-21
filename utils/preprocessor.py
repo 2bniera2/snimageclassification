@@ -7,53 +7,19 @@ path.append(f'{os.getcwd()}/../noiseprint2')
 from utils.dataset_builder import noise_extractor
 
 
+class Preprocessor:
+    def __init__(self, input, path):
+        self.input = input
+        self.dset = load_images(path)
 
-def main(patch_size, dataset_name, his_range, sf_range, use_subbands):
-    path = f'{os.getcwd()}'
+    def dct_builder(self):
+        for task, dset in self.dset.items():
+            builder(self.input, task, dset[0], dset[1])
 
-    # load images and split data
-    images_train, images_val, images_test, labels_train, labels_val, labels_test = load_images(path)
+    def get_noise_dset_name(self):
+        return f'p:{self.input.patch_size}'
 
-    tasks = {
-        'train': [images_train, labels_train],
-        'val': [images_val, labels_val],
-        'test': [images_test, labels_test]
-    }
-    
-
-    for task in tasks.items():
-    # make patches and extract dct coefficients
-        builder(
-            task[1][0],
-            task[1][1],
-            patch_size, 
-            task[0],
-            dataset_name,
-            sf_range, 
-            his_range
-        )
-
-
-        
-    # # noise
-    # d_name = f'p:{patch_size}'
-    # noise_extractor(
-    #     images_train, 'train', patch_size, d_name
-    # )
-
-    # noise_extractor(
-    #     images_val, 'val', patch_size, d_name
-    # )
-
-    # noise_extractor(
-    #     images_test, 'test', patch_size, d_name
-    # )
-
-
-    
-
-if __name__ == "__main__":
-    main()
-
-
+    def noise_builder(self):
+        for task, dset in self.dset.items():
+            noise_extractor(dset[0], task, self.input.patch_size, self.get_noise_dset_name())        
 
