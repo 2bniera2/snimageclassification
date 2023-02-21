@@ -12,6 +12,5 @@ indexes = [
 
 
 sf_range = [[0, 3], [4, 6], [7, 50]]
-lis = []
-lis.append([indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)])
+lis = [y for x in [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)] for y in x]
 print(lis)

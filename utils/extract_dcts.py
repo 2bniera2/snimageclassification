@@ -2,11 +2,12 @@ from jpeg2dct.numpy import loads
 import numpy as np
 import time as t
 from numba import jit
+import sys
 
 
 
 @jit(nopython=True)
-def hist_1D(dct, sf_range, his_range, bands):
+def hist_1D(dct, sf_range, his_range, bands, sf_num):
     bin_num = len(range(his_range[0], his_range[1])) + 1
     # indexes to DC and all AC coefficients
     indexes = [
@@ -23,13 +24,12 @@ def hist_1D(dct, sf_range, his_range, bands):
     # # obtain spatial frequencies
     if bands == 3:
 
-        coords = [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)]
+        coords = [y for x in [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)] for y in x]
     else:
         coords = indexes[sf_range[bands][0]: sf_range[bands][1]]
 
-    coords = indexes[sf_range[0]: sf_range[1]]
     # build histogram
-    his = np.zeros((sf_range[1] - sf_range[0], bin_num))
+    his = np.zeros((sf_num, bin_num))
 
     c_H = len(dct)
     c_W = len(dct[0])
@@ -54,7 +54,13 @@ def process(patches, input):
     for p in patches:
             # extract dct coefficients
             dct, _, _ =  loads(p, False)        
-            histogram = getattr(input.dct_rep)(dct, input.sf_range, input.his_range, input.bands)
+            his_range = (input.his_range[0], input.his_range[1])
+            sf_range = (
+                (input.sf_range[0][0], input.sf_range[0][1]),
+                (input.sf_range[1][0], input.sf_range[1][1]),
+                (input.sf_range[2][0], input.sf_range[2][1])
+            )
+            histogram = getattr(sys.modules[__name__], input.dct_rep)(dct, sf_range, his_range, input.bands,  input.sf_num)
             histograms.append(histogram)
 
     return histograms

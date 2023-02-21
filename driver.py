@@ -20,12 +20,12 @@ class Input:
         self.sf_range = [sf_lo, sf_mid, sf_hi]
         self.his_range = his_range
 
-        self.sf_num = self.num_of_sf(self.sf_range, bands)
+        self.sf_num = self.num_of_sf()
         self.dset_name = self.get_dset_name(grayscale)
         self.his_size = self.get_his_range()
 
     def num_of_sf(self):
-        if self.multibands == 3:
+        if self.bands == 3:
             return sum([sf[1] - sf[0] for sf in self.sf_range])
         else:
             return self.sf_range[self.bands][1] - self.sf_range[self.bands][0]
