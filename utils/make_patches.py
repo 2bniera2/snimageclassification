@@ -25,38 +25,36 @@ def resize(image, downscale_factor):
 
 def builder(input, task, examples, labels):
     his_size = input.his_size
-    # initialise X datasets 
+    # initialise dataset 
     with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'w') as f:
-        _  = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
+        _ = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
+        _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
     
-    # initialise y datasets
-    with h5py.File(f'processed/labels_{task}_{input.dset_name}.h5', 'w') as f:
-        _ = f.create_dataset('labels', (0, ), maxshape=(None, ), dtype=h5py.special_dtype(vlen=str))
-   
-    # generate patches from an image and extract the dcts from each patch and store in dataset
-    for index, (path, label) in enumerate(zip(examples, labels)):
-        with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'a') as DCTs , h5py.File(f'processed/labels_{task}_{input.dset_name}.h5', 'a') as Labels:
+    
+        # generate patches from an image and extract the dcts from each patch and store in dataset
+        for im_num, (path, label) in enumerate(zip(examples, labels)):
+            # with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'a') as Dset:
 
-            image = cv2.cvtColor(cv2.imread(path), input.colour_space)
-            image = resize(image, input.downscale_factor)
-          
-            if input.patch_size:
-                patches = make_patches(image, input.patch_size)
+                image = cv2.cvtColor(cv2.imread(path), input.colour_space)
+                image = resize(image, input.downscale_factor)
+            
+                if input.patch_size:
+                    patches = make_patches(image, input.patch_size)
 
-            # extract dct histograms from each patch 
-            patch_histograms = extract_dcts.process(patches, input)
+                # extract dct histograms from each patch 
+                patch_histograms = extract_dcts.process(patches, input)
 
 
-            #iterate over all patches
-            for patch_histogram in patch_histograms:
+                #iterate over all patches
+                for patch_histogram in patch_histograms:
 
-                dct_dset = DCTs['DCT']
-                dct_dset.resize((dct_dset.shape[0] + 1, his_size))
-                dct_dset[-1] = patch_histogram
-
-                labels_dset = Labels['labels']
-                labels_dset.resize(labels_dset.shape[0] + 1, axis=0)
-                labels_dset[-1] = f"{label}.{index}" if task == 'test' else label
+                    dct_dset = f['DCT']
+                    dct_dset.resize((dct_dset.shape[0] + 1, his_size))
+                    dct_dset[-1] = patch_histogram
+                    
+                    labels_dset = f['labels']
+                    labels_dset.resize((labels_dset.shape[0] + 1, 2))
+                    labels_dset[-1] = np.array([label, im_num])
 
 
 

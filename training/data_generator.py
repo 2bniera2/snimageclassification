@@ -3,10 +3,9 @@ import h5py
 import numpy as np
 
 class data_generator(Sequence):
-    def __init__(self, X_dset_path, y_dset_path, dset_name, dset_len, batch_size=32, shuffle=True):
+    def __init__(self, dset_path, dset_name, dset_len, batch_size=32, shuffle=True):
         self.batch_size = batch_size
-        self.X_dset_path = X_dset_path
-        self.y_dset_path = y_dset_path
+        self.dset_path = dset_path
         self.dset_name = dset_name
         self.dset_len = dset_len
         self.indices = [i for i in range(dset_len)]
@@ -22,36 +21,19 @@ class data_generator(Sequence):
         y = []
 
 
-        with h5py.File(self.X_dset_path) as X_dset_, h5py.File(self.y_dset_path) as y_dset_:
+        with h5py.File(self.dset_path) as dset:
             for i in batch_indices:
-                X.append(X_dset_[self.dset_name][i])
-                y.append(self.one_hot_encode(y_dset_['labels'][i]))
+                X.append(dset[self.dset_name][i])
+                y.append(self.one_hot_encode(dset['labels'][i]))
                 
-
-
         return np.array(X), np.array(y)
-
-
-
-
-
 
     def on_epoch_end(self):
         if self.shuffle:
             np.random.shuffle(self.indices)
 
     def one_hot_encode(self, label):
-        label_map = {
-            'facebook': 0,
-            'flickr': 1,
-            'google+': 2,
-            'instagram': 3,
-            'original': 4,
-            'telegram': 5,
-            'twitter': 6,
-            'whatsapp': 7
-        }
-        one_hot_label = np.zeros(len(label_map))
-        one_hot_label[label_map[label.decode('UTF-8')]] = 1
+        one_hot_label = np.zeros(8)
+        one_hot_label[int(label[0])] = 1
         return one_hot_label
 

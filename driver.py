@@ -5,8 +5,8 @@ from sys import path
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
-# from cnn_test import main as test
-# from dct_train import main as train
+from cnn_test import main as test
+from dct_train import main as train
 from preprocessor import Preprocessor
 
 
@@ -31,7 +31,7 @@ class Input:
             return self.sf_range[self.bands][1] - self.sf_range[self.bands][0]
        
     def get_dset_name(self, grayscale):
-        return f'g:{grayscale}p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sf_num:{self.sf_num}_subbands:{self.bands}'
+        return f'g:{grayscale}_p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sfnum:{self.sf_num}_subbands:{self.bands}'
 
     def get_colour_space(self, grayscale):
         return cv2.COLOR_BGR2GRAY if grayscale else cv2.COLOR_BGR2RGB
@@ -41,7 +41,6 @@ class Input:
 
 
 
-# # calculate the number of spatial frequencies being used
 
 
 if __name__ == "__main__":
@@ -50,14 +49,20 @@ if __name__ == "__main__":
 
     input = Input(**args)
 
-    preprocessor = Preprocessor(input, os.getcwd())
+    # preprocessor = Preprocessor(input, os.getcwd())
     
-    preprocessor.dct_builder()
+    # preprocessor.dct_builder()
 
-    # epochs = args['epochs']
-    # batch_size = args['batch_size']
-    # architecture = args['architecture']
-    # train(dataset_name, epochs, batch_size, architecture, his_range, sf_num)
+
+
+    epochs = 10
+    batch_size = 32
+    architecture = 'dct_cnn_2017'
+    name = f'{architecture}_e:{epochs}_b:{batch_size}'
+
+    # train(name, epochs, batch_size, architecture, input)
+
+    test(name, input.dset_name)
 
 
 

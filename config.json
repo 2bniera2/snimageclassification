@@ -1,6 +1,6 @@
 {
     "downscale_factor" : 1,
-    "grayscale" : true,
+    "grayscale" : false,
     "dct_rep" : "hist_1D",
     "patch_size" : 64,
     "bands" : 0, 

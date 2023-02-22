@@ -15,24 +15,21 @@ def get_dset_len(path):
 
 
 
-def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_range):
+def main(name, epoch, batch_size, architecture, input):
 
     
-    train_len = get_dset_len(f'{path[0]}/processed/DCT_train_{dataset_name}.h5')
-    val_len = get_dset_len(f'{path[0]}/processed/DCT_val_{dataset_name}.h5')
+    train_len = get_dset_len(f'{path[0]}/processed/DCT_train_{input.dset_name}.h5')
+    val_len = get_dset_len(f'{path[0]}/processed/DCT_val_{input.dset_name}.h5')
 
     
-    print(train_len)
     train_gen = data_generator(
-        f'{path[0]}/processed/DCT_train_{dataset_name}.h5',
-        f'{path[0]}/processed/labels_train_{dataset_name}.h5',
+        f'{path[0]}/processed/DCT_train_{input.dset_name}.h5',
         'DCT',
         train_len,
         batch_size,
     )
     val_gen = data_generator(
-        f'{path[0]}/processed/DCT_val_{dataset_name}.h5',
-        f'{path[0]}/processed/labels_val_{dataset_name}.h5',
+        f'{path[0]}/processed/DCT_val_{input.dset_name}.h5',
         'DCT',
         val_len,
         batch_size
@@ -43,7 +40,7 @@ def main(name, dataset_name, epoch, batch_size, architecture, his_range, sf_rang
     # layers
     model = models.Sequential()
 
-    input_shape = ((his_range[1]*2 + 1) * (sf_range[1] - sf_range[0]), 1)
+    input_shape = (input.his_size, 1)
 
     getattr(model_architectures, architecture)(model, input_shape)
 
