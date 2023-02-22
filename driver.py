@@ -22,6 +22,7 @@ class Input:
 
         self.sf_num = self.num_of_sf()
         self.dset_name = self.get_dset_name(grayscale)
+        self.noise_dset_name = self.get_noise_dset_name()
         self.his_size = self.get_his_range()
 
     def num_of_sf(self):
@@ -33,11 +34,16 @@ class Input:
     def get_dset_name(self, grayscale):
         return f'g:{grayscale}_p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sfnum:{self.sf_num}_subbands:{self.bands}'
 
+    def get_noise_dset_name(self):
+        return f'p:{self.input.patch_size}'
+
     def get_colour_space(self, grayscale):
         return cv2.COLOR_BGR2GRAY if grayscale else cv2.COLOR_BGR2RGB
 
     def get_his_range(self):
         return (len(range(self.his_range[0], self.his_range[1])) + 1) * self.sf_num
+
+    
 
 
 

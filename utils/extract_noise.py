@@ -13,22 +13,28 @@ def extract_noise_residual(i, d):
     return n_r
 
 
-def extract(paths, size, task, dataset_name):
-    with h5py.File(f'processed/noise_{task}_{dataset_name}.h5', 'w') as f:
-        dset = f.create_dataset('noise', shape=(0, size, size), maxshape=(None, size, size))
+def extract(input, task, examples, labels):
+    with h5py.File(f'processed/noise_{task}_{input.noise_dset_name}.h5', 'w') as f:
+        _ = f.create_dataset('noise', shape=(0, input.patch_size, input.patch_size), maxshape=(None, input.patch_size, input.patch_size))
+        _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
 
-    for p in paths:
-        with h5py.File(f'processed/noise_{task}_{dataset_name}.h5', 'a') as f:
 
-            i = np.array(Image.open(p).convert('L'))
+        for im_num, (path, label) in enumerate(zip(examples, labels)):
 
-            d = cv2.fastNlMeansDenoising(i)
+                i = np.array(Image.open(path).convert('L'))
 
-            residual = extract_noise_residual(i, d)
-            patches = make_patches.make_patches(residual, size)
+                d = cv2.fastNlMeansDenoising(i)
 
-            dset = f['noise']
+                residual = extract_noise_residual(i, d)
+                patches = make_patches.make_patches(residual, input.patch_size)
 
-            dset.resize((dset.shape[0] + len(patches), size, size))
+                for patch in patches:
 
-            dset[-len(patches):] = patches 
+
+                    dset = f['noise']
+                    dset.resize((dset.shape[0] + 1, input.patch_size, input.patch_size))
+                    dset[-1] = patch 
+
+                    dset = f['labels']
+                    dset.resize((dset.shape[0] + 1, 2))
+                    dset[-1] = np.array([label, im_num])

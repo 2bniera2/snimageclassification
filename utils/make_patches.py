@@ -4,7 +4,6 @@ import h5py
 import extract_dcts 
 
 def im_to_bytes(patch):
-    # NEW CV2 CODE
     _, im_buf_arr = cv2.imencode(".jpeg", patch, [cv2.IMWRITE_JPEG_QUALITY, 100])
     return im_buf_arr.tobytes()
 
@@ -33,7 +32,6 @@ def builder(input, task, examples, labels):
     
         # generate patches from an image and extract the dcts from each patch and store in dataset
         for im_num, (path, label) in enumerate(zip(examples, labels)):
-            # with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'a') as Dset:
 
                 image = cv2.cvtColor(cv2.imread(path), input.colour_space)
                 image = resize(image, input.downscale_factor)
@@ -43,7 +41,6 @@ def builder(input, task, examples, labels):
 
                 # extract dct histograms from each patch 
                 patch_histograms = extract_dcts.process(patches, input)
-
 
                 #iterate over all patches
                 for patch_histogram in patch_histograms:
