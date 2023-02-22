@@ -35,7 +35,7 @@ class Input:
         return f'g:{grayscale}_p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sfnum:{self.sf_num}_subbands:{self.bands}'
 
     def get_noise_dset_name(self):
-        return f'p:{self.input.patch_size}'
+        return f'p:{self.patch_size}'
 
     def get_colour_space(self, grayscale):
         return cv2.COLOR_BGR2GRAY if grayscale else cv2.COLOR_BGR2RGB
@@ -55,20 +55,21 @@ if __name__ == "__main__":
 
     input = Input(**args)
 
-    # preprocessor = Preprocessor(input, os.getcwd())
+    preprocessor = Preprocessor(input, os.getcwd())
     
-    # preprocessor.dct_builder()
+    preprocessor.dct_builder()
+
+    # preprocessor.noise_builder()
 
 
+    # epochs = 10
+    # batch_size = 32
+    # architecture = 'dct_cnn_2017'
+    # name = f'{architecture}_e:{epochs}_b:{batch_size}'
 
-    epochs = 10
-    batch_size = 32
-    architecture = 'dct_cnn_2017'
-    name = f'{architecture}_e:{epochs}_b:{batch_size}'
+    # # train(name, epochs, batch_size, architecture, input)
 
-    # train(name, epochs, batch_size, architecture, input)
-
-    test(name, input.dset_name)
+    # test(name, input.dset_name)
 
 
 

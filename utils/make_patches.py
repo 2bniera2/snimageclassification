@@ -22,12 +22,26 @@ def resize(image, downscale_factor):
     return cv2.resize(image, image.shape[0] / downscale_factor, image.shape[0] / downscale_factor) if downscale_factor > 1 else image
 
 
-def builder(input, task, examples, labels):
+def builder(input, task, examples, labels, image_counts):
     his_size = input.his_size
+
+    patch_counts = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+    }
+
     # initialise dataset 
     with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'w') as f:
         _ = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
         _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
+        _ = f.create_dataset('weights', shape=(0, ), maxshape=(None, ))
+
     
     
         # generate patches from an image and extract the dcts from each patch and store in dataset
@@ -39,8 +53,13 @@ def builder(input, task, examples, labels):
                 if input.patch_size:
                     patches = make_patches(image, input.patch_size)
 
+                N = len(patches)
+                I = image_counts(label) 
+
+                patch_counts[label] += N
                 # extract dct histograms from each patch 
                 patch_histograms = extract_dcts.process(patches, input)
+
 
                 #iterate over all patches
                 for patch_histogram in patch_histograms:
@@ -52,6 +71,14 @@ def builder(input, task, examples, labels):
                     labels_dset = f['labels']
                     labels_dset.resize((labels_dset.shape[0] + 1, 2))
                     labels_dset[-1] = np.array([label, im_num])
+
+                    weights_dset = f['weights']
+                    weights_dset.resize((weights_dset.shape[0] + 1, ))
+                    weights_dset[-1] = (1/I)*(1/N)  # we still need to multiply by patch number per class but we can only do this at the end 
+
+        for i in range(weights_dset.shape[0]):
+            weights_dset[i] = weights_dset[i] * patch_counts[labels_dset[i, 0]]
+
 
 
 
