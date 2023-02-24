@@ -31,43 +31,39 @@ def hist_1D(dct, sf_range, his_range, bands, sf_num):
     # build histogram
     his = np.zeros((sf_num, bin_num))
 
-    # c_H = len(dct)
-    # c_W = len(dct[0])
+    c_H = len(dct)
+    c_W = len(dct[0])
 
-    for x in range(len(dct)):
 
     # # iterate over each 8x8 block in a patch and build up histogram
-    # for x in range(c_H):
-    #     for y in range(c_W):
-        sf = np.array([dct[x][c[0]][c[1]] for c in coords])
+    for x in range(c_H):
+        for y in range(c_W):
+            sf = np.array([dct[x][y].reshape(8,8)[c[0]][c[1]] for c in coords])
 
-        for i, f in enumerate(sf):
-            h, _ = np.histogram(f, bins=bin_num, range=(his_range[0], his_range[1]))
-            his[i] += h
+            for i, f in enumerate(sf):
+                h, _ = np.histogram(f, bins=bin_num, range=(his_range[0], his_range[1]))
+                his[i] += h
 
     return his.flatten()
 
 
-
+# def hist_2D
 
 def process(patches, input):
     histograms = []
     
     for p in patches:
-            blocks = []
-            for i in range(0, p.shape[0], 8):
-                for j in range(0, p.shape[1], 8):
-                    blocks.append(p[i:i+8, j:j+8])
-
-
-            # extract dct coefficients
+            dct, _, _ =  loads(p)
+            
+            # this is just to stop numba complaining 
             his_range = (input.his_range[0], input.his_range[1])
             sf_range = (
                 (input.sf_range[0][0], input.sf_range[0][1]),
                 (input.sf_range[1][0], input.sf_range[1][1]),
                 (input.sf_range[2][0], input.sf_range[2][1])
             )
-            histogram = getattr(sys.modules[__name__], input.dct_rep)(blocks, sf_range, his_range, input.bands,  input.sf_num)
+            # extract dct coefficients
+            histogram = getattr(sys.modules[__name__], input.dct_rep)(dct, sf_range, his_range, input.bands,  input.sf_num)
             histograms.append(histogram)
 
     return histograms

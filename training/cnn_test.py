@@ -55,15 +55,9 @@ def image_truth(labels, predictions, classes):
 
     df = df[pd.notna(pd.to_numeric(df['prediction'], errors='coerce'))]
     df = df.reset_index().drop('image_num', axis=1)
-    print(df)
     image_truth = df['truth'].tolist()
     image_predictions = df['prediction'].tolist()
 
-    print(len(image_truth))
-    print(len(image_predictions))
-
-
-   
     print(classification_report(image_truth, image_predictions, target_names=classes, digits=4))
 
 
