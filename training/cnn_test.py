@@ -40,7 +40,7 @@ def get_predictions(dataset_name, model, num_examples):
 # get accuracy at patch level
 def patch_truth(labels, predictions, classes):
 
-    print(classification_report(labels[:, 0], predictions, target_names=classes))
+    print(classification_report(labels[:, 0], predictions, target_names=classes, digits=4))
 
 
 # get accuracy at image level
@@ -51,18 +51,20 @@ def image_truth(labels, predictions, classes):
                       index=['truth', 'image_num', 'prediction']).T
 
     # group by ground truth and image number and aggregate on the mode of prediction
-    df = df.groupby(['truth','image_num'])['prediction'].agg(pd.Series.mode)
+    df = df.groupby(['truth','image_num'])['prediction'].agg(pd.Series.mode).reset_index()
 
-
-    # mask to get rid of multiple modes as this gets represented as a list and drop image_num(we don't need this anymore)
-    mask = df.apply(lambda x: isinstance(x, list))
-    df = df[~mask].reset_index().drop('image_num', axis=1)
+    df = df[pd.notna(pd.to_numeric(df['prediction'], errors='coerce'))]
+    df = df.reset_index().drop('image_num', axis=1)
     print(df)
     image_truth = df['truth'].tolist()
     image_predictions = df['prediction'].tolist()
 
+    print(len(image_truth))
+    print(len(image_predictions))
+
+
    
-    print(classification_report(image_truth, image_predictions, target_names=classes))
+    print(classification_report(image_truth, image_predictions, target_names=classes, digits=4))
 
 
 def main(name, dataset_name):

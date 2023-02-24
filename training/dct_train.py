@@ -6,6 +6,7 @@ import h5py
 import model_architectures
 from matplotlib import pyplot as plt
 from data_generator import data_generator
+import numpy as np
 
 
 
@@ -37,12 +38,11 @@ def main(name, epoch, batch_size, architecture, input):
 
 
 
-    # layers
-    model = models.Sequential()
+   
 
     input_shape = (input.his_size, 1)
 
-    getattr(model_architectures, architecture)(model, input_shape)
+    model = getattr(model_architectures, architecture)(input_shape)
 
 
     # early stopping to prevent doing unnecessary epochs
@@ -52,12 +52,12 @@ def main(name, epoch, batch_size, architecture, input):
     history = model.fit(
         train_gen,
         # callbacks=[callback],
+        # class_weight=class_weights_dict,
         epochs = epoch,
         validation_data=val_gen,
         use_multiprocessing=True,
-        workers=6
+        workers=8
     )
-    
     model.save(f'models/cnn_{name}')
 
     plt.plot(history.history['accuracy'])

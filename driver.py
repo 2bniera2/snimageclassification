@@ -62,14 +62,14 @@ if __name__ == "__main__":
     # preprocessor.noise_builder()
 
 
-    # epochs = 10
-    # batch_size = 32
-    # architecture = 'dct_cnn_2017'
-    # name = f'{architecture}_e:{epochs}_b:{batch_size}'
+    epochs = 10
+    batch_size = 32
+    architecture = 'dct_cnn_2017'
+    name = f'{architecture}_e:{epochs}_b:{batch_size}'
 
-    # # train(name, epochs, batch_size, architecture, input)
+    train(name, epochs, batch_size, architecture, input)
 
-    # test(name, input.dset_name)
+    test(name, input.dset_name)
 
 
 

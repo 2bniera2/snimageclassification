@@ -20,7 +20,6 @@ class data_generator(Sequence):
         X = []
         y = []
 
-
         with h5py.File(self.dset_path) as dset:
             for i in batch_indices:
                 X.append(dset[self.dset_name][i])

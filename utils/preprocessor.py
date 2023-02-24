@@ -14,7 +14,7 @@ class Preprocessor:
 
     def dct_builder(self):
         for task, dset in self.dset.items():
-            builder(self.input, task, dset[0], dset[1], image_counts)
+            builder(self.input, task, dset[0], dset[1], self.image_counts)
 
     def noise_builder(self):
         for task, dset in self.dset.items():
