@@ -5,7 +5,7 @@ import model_architectures
 from data_generator import data_generator
 
 
-def main(name, dataset_name, epoch, batch_size, architecture, patch_size):
+def main(name, dataset_name, epoch, batch_size, architecture, input):
     train_gen = data_generator(
         f'{path[0]}/processed/Noise_train_{dataset_name}.h5',
         'Noise',
@@ -17,7 +17,7 @@ def main(name, dataset_name, epoch, batch_size, architecture, patch_size):
         batch_size
     )
 
-    input_shape = (patch_size, patch_size, 1)
+    input_shape = (input.patch_size, input.patch_size, 1)
 
     model = getattr(model_architectures, architecture)(input_shape)
 

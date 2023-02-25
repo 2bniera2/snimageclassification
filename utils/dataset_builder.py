@@ -1,8 +1,15 @@
 import numpy as np
 import h5py
 from noiseprint2 import gen_noiseprint, normalize_noiseprint
-from utils.make_patches import make_patches
 
+
+def make_patches(im, size):
+    patches = []
+    for i in range(0, im.shape[0]-size+1, size):
+        for j in range(0, im.shape[1]-size+1, size):
+            image = im[i:i+size, j:j+size]
+            patches.append(image)
+    return patches
 
 
 def noise_extractor(input, task, examples, labels):
@@ -15,7 +22,7 @@ def noise_extractor(input, task, examples, labels):
     
         for im_num, (path, label) in enumerate(zip(examples, labels)):
             noiseprint = normalize_noiseprint(gen_noiseprint(path, quality=101))
-            noiseprint_patches = make_patches(noiseprint, input.patch_size, False)
+            noiseprint_patches = make_patches(noiseprint, input.patch_size)
 
             for noiseprint_patch in noiseprint_patches:
 

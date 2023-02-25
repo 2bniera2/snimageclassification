@@ -7,17 +7,15 @@ from data_generator import data_generator
 
 def train(name, epoch, batch_size, architecture, input):
     train_gen = data_generator(
-        f'{path[0]}/processed/DCT_train_{input.dset_name}.h5',
-        'DCT',
+        f'{path[0]}/processed/{input.domain}_train_{input.dset_name}.h5',
+        input.domain,
         batch_size,
     )
     val_gen = data_generator(
-        f'{path[0]}/processed/DCT_val_{input.dset_name}.h5',
-        'DCT',
+        f'{path[0]}/processed/{input.domain}_val_{input.dset_name}.h5',
+        input.domain,
         batch_size
     )
-
-    input_shape = (input.his_size, 1)
 
     model = getattr(model_architectures, architecture)(input_shape)
 
