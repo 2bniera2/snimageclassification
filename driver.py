@@ -55,9 +55,9 @@ if __name__ == "__main__":
 
     input = Input(**args)
 
-    preprocessor = Preprocessor(input, os.getcwd())
+    # preprocessor = Preprocessor(input, os.getcwd())
     
-    preprocessor.dct_builder()
+    # preprocessor.dct_builder()
 
     # preprocessor.noise_builder()
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     architecture = 'dct_cnn_2017'
     name = f'{architecture}_e:{epochs}_b:{batch_size}'
 
-    train(name, epochs, batch_size, architecture, input)
+    # train(name, epochs, batch_size, architecture, input)
 
     test(name, input.dset_name)
 
