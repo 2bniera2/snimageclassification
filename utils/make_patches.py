@@ -1,10 +1,6 @@
 import numpy as np
-import cv2
 import h5py
 import extract_dcts 
-from sklearn.utils import class_weight
-from jpeg2dct.numpy import load
-from numba import jit
 import io
 from PIL import Image
 
@@ -26,13 +22,6 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
             patches.append(patch)
     return patches    
 
-
- 
-
-def resize(image, downscale_factor):
-    return cv2.resize(image, image.shape[0] / downscale_factor, image.shape[0] / downscale_factor) if downscale_factor > 1 else image
-
-    
 
 def builder(input, task, examples, labels):
     # get the histogram size which will be used to generate the input to the CNN

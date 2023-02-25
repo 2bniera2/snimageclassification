@@ -9,7 +9,7 @@ def noise_extractor(input, task, examples, labels):
 
     # initialise X datasets 
     with h5py.File(f'processed/Noise_{task}_{input.noise_dset_name}.h5', 'w') as f:
-        _ = f.create_dataset('noise', shape=(0, input.patch_size, input.patch_size), maxshape=(None, input.patch_size, input.patch_size))
+        _ = f.create_dataset('Noise', shape=(0, input.patch_size, input.patch_size), maxshape=(None, input.patch_size, input.patch_size))
         _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
     
     
@@ -19,7 +19,7 @@ def noise_extractor(input, task, examples, labels):
 
             for noiseprint_patch in noiseprint_patches:
 
-                dset = f['noise']
+                dset = f['Noise']
                 dset.resize((dset.shape[0] + 1, input.patch_size, input.patch_size))
                 dset[-1] = noiseprint_patch
 
