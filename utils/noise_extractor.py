@@ -13,16 +13,17 @@ def make_patches(im, size):
 
 
 def noise_extractor(input, task, examples, labels):
-
     # initialise X datasets 
-    with h5py.File(f'processed/Noise_{task}_{input.noise_dset_name}.h5', 'w') as f:
+    with h5py.File(f'processed/Noise_{task}_{input.dset_name}.h5', 'w') as f:
         _ = f.create_dataset('Noise', shape=(0, input.patch_size, input.patch_size), maxshape=(None, input.patch_size, input.patch_size))
         _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
     
     
         for im_num, (path, label) in enumerate(zip(examples, labels)):
             noiseprint = normalize_noiseprint(gen_noiseprint(path, quality=101))
+            print(noiseprint.shape)
             noiseprint_patches = make_patches(noiseprint, input.patch_size)
+            print(len(noiseprint_patches))
 
             for noiseprint_patch in noiseprint_patches:
 

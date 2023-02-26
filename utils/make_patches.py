@@ -14,8 +14,8 @@ def im_to_bytes(patch, q):
 # from image, create a list of patches of defined size
 def make_patches(image, patch_size, q=None, to_bytes=True):
     patches = []
-    for i in range(0, image.width, patch_size):
-        for j in range(0, image.height, patch_size):
+    for i in range(0, image.width-patch_size+1, patch_size):
+        for j in range(0, image.height-patch_size+1, patch_size):
             patch = image.crop((i, j, i+patch_size, j+patch_size))
             if to_bytes:
                 patch = im_to_bytes(patch, q)
@@ -24,23 +24,16 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
 
 
 def builder(input, task, examples, labels):
-    # get the histogram size which will be used to generate the input to the CNN
-    his_size = input.his_size
-
-
     # initialise dataset 
     with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'w') as f:
-        _ = f.create_dataset('DCT', shape=(0, his_size), maxshape=(None, his_size))
+        _ = f.create_dataset('DCT', shape=(0, input.his_size), maxshape=(None, input.his_size))
         _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
 
-    
-    
         # generate patches from an image and extract the dcts from each patch and store in dataset
         for im_num, (path, label) in enumerate(zip(examples, labels)):
 
                 # load image
                 image = Image.open(path)
-                
                 # get q tables
                 qtable = image.quantization
 
@@ -55,16 +48,9 @@ def builder(input, task, examples, labels):
                 for patch_histogram in patch_histograms:
 
                     dct_dset = f['DCT']
-                    dct_dset.resize((dct_dset.shape[0] + 1, his_size))
+                    dct_dset.resize((dct_dset.shape[0] + 1, input.his_size))
                     dct_dset[-1] = patch_histogram
                     
                     labels_dset = f['labels']
                     labels_dset.resize((labels_dset.shape[0] + 1, 2))
                     labels_dset[-1] = np.array([label, im_num])
-
-      
-
-
-
-
- 

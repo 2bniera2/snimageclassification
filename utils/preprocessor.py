@@ -1,6 +1,6 @@
 from utils.load_images import load_images
 from utils.make_patches import builder
-from utils.dataset_builder import noise_extractor
+from utils.noise_extractor import noise_extractor
 from sys import path
 import os
 
