@@ -9,16 +9,7 @@ from sys import path
 import h5py
 from data_generator import data_generator
 
-classes = [
-    'facebook',
-    'flickr',
-    'google+',
-    'instagram',
-    'original',
-    'telegram',
-    'twitter', 
-    'whatsapp'
-]
+
 
 def get_labels(input):
     with h5py.File(f'processed/{input.domain}_test_{input.dset_name}.h5', 'r') as f:
@@ -37,70 +28,71 @@ def get_predictions(input, model):
         gen, use_multiprocessing=True, workers=8), axis=1)
 
 def to_confusion_matrix(truth, predictions):
-    t = np.select([
-            truth == 0,
-            truth == 1,
-            truth == 2,
-            truth == 3,
-            truth == 4,
-            truth == 5,
-            truth == 6,
-            truth == 7,
-    ], [
-            'facebook',
-            'flickr',
-            'google+',
-            'instagram',
-            'original',
-            'telegram',
-            'twitter',
-            'whatsapp'
-    ],
-        truth
-    )
+#     t = np.select([
+#             truth == 0,
+#             truth == 1,
+#             truth == 2,
+#             truth == 3,
+#             truth == 4,
+#             truth == 5,
+#             truth == 6,
+#             truth == 7,
+#     ], [
+#             'facebook',
+#             'flickr',
+#             'google+',
+#             'instagram',
+#             'original',
+#             'telegram',
+#             'twitter',
+#             'whatsapp'
+#     ],
+#         truth
+#     )
 
-    p = np.select([
-            predictions == 0,
-            predictions == 1,
-            predictions == 2,
-            predictions == 3,
-            predictions == 4,
-            predictions == 5,
-            predictions == 6,
-            predictions == 7,
+#     p = np.select([
+#             predictions == 0,
+#             predictions == 1,
+#             predictions == 2,
+#             predictions == 3,
+#             predictions == 4,
+#             predictions == 5,
+#             predictions == 6,
+#             predictions == 7,
 
-    ], [
-            'facebook',
-            'flickr',
-            'google+',
-            'instagram',
-            'original',
-            'telegram',
-            'twitter',
-            'whatsapp'
-    ],
-        predictions
-    )
+#     ], [
+#             'facebook',
+#             'flickr',
+#             'google+',
+#             'instagram',
+#             'original',
+#             'telegram',
+#             'twitter',
+#             'whatsapp'
+#     ],
+#         predictions
+#     )
+    print(confusion_matrix(truth, predictions))
 
-    cm = confusion_matrix(t, p, labels=np.array(classes))
-    print(cm)
+    # cm = confusion_matrix(t, p, labels=np.array(classes))
+#     print(cm)
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-    disp.plot()
-    plt.show()
+#     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
+#     disp.plot()
+#     plt.show()
 
 
 
 
 # get accuracy at patch level
-def patch_truth(labels, predictions):
+def patch_truth(labels, predictions, classes):
     l = labels[:, 0]
     print(classification_report(l, predictions, target_names=classes, digits=4))
 
     to_confusion_matrix(l, predictions)
 
 # get accuracy at image level
-def image_truth(labels, predictions):
+def image_truth(labels, predictions, classes):
     df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'prediction']).T
     df = df.groupby(['truth','image_num'])['prediction'].agg(pd.Series.mode).reset_index()
     df = df[pd.notna(pd.to_numeric(df['prediction'], errors='coerce'))]
@@ -125,8 +117,8 @@ def main(input, epochs, batch_size, architecture):
     # labels with class and image number
     labels = get_labels(input)
 
-    patch_truth(labels, predictions)
-    image_truth(labels, predictions)
+    patch_truth(labels, predictions, input.classes)
+    image_truth(labels, predictions, input.classes)
 
 if __name__ == "__main__":
     main()

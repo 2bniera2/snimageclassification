@@ -3,7 +3,7 @@ import h5py
 import numpy as np
 
 class data_generator(Sequence):
-    def __init__(self, dset_path, dset_name, batch_size=32, shuffle=True):
+    def __init__(self, dset_path, dset_name, classes, batch_size=32, shuffle=True):
         self.batch_size = batch_size
         self.dset_path = dset_path
         self.dset_name = dset_name
@@ -11,6 +11,7 @@ class data_generator(Sequence):
         self.indices = [i for i in range(self.dset_len)]
         self.shuffle = shuffle
         self.on_epoch_end()
+        self.classes = classes
 
     def __len__(self):
         return int(np.ceil(self.dset_len / self.batch_size))
@@ -37,7 +38,7 @@ class data_generator(Sequence):
             np.random.shuffle(self.indices)
 
     def one_hot_encode(self, label):
-        one_hot_label = np.zeros(8)
+        one_hot_label = np.zeros(len(self.classes))
         one_hot_label[int(label[0])] = 1
         return one_hot_label
 

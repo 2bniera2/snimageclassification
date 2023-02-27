@@ -1,7 +1,7 @@
 from keras import layers, models
 
 
-def dct_cnn_2017(input_shape):
+def dct_cnn_2017(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
     conv1 = layers.Conv1D(100, 3, activation='relu')(input)
     max_pool1 = layers.MaxPooling1D()(conv1)
@@ -9,9 +9,10 @@ def dct_cnn_2017(input_shape):
     max_pool2 = layers.MaxPooling1D()(conv2)
     flat = layers.Flatten()(max_pool2)
     dense1 = layers.Dense(units=256, activation='relu')(flat)
-    dense2 =  layers.Dense(units=256)(dense1)
-    dropout = layers.Dropout(rate=0.5)(dense2)
-    output = layers.Dense(units=8, activation='softmax')(dropout)
+    dropout1 = layers.Dropout(rate=0.5)(dense1)
+    dense2 =  layers.Dense(units=256, activation='relu')(dropout1)
+    dropout2 = layers.Dropout(rate=0.5)(dense2)
+    output = layers.Dense(units=output_shape, activation='softmax')(dropout2)
     model = models.Model(inputs=input, outputs=output) 
 
     model.summary()
@@ -24,7 +25,7 @@ def dct_cnn_2017(input_shape):
 
     return model
 
-def dct_cnn_2019(input_shape):
+def dct_cnn_2019(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
     conv1 = layers.Conv1D(100, 3, activation='relu')(input)
     max_pool1 = layers.MaxPooling1D()(conv1)
@@ -35,7 +36,7 @@ def dct_cnn_2019(input_shape):
     dropout1 = layers.Dropout(rate=0.5)(dense1)
     dense2 =  layers.Dense(units=1000)(dropout1)
     dropout2 = layers.Dropout(rate=0.5)(dense2)
-    output = layers.Dense(units=8, activation='softmax')(dropout2)
+    output = layers.Dense(units=output_shape, activation='softmax')(dropout2)
     model = models.Model(inputs=input, outputs=output) 
 
     model.summary()
@@ -48,7 +49,7 @@ def dct_cnn_2019(input_shape):
 
     return model
 
-def noise_cnn(input_shape):
+def noise_cnn(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
     conv1 = layers.Conv2D(16, (3,3), activation='relu')(input)
     max_pool1 = layers.MaxPooling2D()(conv1)
@@ -63,7 +64,7 @@ def noise_cnn(input_shape):
     dense3 = layers.Dense(256, activation='swish')(dropout2)
     dropout3 = layers.Dropout(rate=0.8)(dense3)
     dense4 = layers.Dense(256, activation='swish')(dropout3)
-    output = layers.Dense(units=8, activation='softmax')(dense4)
+    output = layers.Dense(units=output_shape, activation='softmax')(dense4)
 
     model = models.Model(inputs=input, outputs=output)
 
@@ -77,7 +78,7 @@ def noise_cnn(input_shape):
 
     return model
 
-def prnu_cnn(input_shape):
+def prnu_cnn(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
     conv1 = layers.Conv2D(32, (3,3), activation='relu')(input)
     conv2 = layers.Conv2D(32, (3,3), activation='relu')(conv1)
@@ -90,7 +91,7 @@ def prnu_cnn(input_shape):
     flat = layers.Flatten()(dropout2)
     dense1 = layers.Dense(256, activation='relu')(flat)
     dropout3 = layers.Dropout(rate=0.5)(dense1)
-    output = layers.Dense(8, activation='softmax')(dropout3)
+    output = layers.Dense(units=output_shape, activation='softmax')(dropout3)
 
     model = models.Model(inputs=input, outputs=output)
 

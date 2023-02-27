@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 
 class Input:
-    def __init__(self, grayscale, dct_rep, patch_size, band_mode, sf_lo, sf_mid, sf_hi, his_range, domain):
+    def __init__(self, grayscale, dct_rep, patch_size, band_mode, sf_lo, sf_mid, sf_hi, his_range, domain, classes):
         self.domain = domain
         self.colour_space = self.get_colour_space(grayscale)
         self.dct_rep = dct_rep
@@ -32,6 +32,8 @@ class Input:
         self.dset_name = self.get_dset_name(grayscale)
         self.his_size = self.get_his_range()
         self.input_shape = self.get_input_shape()
+        self.classes = classes
+        self.label_map = {c: i for i, c in enumerate(classes)}
 
     def num_of_sf(self):
         if self.band_mode == 3:
@@ -59,7 +61,16 @@ class Input:
 
 
 if __name__ == "__main__":
-
+    classes = [
+        'facebook',
+        'flickr',
+        'google+',
+        'instagram',
+        'original',
+        'telegram',
+        'twitter', 
+        'whatsapp'
+    ]
     input = Input(
         grayscale=False,
         dct_rep="hist_1D",
@@ -69,7 +80,8 @@ if __name__ == "__main__":
         sf_mid=[11, 20],
         sf_hi=[20, 30],
         his_range=[-50, 50],
-        domain='DCT'
+        domain='DCT',
+        classes=classes
     )
     preprocessor = Preprocessor(input, os.getcwd())
 
@@ -79,7 +91,7 @@ if __name__ == "__main__":
         preprocessor.noise_builder()
 
         
-    epochs = 10
+    epochs = 20
     batch_size = 32
     architecture = 'dct_cnn_2017'
 

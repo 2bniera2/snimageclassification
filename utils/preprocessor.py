@@ -11,7 +11,7 @@ class Preprocessor:
     # initialise with input configuration and load image paths as well organise them to train, val and test
     def __init__(self, input, path):
         self.input = input
-        self.dset = load_images(path)
+        self.dset = load_images(input, path)
 
     def dct_builder(self):
         for task, dset in self.dset.items():
