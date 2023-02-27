@@ -24,7 +24,7 @@ def main(epochs, batch_size, architecture, input):
     callback = callbacks.EarlyStopping(
         monitor='val_loss',
         patience=3,
-        # restore_best_weights=True
+        restore_best_weights=True
     )
 
     history = model.fit(
@@ -33,6 +33,7 @@ def main(epochs, batch_size, architecture, input):
         validation_data=val_gen,
         callbacks=[callback],
         use_multiprocessing=True,
-        workers=6
+        workers=6,
+        verbose=2
     )
     model.save(f'models/cnn_{architecture}_e:{epochs}_b:{batch_size}')
