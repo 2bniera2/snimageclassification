@@ -60,5 +60,5 @@ def builder(input, task, examples, labels):
                     labels_dset[-1] = np.array([label, im_num])
 
                     vis_dset = f['indices']
-                    vis_dset.resize((labels_dset.shape[0] + 1, 2))
+                    vis_dset.resize((vis_dset.shape[0] + 1, 2))
                     vis_dset[-1] = np.array([indices[i][0], indices[i][1]])

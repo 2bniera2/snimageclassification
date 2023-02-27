@@ -92,7 +92,7 @@ if __name__ == "__main__":
         preprocessor.noise_builder()
 
         
-    epochs = 20
+    epochs = 10
     batch_size = 32
     architecture = 'dct_cnn_2017'
 
