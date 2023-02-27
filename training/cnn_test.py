@@ -21,65 +21,24 @@ def get_predictions(input, model):
     gen = data_generator(
         f'{path[0]}/processed/{input.domain}_test_{input.dset_name}.h5',
         input.domain,
-        32,
+        input.classes,
         shuffle=False
     )
     return np.argmax(model.predict(
         gen, use_multiprocessing=True, workers=8), axis=1)
 
-def to_confusion_matrix(truth, predictions):
-#     t = np.select([
-#             truth == 0,
-#             truth == 1,
-#             truth == 2,
-#             truth == 3,
-#             truth == 4,
-#             truth == 5,
-#             truth == 6,
-#             truth == 7,
-#     ], [
-#             'facebook',
-#             'flickr',
-#             'google+',
-#             'instagram',
-#             'original',
-#             'telegram',
-#             'twitter',
-#             'whatsapp'
-#     ],
-#         truth
-#     )
+def to_confusion_matrix(truth, predictions, classes):
+    t = np.select([truth==i for i in np.unique(truth)],classes, truth)
+    p = np.select([predictions==i for i in np.unique(predictions)],classes, predictions)
 
-#     p = np.select([
-#             predictions == 0,
-#             predictions == 1,
-#             predictions == 2,
-#             predictions == 3,
-#             predictions == 4,
-#             predictions == 5,
-#             predictions == 6,
-#             predictions == 7,
+    # print(confusion_matrix(truth, predictions))
 
-#     ], [
-#             'facebook',
-#             'flickr',
-#             'google+',
-#             'instagram',
-#             'original',
-#             'telegram',
-#             'twitter',
-#             'whatsapp'
-#     ],
-#         predictions
-#     )
-    print(confusion_matrix(truth, predictions))
+    cm = confusion_matrix(t, p, labels=np.array(classes))
+    print(cm)
 
-    # cm = confusion_matrix(t, p, labels=np.array(classes))
-#     print(cm)
-
-#     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-#     disp.plot()
-#     plt.show()
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
+    disp.plot()
+    plt.show()
 
 
 
@@ -89,7 +48,7 @@ def patch_truth(labels, predictions, classes):
     l = labels[:, 0]
     print(classification_report(l, predictions, target_names=classes, digits=4))
 
-    to_confusion_matrix(l, predictions)
+    to_confusion_matrix(l, predictions, classes)
 
 # get accuracy at image level
 def image_truth(labels, predictions, classes):
@@ -103,7 +62,7 @@ def image_truth(labels, predictions, classes):
 
     print(classification_report(image_truth, image_predictions, target_names=classes, digits=4))
 
-    to_confusion_matrix(image_truth, image_predictions)
+    to_confusion_matrix(image_truth, image_predictions, classes)
 
 
 def main(input, epochs, batch_size, architecture):
