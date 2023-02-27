@@ -10,6 +10,8 @@ import h5py
 from data_generator import data_generator
 
 
+def make_name(architecture, input_shape, epochs, batch_size):
+    return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
 
 def get_labels(input):
     with h5py.File(f'processed/{input.domain}_test_{input.dset_name}.h5', 'r') as f:
@@ -65,7 +67,7 @@ def image_truth(labels, predictions, classes):
 
 
 def main(input, epochs, batch_size, architecture):
-    name = f'{architecture}_e:{epochs}_b:{batch_size}'
+    name = make_name(architecture, input.input_shape, epochs, batch_size)
 
     model = models.load_model(f'models/cnn_{name}')
 

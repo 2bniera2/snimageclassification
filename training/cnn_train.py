@@ -5,6 +5,11 @@ import model_architectures
 from data_generator import data_generator
 from keras import callbacks
 
+
+def make_name(architecture, input_shape, epochs, batch_size):
+    return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
+
+
 def main(epochs, batch_size, architecture, input):
     train_gen = data_generator(
         f'{path[0]}/processed/{input.domain}_train_{input.dset_name}.h5',
@@ -33,7 +38,6 @@ def main(epochs, batch_size, architecture, input):
         validation_data=val_gen,
         callbacks=[callback],
         use_multiprocessing=True,
-        workers=6,
-        verbose=2
+        workers=6
     )
-    model.save(f'models/cnn_{architecture}_e:{epochs}_b:{batch_size}')
+    model.save(make_name(architecture, input.input_shape, epochs, batch_size))

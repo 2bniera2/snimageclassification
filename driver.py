@@ -72,35 +72,34 @@ if __name__ == "__main__":
         'whatsapp'
     ]
 
-    for i in range(1,3):
-        input = Input(
-            grayscale=False,
-            dct_rep="hist_1D",
-            patch_size=64,
-            band_mode=i,
-            sf_lo=[1, 10],
-            sf_mid=[11, 29],
-            sf_hi=[30, 37],
-            his_range=[-50, 50],
-            domain='DCT',
-            classes=classes
-        )
-        preprocessor = Preprocessor(input, os.getcwd())
+    input = Input(
+        grayscale=False,
+        dct_rep="hist_1D",
+        patch_size=64,
+        band_mode=0,
+        sf_lo=[1, 10],
+        sf_mid=[11, 29],
+        sf_hi=[30, 37],
+        his_range=[-100, 100],
+        domain='DCT',
+        classes=classes
+    )
+    preprocessor = Preprocessor(input, os.getcwd())
 
-        if args.dct:
-            preprocessor.dct_builder()
-        if args.noise:
-            preprocessor.noise_builder()
+    if args.dct:
+        preprocessor.dct_builder()
+    if args.noise:
+        preprocessor.noise_builder()
 
-            
-        epochs = 20
-        batch_size = 32
-        architecture = 'dct_cnn_2017'
+        
+    epochs = 20
+    batch_size = 32
+    architecture = 'dct_cnn_2017'
 
-        if args.train:
-            train(epochs, batch_size, architecture, input)
-        if args.test:
-            test(input, epochs, batch_size, architecture)
+    if args.train:
+        train(epochs, batch_size, architecture, input)
+    if args.test:
+        test(input, epochs, batch_size, architecture)
 
 
 
