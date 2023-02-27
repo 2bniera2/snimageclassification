@@ -26,8 +26,9 @@ def get_predictions(input, model):
         input.classes,
         shuffle=False
     )
-    return np.argmax(model.predict(
-        gen, use_multiprocessing=True, workers=8), axis=1)
+
+    pred = model.predict(gen, use_multiprocessing=True, workers=8)
+    return pred, np.argmax(pred, axis=1)
 
 def to_confusion_matrix(truth, predictions, classes):
     t = np.select([truth==i for i in np.unique(truth)],classes, truth)
@@ -67,12 +68,10 @@ def image_truth(labels, predictions, classes):
 
 
 def main(input, epochs, batch_size, architecture):
-    name = make_name(architecture, input.input_shape, epochs, batch_size)
-
-    model = models.load_model(f'models/cnn_{name}')
+    model = models.load_model(make_name(architecture, input.input_shape, epochs, batch_size))
 
     # predictions represented as integer representation of classes
-    predictions = get_predictions(input, model)
+    probs, predictions = get_predictions(input, model)
 
     # labels with class and image number
     labels = get_labels(input)
