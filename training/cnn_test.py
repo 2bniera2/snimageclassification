@@ -31,14 +31,13 @@ def to_confusion_matrix(truth, predictions, classes):
     t = np.select([truth==i for i in np.unique(truth)],classes, truth)
     p = np.select([predictions==i for i in np.unique(predictions)],classes, predictions)
 
-    # print(confusion_matrix(truth, predictions))
 
     cm = confusion_matrix(t, p, labels=np.array(classes))
     print(cm)
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-    disp.plot()
-    plt.show()
+    # disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
+    # disp.plot()
+    # plt.show()
 
 
 

@@ -72,12 +72,12 @@ if __name__ == "__main__":
         'whatsapp'
     ]
 
-    for i in range(3):
+    for i in range(1,3):
         input = Input(
             grayscale=False,
             dct_rep="hist_1D",
             patch_size=64,
-            band_mode=3,
+            band_mode=i,
             sf_lo=[1, 10],
             sf_mid=[11, 29],
             sf_hi=[30, 37],
