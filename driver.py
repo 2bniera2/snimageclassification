@@ -80,7 +80,7 @@ if __name__ == "__main__":
         sf_lo=[1, 10],
         sf_mid=[11, 29],
         sf_hi=[30, 37],
-        his_range=[-100, 100],
+        his_range=[-50, 50],
         domain='DCT',
         classes=classes
     )
@@ -95,6 +95,7 @@ if __name__ == "__main__":
     epochs = 20
     batch_size = 32
     architecture = 'dct_cnn_2017'
+
 
     if args.train:
         train(epochs, batch_size, architecture, input)

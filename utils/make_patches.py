@@ -17,6 +17,7 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
     for i in range(0, image.width-patch_size+1, patch_size):
         for j in range(0, image.height-patch_size+1, patch_size):
             patch = image.crop((i, j, i+patch_size, j+patch_size))
+            print((i, j))
             if to_bytes:
                 patch = im_to_bytes(patch, q)
             patches.append(patch)
