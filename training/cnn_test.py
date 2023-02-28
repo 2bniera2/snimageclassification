@@ -9,7 +9,6 @@ from sys import path
 import h5py
 from data_generator import data_generator
 
-
 def make_name(architecture, input_shape, epochs, batch_size):
     return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
 
@@ -54,17 +53,54 @@ def patch_truth(labels, predictions, classes):
 
 # get accuracy at image level
 def image_truth(labels, predictions, classes):
-    df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'prediction']).T
-    df = df.groupby(['truth','image_num'])['prediction'].agg(pd.Series.mode).reset_index()
-    df = df[pd.notna(pd.to_numeric(df['prediction'], errors='coerce'))]
+    df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'predictions']).T
+    df = df.groupby(['truth','image_num'])['predictions'].agg(pd.Series.mode).reset_index()
+    df = df[pd.notna(pd.to_numeric(df['predictions'], errors='coerce'))]
     df = df.reset_index().drop('image_num', axis=1)
 
     image_truth = df['truth'].to_numpy().astype(np.uint8)
-    image_predictions = df['prediction'].to_numpy().astype(np.uint8)
+    image_predictions = df['predictions'].to_numpy().astype(np.uint8)
 
     print(classification_report(image_truth, image_predictions, target_names=classes, digits=4))
 
     to_confusion_matrix(image_truth, image_predictions, classes)
+
+# def weighted_sum(predictions):
+#     weights = 
+
+def prob_truth(labels, predictions, classes):
+    df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'predictions']).T
+    # a = [[0.4, 0.6], [0.5, 0.5], [0.7, 0.3], [0.1, 0.8], [0.6, 0.4], [0.8, 0.1]]
+    # df = pd.DataFrame({
+    #     'truth': np.array([0,0,0,1,1,1], dtype=float),
+    #     'image_num': np.array([1,1,2,1,1,2], dtype=float),
+    #     'predictions': [np.array(i) for i in a]
+
+    # })
+
+
+    
+    counts = df.groupby(['truth', 'image_num']).size().reset_index(name='count')
+
+    df = pd.merge(df, counts, on=['truth', 'image_num'])
+
+    df['predictions'] = df['predictions'] / df['count']
+
+    df = df.drop('count', axis=1)
+
+    df = df.groupby(['truth','image_num'])['predictions'].apply(lambda x: np.sum(x.to_numpy(), axis=0)).reset_index(name='predictions')
+
+    df['predictions'] = df['predictions'].apply(lambda x: np.argmax(x))
+
+    image_truth = df['truth'].to_numpy().astype(np.uint8)
+    image_predictions = df['predictions'].to_numpy().astype(np.uint8)
+
+    print(classification_report(image_truth, image_predictions, target_names=classes, digits=4))
+
+
+
+
+
 
 
 def main(input, epochs, batch_size, architecture):
@@ -73,11 +109,15 @@ def main(input, epochs, batch_size, architecture):
     # predictions represented as integer representation of classes
     probs, predictions = get_predictions(input, model)
 
+
     # labels with class and image number
     labels = get_labels(input)
 
-    patch_truth(labels, predictions, input.classes)
+    # patch_truth(labels, predictions, input.classes)
     image_truth(labels, predictions, input.classes)
+    prob_truth(labels, probs, input.classes)
+
+
 
 if __name__ == "__main__":
     main()
