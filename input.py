@@ -8,7 +8,7 @@ class Input:
         self.his_range = his_range
         self.sf_num = self.num_of_sf()
         self.dset_name = self.get_dset_name()
-        self.his_size = self.get_his_shape()
+        self.his_shape = self.get_his_shape()
         self.input_shape = self.get_input_shape()
         self.classes = classes
         self.label_map = {c: i for i, c in enumerate(classes)}
@@ -21,7 +21,7 @@ class Input:
        
     def get_dset_name(self):
         if self.domain == 'DCT':
-            return f'p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sfnum:{self.sf_num}_band_mode:{self.band_mode}'
+            return f'rep:{self.dct_rep}_p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sfnum:{self.sf_num}_band_mode:{self.band_mode}'
         elif self.domain == 'Noise':
             return f'p:{self.patch_size}'
 
@@ -30,12 +30,12 @@ class Input:
     # for now there is only 2 cases, there should some more encoding soon
     def get_his_shape(self):
         if self.dct_rep == 'hist_1D':
-            return (len(range(self.his_range[0], self.his_range[1])) + 1) * self.sf_num
+            return ((len(range(self.his_range[0], self.his_range[1])) + 1) * self.sf_num,)
         else:
-            return ((len(range(self.his_range[0], self.his_range[1])) + 1), self.sf_num)
+            return (self.sf_num, (len(range(self.his_range[0], self.his_range[1])) + 1))
 
     def get_input_shape(self):
         if self.domain == 'DCT':
-            return (self.his_size, 1)
+            return (*self.his_shape, 1)
         elif self.domain == 'Noise':
             return (self.patch_size, self.patch_size, 1)

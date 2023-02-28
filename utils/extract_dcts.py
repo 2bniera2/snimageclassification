@@ -29,9 +29,27 @@ def hist_1D(dct, sf_range, his_range, band_mode, sf_num):
 
 @jit(nopython=True)
 def hist_2D(dct, sf_range, his_range, band_mode, sf_num):
+
+    # indexes to DC and all AC coefficients
+    indexes = [
+        (0,0), (0, 1), (1, 0), (2, 0), (1, 1), (0, 2), (0, 3), (1, 2),
+        (2, 1), (3, 0), (4, 0), (3, 1), (2, 2),(1, 3), (0, 4), (0, 5),
+        (1, 4), (2, 3), (3, 2), (4, 1), (5, 0), (6, 0), (5, 1), (4, 2),
+        (3, 3), (2, 4), (1, 5), (0, 6), (0, 7), (1, 6), (2, 5), (3, 4),
+        (4, 3), (5, 2), (6, 1), (7, 0), (7, 1), (6, 2), (5, 3), (4, 4),
+        (3, 5), (2, 6), (1, 7), (2, 7), (3, 6), (4, 5), (5, 4), (6, 3),
+        (7, 2), (7, 3), (6, 4), (5, 5), (4, 6), (3, 7), (4, 7), (5, 6),
+        (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
+    ]
+
     bin_num = len(range(his_range[0], his_range[1])) + 1
 
-    coords = get_spatial_freqs(band_mode, sf_range)
+
+    if band_mode == 3:
+
+        coords =  [y for x in [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)] for y in x]
+    else:
+        coords = indexes[sf_range[band_mode][0]: sf_range[band_mode][1]]
 
     # build histogram
     his = np.zeros((sf_num, bin_num))
@@ -50,8 +68,26 @@ def hist_2D(dct, sf_range, his_range, band_mode, sf_num):
 
     return his
 
-def his_encode(dct, sf_range, his_range, bandmode, sf_num):
-    coords = get_spatial_freqs(band_mode, sf_range)
+@jit(nopython=True)
+def his_encode(dct, sf_range, his_range, band_mode, sf_num):
+
+    indexes = [
+        (0,0), (0, 1), (1, 0), (2, 0), (1, 1), (0, 2), (0, 3), (1, 2),
+        (2, 1), (3, 0), (4, 0), (3, 1), (2, 2),(1, 3), (0, 4), (0, 5),
+        (1, 4), (2, 3), (3, 2), (4, 1), (5, 0), (6, 0), (5, 1), (4, 2),
+        (3, 3), (2, 4), (1, 5), (0, 6), (0, 7), (1, 6), (2, 5), (3, 4),
+        (4, 3), (5, 2), (6, 1), (7, 0), (7, 1), (6, 2), (5, 3), (4, 4),
+        (3, 5), (2, 6), (1, 7), (2, 7), (3, 6), (4, 5), (5, 4), (6, 3),
+        (7, 2), (7, 3), (6, 4), (5, 5), (4, 6), (3, 7), (4, 7), (5, 6),
+        (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
+    ]
+
+
+    if band_mode == 3:
+        coords =  [y for x in [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)] for y in x]
+    else:
+        coords = indexes[sf_range[band_mode][0]: sf_range[band_mode][1]]
+
 
     c_H = len(dct)
     c_W = len(dct[0])
@@ -64,13 +100,12 @@ def his_encode(dct, sf_range, his_range, bandmode, sf_num):
 
             for s in sf:
                 for q in range(1, 21):
-                    h, _ = np.histogram(s,bins=bin_num, range=(-0.5, 0.5))
+                    h, _ = np.histogram(s,bins=11, range=(-0.5, 0.5))
                     his[q, :, s] += h
     
-    print(his.shape)
-
-
     return his
+
+
 
     
 

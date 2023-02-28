@@ -20,11 +20,6 @@ parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
 
 args = parser.parse_args()
 
-
-
-
-
-
 if __name__ == "__main__":
     classes = [
         'facebook',
@@ -38,7 +33,7 @@ if __name__ == "__main__":
     ]
 
     input = Input(
-        dct_rep="hist_2D",
+        dct_rep="hist_1D",
         patch_size=64,
         band_mode=0,
         sf_lo=[1, 10],

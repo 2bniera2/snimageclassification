@@ -28,7 +28,7 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
 def builder(input, task, examples, labels):
     # initialise dataset 
     with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'w') as f:
-        _ = f.create_dataset('DCT', shape=(0, input.his_size), maxshape=(None, input.his_size))
+        _ = f.create_dataset('DCT', shape=(0, *input.his_shape), maxshape=(None, *input.his_shape))
         _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
         _ = f.create_dataset('indices', shape=(0, 2), maxshape=(None, 2))
 
@@ -50,9 +50,8 @@ def builder(input, task, examples, labels):
 
                 #iterate over all patches and save to dataset
                 for i, patch_histogram in enumerate(patch_histograms):
-
                     dct_dset = f['DCT']
-                    dct_dset.resize((dct_dset.shape[0] + 1, input.his_size))
+                    dct_dset.resize((dct_dset.shape[0] + 1, *input.his_shape))
                     dct_dset[-1] = patch_histogram
                     
                     labels_dset = f['labels']

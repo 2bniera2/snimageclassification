@@ -8,6 +8,7 @@ import pandas as pd
 from sys import path
 import h5py
 from data_generator import data_generator
+from collections import defaultdict
 
 def make_name(architecture, input_shape, epochs, batch_size):
     return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
@@ -65,21 +66,11 @@ def image_truth(labels, predictions, classes):
 
     to_confusion_matrix(image_truth, image_predictions, classes)
 
-# def weighted_sum(predictions):
-#     weights = 
+
 
 def prob_truth(labels, predictions, classes):
     df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'predictions']).T
-    # a = [[0.4, 0.6], [0.5, 0.5], [0.7, 0.3], [0.1, 0.8], [0.6, 0.4], [0.8, 0.1]]
-    # df = pd.DataFrame({
-    #     'truth': np.array([0,0,0,1,1,1], dtype=float),
-    #     'image_num': np.array([1,1,2,1,1,2], dtype=float),
-    #     'predictions': [np.array(i) for i in a]
-
-    # })
-
-
-    
+ 
     counts = df.groupby(['truth', 'image_num']).size().reset_index(name='count')
 
     df = pd.merge(df, counts, on=['truth', 'image_num'])
@@ -100,6 +91,12 @@ def prob_truth(labels, predictions, classes):
 
 
 
+# def class_image(labels, im_num, predictions, indices):
+#     results = defaultdict()
+
+#     for i in range(len(labels)):
+
+
 
 
 
@@ -113,7 +110,7 @@ def main(input, epochs, batch_size, architecture):
     # labels with class and image number
     labels = get_labels(input)
 
-    # patch_truth(labels, predictions, input.classes)
+    patch_truth(labels, predictions, input.classes)
     image_truth(labels, predictions, input.classes)
     prob_truth(labels, probs, input.classes)
 
