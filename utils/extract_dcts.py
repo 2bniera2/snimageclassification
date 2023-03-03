@@ -15,15 +15,6 @@ indexes = [
     (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
 ]
 
-def get_spatial_freqs(band_mode, sf_range):
-    # # obtain spatial frequencies
-    if band_mode == 3:
-
-        return [y for x in [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)] for y in x]
-    else:
-        return indexes[sf_range[band_mode][0]: sf_range[band_mode][1]]
-
-
 def hist_1D(dct, sf_range, his_range, band_mode, sf_num):
     return hist_2D(dct, sf_range, his_range, band_mode, sf_num).flatten()
 

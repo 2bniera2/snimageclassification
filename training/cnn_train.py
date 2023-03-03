@@ -1,7 +1,10 @@
 from sys import path 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
-import model_architectures
+import training.dct_models as dct_models
+import training.dct_models as dct_models
+import training.dct_models as dct_models
+
 from data_generator import data_generator
 from keras import callbacks
 
@@ -22,7 +25,7 @@ def main(epochs, batch_size, architecture, input, classes, name):
         batch_size
     )
 
-    model = getattr(model_architectures, architecture)(input.input_shape, len(classes))
+    model = getattr(dct_models, architecture)(input.input_shape, len(classes))
 
     callback = callbacks.EarlyStopping(
         monitor='val_loss',

@@ -1,22 +1,19 @@
-from utils.load_images import load_images
 from utils.make_patches import builder
 from utils.noise_extractor import noise_extractor
+from utils.to_dct_domain import dset_builder
+
 from sys import path
 import os
 
 path.append(f'{os.getcwd()}/../noiseprint2')
 
+options = {
+    'DCT': builder,
+    'Noise':    noise_extractor,
+    'DCT2D' : dset_builder
+}
 
-class Preprocessor:
-    # initialise with input configuration and load image paths as well organise them to train, val and test
-    def __init__(self, classes, path):
-        self.dset = load_images(classes, path)
-
-    def dct_builder(self, input):
-        for task, dset in self.dset.items():
-            builder(input, task, dset[0], dset[1])
-
-    def noise_builder(self, input):
-        for task, dset in self.dset.items():
-            noise_extractor(input, task, dset[0], dset[1])        
+def builder(input, dset, domain="DCT2D"):
+    for task, dset, in dset.items():
+        options[domain](input, task, dset[0], dset[1])
 

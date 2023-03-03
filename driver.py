@@ -9,7 +9,8 @@ path.append(f'{os.getcwd()}/dl-4-tsc')
 import cv2
 from cnn_test import main as test
 from cnn_train import main as train
-from preprocessor import Preprocessor
+from utils.load_images import load_images
+from utils.preprocessor import builder
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -59,15 +60,14 @@ if __name__ == "__main__":
         domain="Noise"
     )
 
-    
 
 
     if args.process:
-        preprocessor = Preprocessor(classes, os.getcwd())
-        preprocessor.dct_builder(d_input)
-        preprocessor.noise_builder(n_input)
+        dset = load_images(classes, os.getcwd())
+        builder(d_input, dset, d_input.domain)
+        builder(n_input, dset, n_input.domain)
+        builder(d_input, dset)
 
-        
     epochs = 10
     batch_size = 32
     architecture = 'dct_cnn_2017'
