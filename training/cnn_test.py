@@ -8,10 +8,8 @@ import pandas as pd
 from sys import path
 import h5py
 from data_generator import data_generator
-from collections import defaultdict
 
-def make_name(architecture, input_shape, epochs, batch_size):
-    return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
+
 
 def get_labels(input):
     with h5py.File(f'processed/{input.domain}_test_{input.dset_name}.h5', 'r') as f:
@@ -19,11 +17,11 @@ def get_labels(input):
 
 
 # get predictions and convert numerical values to class name
-def get_predictions(input, model):
+def get_predictions(input, classes, model):
     gen = data_generator(
         f'{path[0]}/processed/{input.domain}_test_{input.dset_name}.h5',
         input.domain,
-        input.classes,
+        classes,
         shuffle=False
     )
 
@@ -37,13 +35,9 @@ def to_confusion_matrix(truth, predictions, classes):
 
     cm = confusion_matrix(t, p, labels=np.array(classes))
     print(cm)
-
-    # disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-    # disp.plot()
-    # plt.show()
-
-
-
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
+    disp.plot()
+    plt.show()
 
 # get accuracy at patch level
 def patch_truth(labels, predictions, classes):
@@ -70,17 +64,11 @@ def image_truth(labels, predictions, classes):
 
 def prob_truth(labels, predictions, classes):
     df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'predictions']).T
- 
     counts = df.groupby(['truth', 'image_num']).size().reset_index(name='count')
-
     df = pd.merge(df, counts, on=['truth', 'image_num'])
-
     df['predictions'] = df['predictions'] / df['count']
-
     df = df.drop('count', axis=1)
-
     df = df.groupby(['truth','image_num'])['predictions'].apply(lambda x: np.sum(x.to_numpy(), axis=0)).reset_index(name='predictions')
-
     df['predictions'] = df['predictions'].apply(lambda x: np.argmax(x))
 
     image_truth = df['truth'].to_numpy().astype(np.uint8)
@@ -89,34 +77,24 @@ def prob_truth(labels, predictions, classes):
     print(classification_report(image_truth, image_predictions, target_names=classes, digits=4))
 
 
-
-
-
-# def class_image(labels, im_num, predictions, indices):
-#     results = defaultdict()
-
-#     for i in range(len(labels)):
-
-
-
-def main(input, epochs, batch_size, architecture):
-    model = models.load_model(make_name(architecture, input.input_shape, epochs, batch_size))
+def main(model_name, input, classes):
+    model = models.load_model(model_name)
 
     # predictions represented as integer representation of classes
-    probs, predictions = get_predictions(input, model)
+    probs, predictions = get_predictions(input, classes, model)
 
 
     # labels with class and image number
     labels = get_labels(input)
     
     print("==Patch Level==")
-    patch_truth(labels, predictions, input.classes)
+    patch_truth(labels, predictions, classes)
 
     print("==Image Level==")
-    image_truth(labels, predictions, input.classes)
+    image_truth(labels, predictions, classes)
 
     print("==Weighted Sum==")
-    prob_truth(labels, probs, input.classes)
+    prob_truth(labels, probs, classes)
 
 
 

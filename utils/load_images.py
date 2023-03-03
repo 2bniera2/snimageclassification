@@ -12,15 +12,15 @@ def load_images(classes, path):
 
     # iterate over each class and in each class iterate over each device and within each device get the image path
     for CLASS in os.listdir(f'{path}/dataset'):
-        devices = f'{path}/dataset/{CLASS}'
-        for DEVICE in os.listdir(devices):
-            if '.DS_Store' not in DEVICE:
-                images = f'{path}/dataset/{CLASS}/{DEVICE}'
-
-                for IMAGE in os.listdir(images):
-                    if '.DS_Store' not in IMAGE:
-                        examples.append(f'{path}/dataset/{CLASS}/{DEVICE}/{IMAGE}')
-                        labels.append(label_map[CLASS])
+        if CLASS in classes:
+            devices = f'{path}/dataset/{CLASS}'
+            for DEVICE in os.listdir(devices):
+                if '.DS_Store' not in DEVICE:
+                    images = f'{path}/dataset/{CLASS}/{DEVICE}'
+                    for IMAGE in os.listdir(images):
+                        if '.DS_Store' not in IMAGE:
+                            examples.append(f'{path}/dataset/{CLASS}/{DEVICE}/{IMAGE}')
+                            labels.append(label_map[CLASS])
         
     train_X, test_X, train_y, test_y = train_test_split(
         examples, labels, test_size=0.2, random_state=42, stratify=labels)

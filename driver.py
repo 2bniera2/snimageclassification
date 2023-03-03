@@ -13,12 +13,23 @@ from preprocessor import Preprocessor
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--dct", help="preprocess images to dct domain", action='store_true')
-parser.add_argument("-n", "--noise", help="preprocess images to noise residuals", action='store_true')
+parser.add_argument("-p", "--process", help="preprocess data to desired domain", action='store_true')
+parser.add_argument("-d", "--dct", help="dct train or test", action='store_true')
+parser.add_argument("-n", "--noise", help="noise train or test", action='store_true')
 parser.add_argument("-t", "--train", help="train model", action='store_true')
 parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
 
 args = parser.parse_args()
+
+def make_name(architecture, input_shape, epochs, batch_size):
+    return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
+
+def train_test(input, architecture, epochs, batch_size, classes):
+    name =  make_name(architecture, input.input_shape, epochs, batch_size)
+    if args.train:
+        train(epochs, batch_size, architecture, input, classes, name)
+    if args.test:
+        test(name, input, classes)
 
 if __name__ == "__main__":
     classes = [
@@ -32,39 +43,39 @@ if __name__ == "__main__":
         'whatsapp'
     ]
 
-    preprocessor = Preprocessor(classes, os.getcwd())
+    d_input = DCTInput(
+        dct_rep="hist_1D",
+        patch_size=64,
+        band_mode=0,
+        sf_lo=[1, 10],
+        sf_mid=[11, 29],
+        sf_hi=[30, 37],
+        his_range=[-50, 50],
+        domain="DCT"
+    )
 
-    if args.dct:
-        input = DCTInput(
-            dct_rep="hist_1D",
-            patch_size=64,
-            band_mode=0,
-            sf_lo=[1, 10],
-            sf_mid=[11, 29],
-            sf_hi=[30, 37],
-            his_range=[-50, 50],
-            classes=classes
-        )
+    n_input = NoiseInput(
+        patch_size=64,
+        domain="Noise"
+    )
 
-        preprocessor.dct_builder()
-    if args.noise:
-        input = NoiseInput(
-            patch_size=64,
-        )
-
-        preprocessor.noise_builder()
+    if args.process:
+        preprocessor = Preprocessor(classes, os.getcwd())
+        preprocessor.dct_builder(d_input)
+        preprocessor.noise_builder(n_input)
 
         
     epochs = 10
     batch_size = 32
     architecture = 'dct_cnn_2017'
 
+    if args.dct:
+        train_test(d_input, architecture, epochs, batch_size, classes)
+    if args.noise:
+        train_test(n_input, architecture, epochs, batch_size, classes)
 
-    if args.train:
-        train(epochs, batch_size, architecture, input)
-    if args.test:
-        test(input, epochs, batch_size, architecture)
 
+   
 
 
 

@@ -105,10 +105,6 @@ def his_encode(dct, sf_range, his_range, band_mode, sf_num):
     
     return his
 
-
-
-    
-
 def process(patches, input):
     histograms = []
 

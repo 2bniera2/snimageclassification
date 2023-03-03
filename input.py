@@ -1,6 +1,7 @@
 class Input():
-    def __init__(self, patch_size):
+    def __init__(self, patch_size, domain):
         self.patch_size = patch_size
+        self.domain = domain
 
     def get_dset_name(self):
         return
@@ -13,8 +14,8 @@ class Input():
 
 
 class DCTInput(Input):
-    def __init__(self, dct_rep, patch_size, band_mode, sf_lo, sf_mid, sf_hi, his_range):
-        Input.__init__(self, patch_size)
+    def __init__(self, dct_rep, patch_size, band_mode, sf_lo, sf_mid, sf_hi, his_range, domain):
+        Input.__init__(self, patch_size, domain)
         self.dct_rep = dct_rep
         self.patch_size = patch_size
         self.band_mode = band_mode
@@ -47,9 +48,8 @@ class DCTInput(Input):
     
 
 class NoiseInput:
-
-    def __init__(self, patch_size):
-        Input.__init__(self, patch_size)
+    def __init__(self, patch_size, domain):
+        Input.__init__(self, patch_size, domain)
         self.dset_name = self.get_dset_name()
         self.input_shape = self.get_input_shape()
 

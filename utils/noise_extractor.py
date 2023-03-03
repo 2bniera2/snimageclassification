@@ -21,9 +21,7 @@ def noise_extractor(input, task, examples, labels):
     
         for im_num, (path, label) in enumerate(zip(examples, labels)):
             noiseprint = normalize_noiseprint(gen_noiseprint(path, quality=101))
-            print(noiseprint.shape)
             noiseprint_patches = make_patches(noiseprint, input.patch_size)
-            print(len(noiseprint_patches))
 
             for noiseprint_patch in noiseprint_patches:
 
