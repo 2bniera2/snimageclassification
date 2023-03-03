@@ -15,12 +15,12 @@ indexes = [
     (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
 ]
 
-def hist_1D(dct, sf_range, his_range, band_mode, sf_num):
-    return hist_2D(dct, sf_range, his_range, band_mode, sf_num).flatten()
+def hist_1D(dct, sf, his_range):
+    return hist_2D(dct, sf, his_range).flatten()
 
 @jit(nopython=True)
-def hist_2D(dct, sf_range, his_range, band_mode, sf_num):
-
+def hist_2D(dct, sf, his_range):
+    sf_num = len(range(*sf))
     # indexes to DC and all AC coefficients
     indexes = [
         (0,0), (0, 1), (1, 0), (2, 0), (1, 1), (0, 2), (0, 3), (1, 2),
@@ -33,14 +33,10 @@ def hist_2D(dct, sf_range, his_range, band_mode, sf_num):
         (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
     ]
 
-    bin_num = len(range(his_range[0], his_range[1])) + 1
+    bin_num = len(range(*his_range)) + 1
 
 
-    if band_mode == 3:
-
-        coords =  [y for x in [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)] for y in x]
-    else:
-        coords = indexes[sf_range[band_mode][0]: sf_range[band_mode][1]]
+    coords = indexes[sf[0]: sf[1]]
 
     # build histogram
     his = np.zeros((sf_num, bin_num))
@@ -54,13 +50,13 @@ def hist_2D(dct, sf_range, his_range, band_mode, sf_num):
             sf = np.array([dct[x][y].reshape(8,8)[c[0]][c[1]] for c in coords])
 
             for i, f in enumerate(sf):
-                h, _ = np.histogram(f, bins=bin_num, range=(his_range[0], his_range[1]))
+                h, _ = np.histogram(f, bins=bin_num, range=his_range)
                 his[i] += h # update counts in histogram
 
     return his
 
 @jit(nopython=True)
-def his_encode(dct, sf_range, his_range, band_mode, sf_num):
+def his_encode(dct, sf_range, his_range):
 
     indexes = [
         (0,0), (0, 1), (1, 0), (2, 0), (1, 1), (0, 2), (0, 3), (1, 2),
@@ -74,10 +70,8 @@ def his_encode(dct, sf_range, his_range, band_mode, sf_num):
     ]
 
 
-    if band_mode == 3:
-        coords =  [y for x in [indexes[sf_range[i][0]: sf_range[i][1]] for i in range(3)] for y in x]
-    else:
-        coords = indexes[sf_range[band_mode][0]: sf_range[band_mode][1]]
+ 
+    coords = indexes[sf_range[0]: sf_range[1]]
 
 
     c_H = len(dct)
@@ -91,7 +85,7 @@ def his_encode(dct, sf_range, his_range, band_mode, sf_num):
 
             for s in sf:
                 for q in range(1, 21):
-                    h, _ = np.histogram(s,bins=11, range=(-0.5, 0.5))
+                    h, _ = np.histogram(s,bins=11, range=his_range)
                     his[q, :, s] += h
     
     return his
@@ -100,17 +94,15 @@ def process(patches, input):
     histograms = []
 
     for p in patches:
+            # extract dct coefficients
             dct, _, _ =  loads(p)
-            
+
             # this is just to stop numba complaining 
             his_range = (input.his_range[0], input.his_range[1])
-            sf_range = (
-                (input.sf_range[0][0], input.sf_range[0][1]),
-                (input.sf_range[1][0], input.sf_range[1][1]),
-                (input.sf_range[2][0], input.sf_range[2][1])
-            )
-            # extract dct coefficients
-            histogram = getattr(sys.modules[__name__], input.dct_rep)(dct, sf_range, his_range, input.band_mode,  input.sf_num)
+            sf = (input.sf[0], input.sf[1])
+
+            # build histograms
+            histogram = getattr(sys.modules[__name__], input.dct_rep)(dct, sf, his_range)
             histograms.append(histogram)
             
     return histograms

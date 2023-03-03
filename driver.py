@@ -47,10 +47,7 @@ if __name__ == "__main__":
     d_input = DCTInput(
         dct_rep="hist_1D",
         patch_size=64,
-        band_mode=0,
-        sf_lo=[1, 10],
-        sf_mid=[11, 29],
-        sf_hi=[30, 37],
+        sf=[1, 10],
         his_range=[-50, 50],
         domain="DCT"
     )
