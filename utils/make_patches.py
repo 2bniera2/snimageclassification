@@ -34,6 +34,7 @@ def builder(input, task, examples, labels):
 
         # generate patches from an image and extract the dcts from each patch and store in dataset
         for im_num, (path, label) in enumerate(zip(examples, labels)):
+                print(f'{im_num+1}/{len(examples)}')
 
                 # load image
                 image = Image.open(path)
