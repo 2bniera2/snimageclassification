@@ -9,15 +9,14 @@ path.append(f'{os.getcwd()}/../noiseprint2')
 
 class Preprocessor:
     # initialise with input configuration and load image paths as well organise them to train, val and test
-    def __init__(self, input, path):
-        self.input = input
-        self.dset = load_images(input, path)
+    def __init__(self, classes, path):
+        self.dset = load_images(classes, path)
 
-    def dct_builder(self):
+    def dct_builder(self, input):
         for task, dset in self.dset.items():
-            builder(self.input, task, dset[0], dset[1])
+            builder(input, task, dset[0], dset[1])
 
-    def noise_builder(self):
+    def noise_builder(self, input):
         for task, dset in self.dset.items():
-            noise_extractor(self.input, task, dset[0], dset[1])        
+            noise_extractor(input, task, dset[0], dset[1])        
 

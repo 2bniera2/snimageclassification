@@ -1,6 +1,6 @@
 import os
 from sys import path
-from input import Input
+from input import DCTInput, NoiseInput
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
@@ -32,22 +32,26 @@ if __name__ == "__main__":
         'whatsapp'
     ]
 
-    input = Input(
-        dct_rep="hist_1D",
-        patch_size=64,
-        band_mode=0,
-        sf_lo=[1, 10],
-        sf_mid=[11, 29],
-        sf_hi=[30, 37],
-        his_range=[-50, 50],
-        domain='DCT',
-        classes=classes
-    )
-    preprocessor = Preprocessor(input, os.getcwd())
+    preprocessor = Preprocessor(classes, os.getcwd())
 
     if args.dct:
+        input = DCTInput(
+            dct_rep="hist_1D",
+            patch_size=64,
+            band_mode=0,
+            sf_lo=[1, 10],
+            sf_mid=[11, 29],
+            sf_hi=[30, 37],
+            his_range=[-50, 50],
+            classes=classes
+        )
+
         preprocessor.dct_builder()
     if args.noise:
+        input = NoiseInput(
+            patch_size=64,
+        )
+
         preprocessor.noise_builder()
 
         

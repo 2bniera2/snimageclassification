@@ -91,12 +91,11 @@ def prob_truth(labels, predictions, classes):
 
 
 
+
 # def class_image(labels, im_num, predictions, indices):
 #     results = defaultdict()
 
 #     for i in range(len(labels)):
-
-
 
 
 
@@ -109,9 +108,14 @@ def main(input, epochs, batch_size, architecture):
 
     # labels with class and image number
     labels = get_labels(input)
-
+    
+    print("==Patch Level==")
     patch_truth(labels, predictions, input.classes)
+
+    print("==Image Level==")
     image_truth(labels, predictions, input.classes)
+
+    print("==Weighted Sum==")
     prob_truth(labels, probs, input.classes)
 
 
