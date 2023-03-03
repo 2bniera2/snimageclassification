@@ -12,31 +12,22 @@ class Input():
         raise NotImplementedError
 
 class DCTInput(Input):
-    def __init__(self, dct_rep, patch_size, band_mode, sf_lo, sf_mid, sf_hi, his_range, domain):
+    def __init__(self, dct_rep, patch_size, sf, his_range, domain):
         self.dct_rep = dct_rep
-        self.band_mode = band_mode
-        self.sf_range = [sf_lo, sf_mid, sf_hi]
+        self.sf = sf
         self.his_range = his_range
-        self.sf_num = self.num_of_sf()
         self.his_shape = self.get_his_shape()
         Input.__init__(self, patch_size, domain)
     
-
-    def num_of_sf(self):
-        if self.band_mode == 3:
-            return sum([sf[1] - sf[0] for sf in self.sf_range])
-        else:
-            return self.sf_range[self.band_mode][1] - self.sf_range[self.band_mode][0]
-       
     def get_dset_name(self):
-        return f'rep:{self.dct_rep}_p:{self.patch_size}_his:{self.his_range[0]},{self.his_range[1]}_sfnum:{self.sf_num}_band_mode:{self.band_mode}'
+        return f'rep:{self.dct_rep}_p:{self.patch_size}_his:{self.his_range}_sf:{self.sf}.'
 
     # for now there is only 2 cases, there should some more encoding soon
     def get_his_shape(self):
         if self.dct_rep == 'hist_1D':
-            return ((len(range(self.his_range[0], self.his_range[1])) + 1) * self.sf_num,)
+            return ((len(range(self.his_range[0], self.his_range[1])) + 1) * len(range(*self.sf)),)
         else:
-            return (self.sf_num, (len(range(self.his_range[0], self.his_range[1])) + 1))
+            return (len(range(*self.sf)), (len(range(self.his_range[0], self.his_range[1])) + 1))
 
     def get_input_shape(self):
         return (*self.his_shape, 1)

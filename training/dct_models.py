@@ -49,4 +49,32 @@ def dct_cnn_2019(input_shape, output_shape):
     return model
 
 def dct_cnn(input_shape, output_shape):
-    pass
+    input = layers.Input(shape=input_shape)
+    conv = layers.Conv2D(64, (3,3), activation='relu')(conv)
+    batch = layers.BatchNormalization()(conv)
+    conv = layers.Conv2D(64, (3,3), activation='relu')(batch)
+    maxpool = layers.MaxPooling2D()(conv)
+    batch = layers.BatchNormalization()(maxpool)
+    conv = layers.Conv2D(128, (3,3), activation='relu')(batch)
+    batch = layers.BatchNormalization()(conv)
+    conv = layers.Conv2D(128, (3,3), activation='relu')(batch)
+    flat = layers.Flatten()(conv)
+    dense1 = layers.Dense(256, activation='swish')(flat)
+    dropout1 = layers.Dropout(rate=0.8)(dense1)
+    dense2 = layers.Dense(256, activation='swish')(dropout1)
+    dropout2 = layers.Dropout(rate=0.8)(dense2)
+    dense3 = layers.Dense(256, activation='swish')(dropout2)
+    dropout3 = layers.Dropout(rate=0.8)(dense3)
+    dense4 = layers.Dense(256, activation='swish')(dropout3)
+    output = layers.Dense(units=output_shape, activation='softmax')(dense4)
+    model = models.Model(inputs=input, outputs=output) 
+
+    model.summary()
+
+    model.compile(
+        loss='categorical_crossentropy',
+        optimizer='Nadam',
+        metrics=['accuracy']
+    )
+
+    return model
