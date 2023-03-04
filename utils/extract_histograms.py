@@ -92,7 +92,7 @@ def process(patches, input):
             sf = (input.sf[0], input.sf[1])
 
             # build histograms
-            histogram = getattr(sys.modules[__name__], input.dct_rep)(dct, sf, his_range)
+            histogram = getattr(sys.modules[__name__], input.hist_rep)(dct, sf, his_range)
             histograms.append(histogram)
             
     return histograms

@@ -1,6 +1,6 @@
 import numpy as np
 import h5py
-import extract_dcts 
+import utils.extract_histograms as extract_histograms 
 import io
 from PIL import Image
 
@@ -25,7 +25,7 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
     return patches, indices    
 
 
-def builder(input, task, examples, labels):
+def histogram_extractor(input, task, examples, labels):
     # initialise dataset 
     with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'w') as f:
         _ = f.create_dataset('DCT', shape=(0, *input.his_shape), maxshape=(None, *input.his_shape))
@@ -47,7 +47,7 @@ def builder(input, task, examples, labels):
                     patches, indices = make_patches(image, input.patch_size, qtable, True)
 
                 # extract dct histograms from each patch 
-                patch_histograms = extract_dcts.process(patches, input)
+                patch_histograms = extract_histograms.process(patches, input)
 
                 #iterate over all patches and save to dataset
                 for i, patch_histogram in enumerate(patch_histograms):

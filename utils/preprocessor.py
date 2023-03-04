@@ -1,6 +1,6 @@
-from utils.make_patches import builder
+from utils.histogram_extractor import histogram_extractor
 from utils.noise_extractor import noise_extractor
-from utils.to_dct_domain import dset_builder
+from utils.transform_builder import transform_builder
 
 from sys import path
 import os
@@ -8,12 +8,11 @@ import os
 path.append(f'{os.getcwd()}/../noiseprint2')
 
 options = {
-    'DCT': builder,
+    'Histogram': histogram_extractor,
     'Noise':    noise_extractor,
-    'DCT2D' : dset_builder
 }
 
-def builder(input, dset, domain="DCT2D"):
+def builder(input, dset, domain):
     for task, dset, in dset.items():
-        options[domain](input, task, dset[0], dset[1])
+        options.get(domain, transform_builder)(input, task, dset[0], dset[1])
 

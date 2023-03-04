@@ -1,6 +1,6 @@
 import os
 from sys import path
-from input import DCTInput, NoiseInput
+from input import NoiseInput, HistInput, TransformedInput
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
@@ -14,9 +14,11 @@ from utils.preprocessor import builder
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--process", help="preprocess data to desired domain", action='store_true')
-parser.add_argument("-d", "--dct", help="dct train or test", action='store_true')
-parser.add_argument("-n", "--noise", help="noise train or test", action='store_true')
+parser.add_argument("-p", "--process", help="preprocess flag", action='store_true')
+parser.add_argument("-d", "--dct", help="dct domain", action='store_true')
+parser.add_argument("-n", "--noise", help="noiseprint", action='store_true')
+parser.add_argument("-h", "--histogram", help="dct histogram", action='store_true')
+parser.add_argument("-w", "--wavelet", help="wavelet domain", action='store_true')
 parser.add_argument("-t", "--train", help="train model", action='store_true')
 parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
 
@@ -44,8 +46,8 @@ if __name__ == "__main__":
         'whatsapp'
     ]
 
-    d_input = DCTInput(
-        dct_rep="hist_2D",
+    h_input = HistInput(
+        hist_rep="hist_2D",
         patch_size=64,
         sf=[1, 10],
         his_range=[-50, 50],
@@ -57,15 +59,24 @@ if __name__ == "__main__":
         domain="Noise"
     )
 
+    d_input = TransformedInput(
+        domain="DCT"
+    )
 
+    w_input = TransformedInput(
+        domain="DWT"
+    )
 
     if args.process:
         dset = load_images(classes, os.getcwd())
         if args.dct: 
-            builder(d_input, dset, d_input.domain)
-            # builder(d_input, dset)
+            builder(d_input, dset)
+        if args.wavelet:
+            builder(w_input, dset)
+        if args.histogram:    
+            builder(h_input, dset)
         if args.noise:
-            builder(n_input, dset, n_input.domain)
+            builder(n_input, dset)
 
     epochs = 10
     batch_size = 32
@@ -75,6 +86,11 @@ if __name__ == "__main__":
         train_test(d_input, architecture, epochs, batch_size, classes)
     if args.noise:
         train_test(n_input, architecture, epochs, batch_size, classes)
+    if args.wavelet:
+        train_test(w_input, architecture, epochs, batch_size, classes)
+    if args.histogram:
+        train_test(h_input, architecture, epochs, batch_size, classes)
+
 
 
    
