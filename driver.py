@@ -45,7 +45,7 @@ if __name__ == "__main__":
     ]
 
     d_input = DCTInput(
-        dct_rep="hist_1D",
+        dct_rep="hist_2D",
         patch_size=64,
         sf=[1, 10],
         his_range=[-50, 50],
@@ -62,8 +62,8 @@ if __name__ == "__main__":
     if args.process:
         dset = load_images(classes, os.getcwd())
         if args.dct: 
-            # builder(d_input, dset, d_input.domain)
-            builder(d_input, dset)
+            builder(d_input, dset, d_input.domain)
+            # builder(d_input, dset)
         if args.noise:
             builder(n_input, dset, n_input.domain)
 
