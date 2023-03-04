@@ -78,3 +78,5 @@ def dct_cnn(input_shape, output_shape):
     )
 
     return model
+
+

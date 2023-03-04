@@ -61,9 +61,11 @@ if __name__ == "__main__":
 
     if args.process:
         dset = load_images(classes, os.getcwd())
-        builder(d_input, dset, d_input.domain)
-        builder(n_input, dset, n_input.domain)
-        builder(d_input, dset)
+        if args.dct: 
+            # builder(d_input, dset, d_input.domain)
+            builder(d_input, dset)
+        if args.noise:
+            builder(n_input, dset, n_input.domain)
 
     epochs = 10
     batch_size = 32
