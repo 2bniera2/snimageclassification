@@ -12,7 +12,14 @@ def to_dct_domain(path):
     return stacked
 
 def to_dwt_domain(path):
-    pass
+    im = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    dwt = pywt.wavedec2(im, 'bior4.4', level=2)
+    arr, slices = pywt.coeffs_to_array(dwt)
+    arr = cv2.resize(arr, (224, 224))
+    stacked = np.stack((arr, arr, arr))
+    return stacked
+
+
 
 def transform_builder(input, task, examples, labels):
     with h5py.File(f'processed/{input.dset_name}_{task}.h5', 'w') as f:
