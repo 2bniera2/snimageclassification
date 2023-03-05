@@ -27,7 +27,7 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
 
 def histogram_extractor(input, task, examples, labels):
     # initialise dataset 
-    with h5py.File(f'processed/DCT_{task}_{input.dset_name}.h5', 'w') as f:
+    with h5py.File(f'processed/{input.dset_name}_{task}.h5', 'w') as f:
         _ = f.create_dataset('DCT', shape=(0, *input.his_shape), maxshape=(None, *input.his_shape))
         _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
         _ = f.create_dataset('indices', shape=(0, 2), maxshape=(None, 2))

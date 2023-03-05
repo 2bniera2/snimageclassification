@@ -20,7 +20,7 @@ class HistInput(Input):
         Input.__init__(self, patch_size, domain)
     
     def get_dset_name(self):
-        return f'rep:{self.hist_rep}_p:{self.patch_size}_his:{self.his_range}_sf:{self.sf}.'
+        return f'{self.domain}_r:{self.hist_rep}_p:{self.patch_size}_his:{self.his_range}_sf:{self.sf}.'
 
     # for now there is only 2 cases, there should some more encoding soon
     def get_his_shape(self):
@@ -35,7 +35,7 @@ class HistInput(Input):
     
 class NoiseInput(Input):
     def get_dset_name(self):
-        return f'p:{self.patch_size}'
+        return f'{self.domain}_p:{self.patch_size}'
 
     def get_input_shape(self):
         return (self.patch_size, self.patch_size, 1)

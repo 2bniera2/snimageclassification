@@ -12,7 +12,7 @@ options = {
     'Noise':    noise_extractor,
 }
 
-def builder(input, dset, domain):
+def builder(input, dset):
     for task, dset, in dset.items():
-        options.get(domain, transform_builder)(input, task, dset[0], dset[1])
+        options.get(input.domain, transform_builder)(input, task, dset[0], dset[1])
 
