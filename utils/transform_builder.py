@@ -14,7 +14,7 @@ def to_dct_domain(path):
 def to_dwt_domain(path):
     im = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     dwt = pywt.wavedec2(im, 'bior4.4', level=2)
-    arr, slices = pywt.coeffs_to_array(dwt)
+    arr, _ = pywt.coeffs_to_array(dwt)
     arr = cv2.resize(arr, (224, 224))
     stacked = np.stack((arr, arr, arr))
     return stacked
@@ -43,5 +43,3 @@ def transform_builder(input, task, examples, labels):
             labels_dset = f['labels']
             labels_dset.resize((labels_dset.shape[0] + 1, 1))
             labels_dset[-1] = np.array([label])
-
-    

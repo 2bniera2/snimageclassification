@@ -1,4 +1,5 @@
 {
     "editor.fontFamily": "'VictorMono Nerd Font', 'monospace', monospace",
-    "terminal.integrated.fontFamily": "'VictorMono Nerd Font', 'monospace', monospace"
+    "terminal.integrated.fontFamily": "'VictorMono Nerd Font', 'monospace', monospace",
+    "python.analysis.typeCheckingMode": "basic"
 }

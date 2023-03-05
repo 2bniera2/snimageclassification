@@ -1,14 +1,14 @@
 import os
 from sys import path
 from input import NoiseInput, HistInput, TransformedInput
+
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
 path.append(f'{os.getcwd()}/dl-4-tsc')
 
-import cv2
-from cnn_test import main as test
-from cnn_train import main as train
+from training.cnn_test import main as test
+from training.cnn_train import main as train
 from utils.load_images import load_images
 from utils.preprocessor import builder
 import argparse
@@ -27,54 +27,22 @@ args = parser.parse_args()
 def make_name(architecture, input_shape, epochs, batch_size):
     return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
 
-def train_test(input, architecture, epochs, batch_size, classes):
-    name =  make_name(architecture, input.input_shape, epochs, batch_size)
-    if args.train:
-        train(epochs, batch_size, architecture, input, classes, name)
-    if args.test:
-        test(name, input, classes)
-
 if __name__ == "__main__":
-    classes = [
-        'facebook',
-        'flickr',
-        'google+',
-        'instagram',
-        'original',
-        'telegram',
-        'twitter', 
-        'whatsapp'
-    ]
+    classes = ['facebook', 'flickr', 'google+', 'instagram', 'original', 'telegram', 'twitter',  'whatsapp']
 
+    h_input = HistInput(hist_rep="hist_1D", patch_size=64, sf=[1, 10], his_range=[-50, 50], domain="Histogram")
 
-    h_input = HistInput(
-        hist_rep="hist_1D",
-        patch_size=64,
-        sf=[1, 10],
-        his_range=[-50, 50],
-        domain="Histogram"
-    )
+    n_input = NoiseInput(patch_size=64, domain="Noise")
 
-    n_input = NoiseInput(
-        patch_size=64,
-        domain="Noise"
-    )
+    d_input = TransformedInput(0, domain="DCT")
 
-    d_input = TransformedInput(
-        0,
-        domain="DCT",
-    )
-
-    w_input = TransformedInput(
-        0,
-        domain="DWT",
-    )
+    w_input = TransformedInput(0, domain="DWT")
 
     epochs = 10
     batch_size = 32
     architecture = 'dct_cnn_2017'
 
-    arguments = {args.dct: d_input, args.wavelet: n_input, args.histogram: h_input, args.noise: w_input}
+    arguments = {args.dct: d_input, args.wavelet: w_input, args.histogram: h_input, args.noise: n_input}
 
     dset = load_images(classes, os.getcwd())
 

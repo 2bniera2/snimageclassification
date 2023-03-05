@@ -12,14 +12,14 @@ from data_generator import data_generator
 
 
 def get_labels(input):
-    with h5py.File(f'processed/{input.domain}_test_{input.dset_name}.h5', 'r') as f:
+    with h5py.File(f'processed/{input.dset_name}_test.h5', 'r') as f:
         return np.array(f['labels'][()])
 
 
 # get predictions and convert numerical values to class name
 def get_predictions(input, classes, model):
     gen = data_generator(
-        f'{path[0]}/processed/{input.domain}_test_{input.dset_name}.h5',
+        f'{path[0]}/processed/{input.dset_name}_test.h5',
         input.domain,
         classes,
         shuffle=False
