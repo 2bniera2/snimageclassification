@@ -20,7 +20,7 @@ def get_labels(input):
 def get_predictions(input, classes, model):
     gen = data_generator(
         f'{path[0]}/processed/{input.dset_name}_test.h5',
-        input.domain,
+        'examples',
         classes,
         shuffle=False
     )

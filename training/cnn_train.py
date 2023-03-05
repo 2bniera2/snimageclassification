@@ -9,18 +9,16 @@ from data_generator import data_generator
 from keras import callbacks
 
 
-
-
 def main(epochs, batch_size, architecture, input, classes, name):
     train_gen = data_generator(
         f'{path[0]}/processed/{input.dset_name}_train.h5',
-        input.domain,
+        'examples',
         classes,
         batch_size
     )
     val_gen = data_generator(
         f'{path[0]}/processed/{input.dset_name}_val.h5',
-        input.domain,
+        'examples',
         classes,
         batch_size
     )
