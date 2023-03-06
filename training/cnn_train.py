@@ -25,17 +25,20 @@ def main(epochs, batch_size, architecture, input, classes, name):
 
     model = getattr(dct_models, architecture)(input.input_shape, len(classes))
 
-    callback = callbacks.EarlyStopping(
+    earlystop = callbacks.EarlyStopping(
         monitor='val_loss',
         patience=3,
         restore_best_weights=True
     )
 
+
+    csv_logger = callbacks.CSVLogger(f'{name}.log')
+
     history = model.fit(
         train_gen,
         epochs=epochs,
         validation_data=val_gen,
-        callbacks=[callback],
+        callbacks=[earlystop, csv_logger],
         use_multiprocessing=True,
         workers=6
     )
