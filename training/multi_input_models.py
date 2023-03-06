@@ -107,6 +107,23 @@ def msf_cnn(input_shape, output_shape):
 
     concat = layers.Concatenate()([f1, f2, f3])
 
+    output = layers.Dense(output_shape, activation='softmax')(concat)
+
+    model = models.Model(inputs=input_shape, outputs=output_shape)
+
+    model.summary()
+
+    model.compile(
+        loss='categorical_crossentropy',
+        optimizer='Nadam',
+        metrics=['accuracy']
+    )
+
+    return model
+
+
+
+
     
 
 

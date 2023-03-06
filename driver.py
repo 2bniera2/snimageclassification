@@ -41,6 +41,7 @@ if __name__ == "__main__":
     epochs = 10
     batch_size = 32
     architecture = 'dct_cnn_2017'
+    location = 'dct_models'
 
     arguments = {args.dct: d_input, args.wavelet: w_input, args.histogram: h_input, args.noise: n_input}
 
@@ -52,7 +53,7 @@ if __name__ == "__main__":
             if args.process:
                 builder(argument[1], dset)
             elif args.train:
-                train(epochs, batch_size, architecture, argument[1], classes, name)
+                train(epochs, batch_size, architecture, location, argument[1], classes, name)
             elif args.test:
                 test(name, argument[1], classes)
 
