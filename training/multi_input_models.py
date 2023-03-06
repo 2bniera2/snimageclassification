@@ -1,7 +1,7 @@
 from keras import layers, models
 
 
-def cnn_noise_2019(input_shape, output_shape):
+def FusionNET(input_shape, output_shape):
     #dct
     in1 = layers.Input(shape=input)
     conv = layers.Conv1D(100, 3, activation='relu')(in1)
@@ -77,8 +77,6 @@ def two_stream(input_shape, output_shape):
 
     model = models.Model(inputs=[input1, input2], outputs=output)
 
-    odel = models.Model(inputs=input, outputs=output)
-
     model.summary()
 
     model.compile(
@@ -88,6 +86,29 @@ def two_stream(input_shape, output_shape):
     )
 
     return model
+
+def msf_cnn(input_shape, output_shape):
+    input = layers.Input(shape=input_shape)
+    #branch1
+    conv1 = layers.Conv2D(32, (3,3), activation='relu')(input)
+    conv2 = layers.Conv2D(64, (3,3), activation='relu')(conv1)
+    max_pool = layers.MaxPooling2D()(conv2)
+    f1 = layers.Flatten()(max_pool)
+    #branch2
+    conv1 = layers.Conv2D(32, (5,5), activation='relu')(input)
+    conv2 = layers.Conv2D(64, (5,5), activation='relu')(conv1)
+    max_pool = layers.MaxPooling2D()(conv2)
+    f2 = layers.Flatten()(max_pool)
+    #branch3
+    conv1 = layers.Conv2D(32, (7,7), activation='relu')(input)
+    conv2 = layers.Conv2D(64, (7,7), activation='relu')(conv1)
+    max_pool = layers.MaxPooling2D()(conv2)
+    f3 = layers.Flatten()(max_pool)
+
+    concat = layers.Concatenate()([f1, f2, f3])
+
+    
+
 
 
 
