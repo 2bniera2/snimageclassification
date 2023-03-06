@@ -74,7 +74,7 @@ def dct_cnn_2019(input_shape, output_shape):
 
 def dct_cnn(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
-    conv = layers.Conv2D(64, (3,3), activation='relu')(conv)
+    conv = layers.Conv2D(64, (3,3), activation='relu')(input)
     batch = layers.BatchNormalization()(conv)
     conv = layers.Conv2D(64, (3,3), activation='relu')(batch)
     maxpool = layers.MaxPooling2D()(conv)

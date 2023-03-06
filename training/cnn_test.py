@@ -101,7 +101,6 @@ def viewer(labels, predictions, indices, classes, index):
     records = df.to_records(index=False)
     results = list(records)
 
-    # print(results[index])
 
     size = np.max(results[index][3], axis=0)
 
