@@ -5,10 +5,10 @@ from input import NoiseInput, HistInput, TransformedInput
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
-path.append(f'{os.getcwd()}/dl-4-tsc')
 
 from training.cnn_test import main as test
 from training.cnn_train import main as train
+from training.multi_input_train import main as multi_train
 from utils.load_images import load_images
 from utils.preprocessor import builder
 import argparse
@@ -21,6 +21,8 @@ parser.add_argument("-s", "--histogram", help="dct histogram", action='store_con
 parser.add_argument("-w", "--wavelet", help="wavelet domain", action='store_const', const=4)
 parser.add_argument("-t", "--train", help="train model", action='store_true')
 parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
+parser.add_argument("-m", "--multitrain", help="multi input train", action='store_true')
+
 
 args = parser.parse_args()
 
@@ -40,7 +42,7 @@ if __name__ == "__main__":
 
     epochs = 10
     batch_size = 32
-    architecture = 'dct_cnn_2017'
+    architecture = 'dct_cnn2017'
     location = 'dct_models'
 
     arguments = {args.dct: d_input, args.wavelet: w_input, args.histogram: h_input, args.noise: n_input}
@@ -57,7 +59,9 @@ if __name__ == "__main__":
             elif args.test:
                 test(name, argument[1], classes)
 
-
+    name = "FusionNET"
+    if args.multitrain:
+        multi_train(epochs, batch_size, architecture, h_input, n_input, classes, name)
 
 
    

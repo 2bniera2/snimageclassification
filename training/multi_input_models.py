@@ -1,19 +1,19 @@
 from keras import layers, models
 
 
-def FusionNET(input_shape, output_shape):
+def FusionNET(input1_shape, input2_shape, output_shape):
     #dct
-    in1 = layers.Input(shape=input)
+    in1 = layers.Input(shape=input1_shape)
     conv = layers.Conv1D(100, 3, activation='relu')(in1)
     max_pool = layers.MaxPooling1D()(conv1)
     conv = layers.Conv1D(100, 3, activation='relu')(max_pool)
     max_pool = layers.MAxPooling1D()(conv)
     dense = layers.Dense(256, activation='relu')(max_pool)
-    flat = layers.Flatten()(dense/)
+    flat = layers.Flatten()(dense)
     f1 = layers.Dropout(rate=0.5)(flat)
 
     #noise
-    in2 = layers.Input(shape=input_shape)
+    in2 = layers.Input(shape=input2_shape)
     conv1 = layers.Conv2D(32, (3,3), activation='relu')(input)
     conv2 = layers.Conv2D(32, (3,3), activation='relu')(conv1)
     max_pool1 = layers.MaxPool2D()(conv2)
@@ -43,9 +43,9 @@ def FusionNET(input_shape, output_shape):
 
     return model
 
-def two_stream(input_shape, output_shape):
+def two_stream(input1_shape, input2_shape, output_shape):
     #dct
-    input1 = layers.Input(shape=input_shape)
+    input1 = layers.Input(shape=input1_shape)
     conv = layers.Conv2D(64, (3,3), activation='relu')(input1)
     batch = layers.BatchNormalization()(conv)
     conv = layers.Conv2D(64, (3,3), activation='relu')(batch)
@@ -56,7 +56,7 @@ def two_stream(input_shape, output_shape):
     conv = layers.Conv2D(128, (3,3), activation='relu')(batch)
     f1 = layers.Flatten()(conv)
     #noise
-    input2 = layers.Input(shape=input_shape)
+    input2 = layers.Input(shape=input2_shape)
     conv1 = layers.Conv2D(16, (3,3), activation='relu')(input2)
     max_pool1 = layers.MaxPooling2D()(conv1)
     conv2 = layers.Conv2D(32, (3,3), activation='relu')(max_pool1)
@@ -76,40 +76,6 @@ def two_stream(input_shape, output_shape):
     output = layers.Dense(units=output_shape, activation='softmax')(dense4)
 
     model = models.Model(inputs=[input1, input2], outputs=output)
-
-    model.summary()
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer='Nadam',
-        metrics=['accuracy']
-    )
-
-    return model
-
-def msf_cnn(input_shape, output_shape):
-    input = layers.Input(shape=input_shape)
-    #branch1
-    conv1 = layers.Conv2D(32, (3,3), activation='relu')(input)
-    conv2 = layers.Conv2D(64, (3,3), activation='relu')(conv1)
-    max_pool = layers.MaxPooling2D()(conv2)
-    f1 = layers.Flatten()(max_pool)
-    #branch2
-    conv1 = layers.Conv2D(32, (5,5), activation='relu')(input)
-    conv2 = layers.Conv2D(64, (5,5), activation='relu')(conv1)
-    max_pool = layers.MaxPooling2D()(conv2)
-    f2 = layers.Flatten()(max_pool)
-    #branch3
-    conv1 = layers.Conv2D(32, (7,7), activation='relu')(input)
-    conv2 = layers.Conv2D(64, (7,7), activation='relu')(conv1)
-    max_pool = layers.MaxPooling2D()(conv2)
-    f3 = layers.Flatten()(max_pool)
-
-    concat = layers.Concatenate()([f1, f2, f3])
-
-    output = layers.Dense(output_shape, activation='softmax')(concat)
-
-    model = models.Model(inputs=input_shape, outputs=output_shape)
 
     model.summary()
 
