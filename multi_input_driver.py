@@ -16,14 +16,10 @@ if __name__ == "__main__":
 
     n_input = NoiseInput(patch_size=64, domain="Noise")
 
-    d_input = TransformedInput(0, domain="DCT")
-
-    w_input = TransformedInput(0, domain="DWT")
-
     epochs = 10
     batch_size = 32
     architecture = 'FusionNET'
 
-    name = f"FusionNET_{h_input.dset_name}"
+    name = f"FusionNET"
     multi_train(epochs, batch_size, architecture, h_input, n_input, classes, name)
 

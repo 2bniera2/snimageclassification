@@ -24,7 +24,9 @@ def main(epochs, batch_size, architecture, h_input, n_input, classes, name):
         classes,
         batch_size
     )
- 
+    print(h_input.input_shape)
+    print(n_input.input_shape)
+
 
     model = getattr(multi_input_models, architecture)(h_input.input_shape, n_input.input_shape, len(classes))
 

@@ -27,7 +27,7 @@ class HistInput(Input):
         if self.hist_rep == 'hist_1D':
             return ((len(range(self.his_range[0], self.his_range[1])) + 1) * len(range(*self.sf)),)
         else:
-            return (len(range(*self.sf)), (len(range(self.his_range[0], self.his_range[1])) + 1))
+            return (20, 11, 9)
 
     def get_input_shape(self):
         return (*self.his_shape, 1)
@@ -45,4 +45,4 @@ class TransformedInput(Input):
         return f'{self.domain}_{self.get_input_shape()}'
     
     def get_input_shape(self):
-        return (3, 224, 224)
+        return (224, 224, 3)

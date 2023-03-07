@@ -2,51 +2,40 @@ from keras.utils import Sequence
 import h5py
 import numpy as np
 
+from tensorflow.image import grayscale_to_rgb
 
-class multi_input_data_generator(Sequence):
-    def __init__(self, dset1_path, dset2_path, dset1_name, dset2_name,classes, batch_size=32, shuffle=True):
+class image_data_generator(Sequence):
+    def __init__(self, dset_path, dset_name, classes, batch_size=32, shuffle=True):
         self.batch_size = batch_size
-
-        self.dset1_path = dset1_path
-        self.dset2_path = dset2_path
-
-        self.dset1_name = dset1_name
-        self.dset2_name = dset2_name
-
+        self.dset_path = dset_path
+        self.dset_name = dset_name
         self.dset_len = self.get_dset_len()
-
         self.indices = [i for i in range(self.dset_len)]
-
         self.shuffle = shuffle
-
         self.on_epoch_end()
-
         self.classes = classes
 
     def __len__(self):
         return int(np.ceil(self.dset_len / self.batch_size))
 
     def get_dset_len(self):
-        with h5py.File(self.dset1_path, 'r') as f:
-            return f[self.dset1_name].shape[0]
+        with h5py.File(self.dset_path, 'r') as f:
+            return f[self.dset_name].shape[0]
 
 
     def __getitem__(self, index):
         batch_indices = self.indices[index*self.batch_size : min((index+1)*self.batch_size, len(self.indices))]
-        X1 = []
-        X2 = []
-
+        X = []
         y = []
 
-
-        with h5py.File(self.dset1_path) as dset1, h5py.File(self.dset2_path) as dset2:
+        with h5py.File(self.dset_path) as dset:
             for i in batch_indices:
-                X1.append(dset1[self.dset1_name][i])
-                X2.append(dset2[self.dset2_name][i])
-                y.append(self.one_hot_encode(dset1['labels'][i]))
-                
-        return [X1, X2], y
+                X.append(dset[self.dset_name][i])
+                y.append(self.one_hot_encode(dset['labels'][i]))
+        
+      
 
+        return np.array(X), np.array(y)
 
     def on_epoch_end(self):
         if self.shuffle:

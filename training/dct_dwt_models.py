@@ -1,12 +1,25 @@
-from keras import layers, models, applications
+from keras import layers, models, applications, optimizers, regularizers
 
 
 def vgg_16(input_shape, output_shape):
-    input = applications.VGG16(False, "imagenet",input_shape=input_shape)
-    output = layers.Dense(output_shape, activation="softmax")(input)
+    input = layers.Input(shape=input_shape)
+    base = applications.VGG16(include_top=False,input_shape=input_shape, weights="imagenet")(input)
+    # for layer in base.layers:
+    #     layer.trainable = False
+    flat = layers.Flatten()(base)
+
+    output = layers.Dense(output_shape, activation="softmax")(flat)
+
+
+
     model = models.Model(inputs=input, outputs=output)
 
     model.summary()
+
+
+
+
+    # adam = optimizers.Adam(learning_rate=0.00001)
 
     model.compile(
         loss='categorical_crossentropy',

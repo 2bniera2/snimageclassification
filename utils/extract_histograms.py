@@ -45,7 +45,7 @@ def hist_1D(dct, sf, his_range):
     return his.flatten()
 
 @jit(nopython=True)
-def his_encode(dct, sf_range, his_range):
+def hist_encode(dct, sf, his_range):
 
     indexes = [
         (0,0), (0, 1), (1, 0), (2, 0), (1, 1), (0, 2), (0, 3), (1, 2),
@@ -58,24 +58,25 @@ def his_encode(dct, sf_range, his_range):
         (6, 5), (7, 4), (7, 5), (6, 6), (5, 7), (6, 7), (7, 6), (7, 7)
     ]
 
-    coords = indexes[sf_range[0]: sf_range[1]]
+    coords = indexes[sf[0]: sf[1]]
 
 
     c_H = len(dct)
     c_W = len(dct[0])
 
-    his = np.zeros((20, 11, len(sf)))
+    his = np.zeros((20, 11, len(coords)))
+
 
     for x in range(c_H):
         for y in range(c_W):
             sf = np.array([dct[x][y].reshape(8,8)[c[0]][c[1]] for c in coords])
-
-            for s in sf:
+            for s in range(len(sf)):
                 for q in range(1, 21):
 
                     h, _ = np.histogram(s,bins=11, range=his_range)
                     h = h / q
-                    his[q, :, s] += h
+                    
+                    his[q-1, :, s] += h
     
     return his
 

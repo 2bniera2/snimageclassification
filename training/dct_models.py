@@ -49,17 +49,18 @@ def dct_cnn_2019(input_shape, output_shape):
 
     return model
 
-def dct_cnn(input_shape, output_shape):
+def dct_cnn2(input_shape, output_shape):
+    input_shape = (20,11,9)
     input = layers.Input(shape=input_shape)
     conv = layers.Conv2D(64, (3,3), activation='relu')(input)
-    batch = layers.BatchNormalization()(conv)
-    conv = layers.Conv2D(64, (3,3), activation='relu')(batch)
-    maxpool = layers.MaxPooling2D()(conv)
-    batch = layers.BatchNormalization()(maxpool)
-    conv = layers.Conv2D(128, (3,3), activation='relu')(batch)
-    batch = layers.BatchNormalization()(conv)
-    conv = layers.Conv2D(128, (3,3), activation='relu')(batch)
-    flat = layers.Flatten()(conv)
+    batch1 = layers.BatchNormalization()(conv)
+    conv1 = layers.Conv2D(64, (3,3), activation='relu')(batch1)
+    maxpool = layers.MaxPooling2D()(conv1)
+    batch2 = layers.BatchNormalization()(maxpool)
+    conv2 = layers.Conv2D(128, (3,3), activation='relu')(batch2)
+    batch3 = layers.BatchNormalization()(conv2)
+    conv3 = layers.Conv2D(128, (3,3), activation='relu')(batch3)
+    flat = layers.Flatten()(conv3)
     dense1 = layers.Dense(256, activation='swish')(flat)
     dropout1 = layers.Dropout(rate=0.8)(dense1)
     dense2 = layers.Dense(256, activation='swish')(dropout1)

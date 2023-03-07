@@ -2,29 +2,31 @@ from keras import layers, models
 
 
 def FusionNET(input1_shape, input2_shape, output_shape):
+    print(f"{input1_shape} {input2_shape}")
+
     #dct
     in1 = layers.Input(shape=input1_shape)
-    conv = layers.Conv1D(100, 3, activation='relu')(in1)
-    max_pool = layers.MaxPooling1D()(conv)
-    conv = layers.Conv1D(100, 3, activation='relu')(max_pool)
-    max_pool = layers.MaxPooling1D()(conv)
-    dense = layers.Dense(256, activation='relu')(max_pool)
-    flat = layers.Flatten()(dense)
-    f1 = layers.Dropout(rate=0.5)(flat)
+    conv1 = layers.Conv1D(100, 3, activation='relu')(in1)
+    max_pool1 = layers.MaxPooling1D()(conv1)
+    conv1 = layers.Conv1D(100, 3, activation='relu')(max_pool1)
+    max_pool1 = layers.MaxPooling1D()(conv1)
+    dense1 = layers.Dense(256, activation='relu')(max_pool1)
+    flat1 = layers.Flatten()(dense1)
+    f1 = layers.Dropout(rate=0.5)(flat1)
 
     #noise
     in2 = layers.Input(shape=input2_shape)
-    conv1 = layers.Conv2D(32, (3,3), activation='relu')(in2)
-    conv2 = layers.Conv2D(32, (3,3), activation='relu')(conv1)
-    max_pool1 = layers.MaxPool2D()(conv2)
-    dropout1 = layers.Dropout(rate=0.5)(max_pool1)
-    conv3 = layers.Conv2D(64, (3,3), activation='relu')(dropout1)
-    conv4 = layers.Conv2D(64, (3,3), activation='relu')(conv3)
-    max_pool2 = layers.MaxPool2D()(conv4)
+    conv2 = layers.Conv2D(32, (3,3), activation='relu')(in2)
+    conv2 = layers.Conv2D(32, (3,3), activation='relu')(conv2)
+    max_pool2 = layers.MaxPool2D()(conv2)
     dropout2 = layers.Dropout(rate=0.5)(max_pool2)
-    flat = layers.Flatten()(dropout2)
-    dense = layers.Dense(256, activation='relu')(flat)
-    f2 = layers.Dropout(rate=0.5)(dense)
+    conv2 = layers.Conv2D(64, (3,3), activation='relu')(dropout2)
+    conv2 = layers.Conv2D(64, (3,3), activation='relu')(conv2)
+    max_pool2 = layers.MaxPool2D()(conv2)
+    dropout2 = layers.Dropout(rate=0.5)(max_pool2)
+    flat2 = layers.Flatten()(dropout2)
+    dense2 = layers.Dense(256, activation='relu')(flat2)
+    f2 = layers.Dropout(rate=0.5)(dense2)
 
     concat = layers.Concatenate()([f1, f2])
 

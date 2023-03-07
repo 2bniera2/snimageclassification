@@ -4,13 +4,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
 
 import importlib
 
+
 from data_generator import data_generator
 from keras import callbacks
 
 
 
 
-def main(epochs, batch_size, architecture, location, input, classes, name):
+def main(epochs, batch_size, architecture, input, classes, name):
     train_gen = data_generator(
         f'{path[0]}/processed/{input.dset_name}_train.h5',
         'examples',
@@ -23,7 +24,9 @@ def main(epochs, batch_size, architecture, location, input, classes, name):
         classes,
         batch_size
     )
-    module = importlib.import_module(location)
+
+    module = importlib.import_module('dct_dwt_models')
+
     model = getattr(module, architecture)(input.input_shape, len(classes))
 
     earlystop = callbacks.EarlyStopping(
