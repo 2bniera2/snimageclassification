@@ -5,16 +5,16 @@ def FusionNET(input1_shape, input2_shape, output_shape):
     #dct
     in1 = layers.Input(shape=input1_shape)
     conv = layers.Conv1D(100, 3, activation='relu')(in1)
-    max_pool = layers.MaxPooling1D()(conv1)
+    max_pool = layers.MaxPooling1D()(conv)
     conv = layers.Conv1D(100, 3, activation='relu')(max_pool)
-    max_pool = layers.MAxPooling1D()(conv)
+    max_pool = layers.MaxPooling1D()(conv)
     dense = layers.Dense(256, activation='relu')(max_pool)
     flat = layers.Flatten()(dense)
     f1 = layers.Dropout(rate=0.5)(flat)
 
     #noise
     in2 = layers.Input(shape=input2_shape)
-    conv1 = layers.Conv2D(32, (3,3), activation='relu')(input)
+    conv1 = layers.Conv2D(32, (3,3), activation='relu')(in2)
     conv2 = layers.Conv2D(32, (3,3), activation='relu')(conv1)
     max_pool1 = layers.MaxPool2D()(conv2)
     dropout1 = layers.Dropout(rate=0.5)(max_pool1)
@@ -31,7 +31,7 @@ def FusionNET(input1_shape, input2_shape, output_shape):
     dense = layers.Dense(512, activation='relu')(concat)
     output = layers.Dense(units=output_shape, activation='softmax')(dense)
 
-    model = models.Model(inputs=[in1, in2], output=output)
+    model = models.Model(inputs=[in1, in2], outputs=output)
 
     model.summary()
 

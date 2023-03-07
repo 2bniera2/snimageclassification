@@ -93,15 +93,8 @@ def tuple_gen(labels, predictions, indices, classes):
 
     return results
 
-def viewer(labels, predictions, indices, classes, index):
-    df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions, indices], index=['truth', 'image_num', 'predictions', 'indices']).T
-    df = df.groupby(['truth', 'image_num']).agg({'predictions' : (lambda x: list(x)), 'indices': (lambda x: list(x))}).reset_index()
-
-
-    records = df.to_records(index=False)
-    results = list(records)
-
-
+def viewer(results, classes, index):
+    
     size = np.max(results[index][3], axis=0)
 
     data = [[0 for j in range(int(size[1])+1)] for i in range(int(size[0])+1)]
@@ -109,12 +102,7 @@ def viewer(labels, predictions, indices, classes, index):
         x, y = int(idx[0]), int(idx[1])
         data[x][y] = results[index][2][i]
 
-
-
     max_data = np.argmax(data, axis=2)
-
-    
-    
 
     fig, ax = plt.subplots()
     im = ax.imshow(max_data, cmap='gist_rainbow', vmin=0, vmax=len(classes)-1)

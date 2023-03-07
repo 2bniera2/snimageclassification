@@ -5,11 +5,10 @@ import sys
 
 # yes, indexes list is repeated but numba complains otherwise
 
-def hist_1D(dct, sf, his_range):
-    return hist_2D(dct, sf, his_range).flatten()
+
 
 @jit(nopython=True)
-def hist_2D(dct, sf, his_range):
+def hist_1D(dct, sf, his_range):
     sf_num = len(range(*sf))
     # indexes to DC and all AC coefficients
     indexes = [
@@ -43,7 +42,7 @@ def hist_2D(dct, sf, his_range):
                 h, _ = np.histogram(f, bins=bin_num, range=his_range)
                 his[i] += h # update counts in histogram
 
-    return his
+    return his.flatten()
 
 @jit(nopython=True)
 def his_encode(dct, sf_range, his_range):

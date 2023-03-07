@@ -21,7 +21,6 @@ parser.add_argument("-s", "--histogram", help="dct histogram", action='store_con
 parser.add_argument("-w", "--wavelet", help="wavelet domain", action='store_const', const=4)
 parser.add_argument("-t", "--train", help="train model", action='store_true')
 parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
-parser.add_argument("-m", "--multitrain", help="multi input train", action='store_true')
 
 
 args = parser.parse_args()
@@ -30,7 +29,7 @@ def make_name(architecture, input_shape, epochs, batch_size):
     return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
 
 if __name__ == "__main__":
-    classes = ['facebook', 'flickr', 'google+', 'instagram', 'original', 'telegram', 'twitter',  'whatsapp']
+    classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 
     h_input = HistInput(hist_rep="hist_1D", patch_size=64, sf=[1, 10], his_range=[-50, 50], domain="Histogram")
 
@@ -59,9 +58,7 @@ if __name__ == "__main__":
             elif args.test:
                 test(name, argument[1], classes)
 
-    name = "FusionNET"
-    if args.multitrain:
-        multi_train(epochs, batch_size, architecture, h_input, n_input, classes, name)
+
 
 
    
