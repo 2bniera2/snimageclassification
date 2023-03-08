@@ -7,7 +7,9 @@ path.append(f'{os.getcwd()}/utils')
 
 # from training.cnn_test import main as test
 from training.image_cnn_train import main as train
-from utils.load_images import load_images
+from utils.load_iplab import load_iplab
+from utils.load_fodb import load_fodb
+
 from utils.preprocessor import builder
 
 import argparse
@@ -26,19 +28,26 @@ def make_name(architecture, input_shape, epochs, batch_size):
 
 
 if __name__ == "__main__":
-    classes = ['facebook', 'orig', 'whatsapp']
-
-    d_input = TransformedInput(0, domain="DCT")
-
-    w_input = TransformedInput(0, domain="DWT")
+    classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 
 
-    epochs = 10
+
+    epochs = 50
     batch_size = 20
     architecture = 'vgg_16'
 
+    dataset = 'iplab'
 
-    dset = load_images(classes, os.getcwd())
+    if dataset=='fodb':
+        dset = load_fodb(classes, os.getcwd(), dataset)
+    elif dataset=='iplab':
+        dset = load_iplab(classes, os.getcwd(), dataset)
+
+    
+
+    d_input = TransformedInput(input_shape=(224,224,3), dset_name=dataset, domain="DCT")
+
+    w_input = TransformedInput(input_shape=(224,224,3), dset_name=dataset, domain="DWT")
 
     input = d_input
     

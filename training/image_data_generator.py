@@ -2,8 +2,6 @@ from keras.utils import Sequence
 import h5py
 import numpy as np
 
-from tensorflow.image import grayscale_to_rgb
-
 class image_data_generator(Sequence):
     def __init__(self, dset_path, dset_name, classes, batch_size=32, shuffle=True):
         self.batch_size = batch_size

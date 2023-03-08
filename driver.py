@@ -9,7 +9,7 @@ path.append(f'{os.getcwd()}/noiseprint2')
 from training.cnn_test import main as test
 from training.cnn_train import main as train
 from training.multi_input_train import main as multi_train
-from utils.load_images import load_images
+from utils.load_iplab import load_images
 from utils.preprocessor import builder
 import argparse
 
@@ -35,13 +35,13 @@ if __name__ == "__main__":
 
 
 
-    epochs = 10
+    epochs = 20
     batch_size = 20
     architecture = 'dct_cnn_2017'
     location = 'dct_models'
 
     arguments = {args.histogram: h_input, args.noise: n_input}
-
+    
     dset = load_images(classes, os.getcwd())
 
     for argument in arguments.items():

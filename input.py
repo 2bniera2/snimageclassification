@@ -40,9 +40,9 @@ class NoiseInput(Input):
     def get_input_shape(self):
         return (self.patch_size, self.patch_size, 1)
 
-class TransformedInput(Input):
-    def get_dset_name(self):
-        return f'{self.domain}_{self.get_input_shape()}'
-    
-    def get_input_shape(self):
-        return (224, 224, 3)
+class TransformedInput():
+    def __init__(self, input_shape, dset_name, domain):
+        self.input_shape = input_shape
+        self.dset_name = dset_name
+        self.domain = domain
+

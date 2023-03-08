@@ -6,19 +6,33 @@ from scipy.fftpack import dctn
 from skimage.io import imread
 from skimage.color import rgb2gray
 from skimage.transform import resize
+from jpeg2dct.numpy import load
+
 
 def normalise(arr):
     return (arr-np. min(arr))/(np. max(arr)-np.min(arr))
 
+def to_2D(image):
+    n_rows = image.shape[0]
+    n_cols = image.shape[1]
+    image_4d = image.reshape((n_rows,n_cols,8,8))
+    blocks = image_4d.transpose(0,2,1,3)
+    return blocks.reshape(n_rows * 8, n_cols * 8)
+    
+
 def to_dct_domain(path):
-    im = cv2.imread(path, 0)
-    dct = ((dctn(im)))
-    dct = cv2.resize(dct, (224, 224))
-    # dct = normalise(dct)
+   
+    freq1, freq2, freq3 = load(path)
 
-    dct = np.repeat(dct[:,:,np.newaxis], 3, axis=-1)
-    # cv2.imwrite('test.jpg', dct)
+    freq1 = to_2D(freq1)
+    freq2 = to_2D(freq2)
+    freq3 = to_2D(freq3)
 
+    freq1 = cv2.resize(freq1, (224, 224))
+    freq2 = cv2.resize(freq2, (224, 224))
+    freq3 = cv2.resize(freq3, (224, 224))
+
+    dct = np.stack((freq1, freq2, freq3)).reshape((224, 224, 3))
 
     return dct
 
