@@ -5,7 +5,9 @@ from input import NoiseInput, HistInput, TransformedInput
 path.append(f'{os.getcwd()}/training')
 
 
-from training.multi_input_train import main as multi_train
+from training.multi_input_train import main as train
+from training.multi_input_test import main as test
+
 
 
 path.append(f'{os.getcwd()}/training')
@@ -20,6 +22,10 @@ if __name__ == "__main__":
     batch_size = 32
     architecture = 'FusionNET'
 
-    name = f"FusionNET"
-    multi_train(epochs, batch_size, architecture, h_input, n_input, classes, name)
+    name = f"model/FusionNET"
+    train(epochs, batch_size, architecture, h_input, n_input, classes, name)
+
+    test(name, h_input, n_input, classes)
+
+
 

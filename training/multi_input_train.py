@@ -18,16 +18,13 @@ def main(epochs, batch_size, architecture, h_input, n_input, classes, name):
     )
     val_gen = multi_input_data_generator(
         f'{path[0]}/processed/{h_input.dset_name}_val.h5',
-        f'{path[0]}/processed/{n_input.dset_name}_train.h5',
+        f'{path[0]}/processed/{n_input.dset_name}_val.h5',
         'examples',
         'examples',
         classes,
         batch_size
     )
-    print(h_input.input_shape)
-    print(n_input.input_shape)
-
-
+   
     model = getattr(multi_input_models, architecture)(h_input.input_shape, n_input.input_shape, len(classes))
 
     earlystop = callbacks.EarlyStopping(
@@ -35,7 +32,6 @@ def main(epochs, batch_size, architecture, h_input, n_input, classes, name):
         patience=3,
         restore_best_weights=True
     )
-
 
     csv_logger = callbacks.CSVLogger(f'{name}.log')
 

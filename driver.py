@@ -15,7 +15,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--process", help="preprocess flag", action='store_true')
 parser.add_argument("-n", "--noise", help="noiseprint", action='store_const', const=1)
-parser.add_argument("-s", "--histogram", help="dct histogram", action='store_const', const=2)
+parser.add_argument("-d", "--histogram", help="dct histogram", action='store_const', const=2)
 parser.add_argument("-t", "--train", help="train model", action='store_true')
 parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
 
@@ -32,8 +32,6 @@ if __name__ == "__main__":
 
     n_input = NoiseInput(patch_size=64, domain="Noise")
 
-
-
     epochs = 20
     batch_size = 20
     architecture = 'dct_cnn_2017'
@@ -41,8 +39,9 @@ if __name__ == "__main__":
 
     arguments = {args.histogram: h_input, args.noise: n_input}
 
-    
-    dset = load_iplab(classes, os.getcwd())
+    dataset = 'iplab'
+
+    dset = load_iplab(classes, os.getcwd(), dataset)
 
     for argument in arguments.items():
         if argument[0]:

@@ -4,7 +4,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
 
 import importlib
 
-
 from data_generator import data_generator
 from keras import callbacks
 

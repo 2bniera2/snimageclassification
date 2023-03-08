@@ -8,8 +8,6 @@ def load_iplab(classes, path, dataset):
     examples = []
     labels = []
 
-
-
     label_map = {c: i for i, c in enumerate(classes)}
 
     # iterate over each class and in each class iterate over each device and within each device get the image path

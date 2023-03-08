@@ -45,7 +45,7 @@ class multi_input_data_generator(Sequence):
                 X2.append(dset2[self.dset2_name][i])
                 y.append(self.one_hot_encode(dset1['labels'][i]))
                 
-        return [X1, X2], y
+        return [np.array(X1), np.array(X2)], np.array(y)
 
 
     def on_epoch_end(self):
