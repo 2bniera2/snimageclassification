@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 from sys import path
 import h5py
-from data_generator import data_generator
+from multi_input_data_generator import multi_input_data_generator
 
 
 
@@ -16,9 +16,11 @@ def get_labels(input):
 
 
 # get predictions and convert numerical values to class name
-def get_predictions(input, classes, model):
+def get_predictions(input1, input2, classes, model):
     gen = data_generator(
         f'{path[0]}/processed/{input.dset_name}_test.h5',
+        f'{path[0]}/processed/{input.dset_name}_test.h5',
+        'examples',
         'examples',
         classes,
         shuffle=False
@@ -51,11 +53,11 @@ def main(model_name, input1, input2, classes):
     model = models.load_model(model_name)
 
     # predictions represented as integer representation of classes
-    predictions = get_predictions(input, classes, model)
+    predictions = get_predictions(input1, input2, classes, model)
 
 
     # labels with class and image number
-    labels = get_labels(input)
+    labels = get_labels(input1
 
 
     
