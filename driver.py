@@ -8,8 +8,7 @@ path.append(f'{os.getcwd()}/noiseprint2')
 
 from training.cnn_test import main as test
 from training.cnn_train import main as train
-from training.multi_input_train import main as multi_train
-from utils.load_iplab import load_images
+from utils.load_iplab import load_iplab
 from utils.preprocessor import builder
 import argparse
 
@@ -41,8 +40,9 @@ if __name__ == "__main__":
     location = 'dct_models'
 
     arguments = {args.histogram: h_input, args.noise: n_input}
+
     
-    dset = load_images(classes, os.getcwd())
+    dset = load_iplab(classes, os.getcwd())
 
     for argument in arguments.items():
         if argument[0]:

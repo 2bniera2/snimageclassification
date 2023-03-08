@@ -7,9 +7,9 @@ def vgg_16(input_shape, output_shape):
     base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
     # base.trainable = False
     flat = layers.Flatten()(base)
-    dense = layers.Dense(512, activation="relu")(flat)
-    dropout = layers.Dropout(0.3)(dense)
-    output = layers.Dense(output_shape, activation="softmax")(dropout)
+    # dense = layers.Dense(512, activation="relu")(flat)
+    # dropout = layers.Dropout(0.3)(flat)
+    output = layers.Dense(output_shape, activation="softmax")(flat)
 
 
 

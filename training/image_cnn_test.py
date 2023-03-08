@@ -25,7 +25,7 @@ def get_predictions(input, classes, model):
     )
 
     pred = model.predict(gen, use_multiprocessing=True, workers=8)
-    return pred, np.argmax(pred, axis=1)
+    return np.argmax(pred, axis=1)
 
 def to_confusion_matrix(truth, predictions, classes):
     t = np.select([truth==i for i in np.unique(truth)],classes, truth)

@@ -2,9 +2,7 @@ __pycache__/
 iplab/
 fodb/
 models/
-original_dataset/
 others/
 processed/
-dataset_dead/
-noiseprint2
-dl-4-tsc
+noiseprint2/
+

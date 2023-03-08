@@ -25,7 +25,7 @@ def main(epochs, batch_size, architecture, input, classes, name):
         batch_size
     )
 
-    module = importlib.import_module('dct_dwt_models')
+    module = importlib.import_module('image_models')
 
     model = getattr(module, architecture)(input.input_shape, len(classes))
 

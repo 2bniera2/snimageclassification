@@ -5,7 +5,7 @@ from input import TransformedInput
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 
-# from training.cnn_test import main as test
+from training.image_cnn_test import main as test
 from training.image_cnn_train import main as train
 from utils.load_iplab import load_iplab
 from utils.load_fodb import load_fodb
@@ -58,7 +58,9 @@ if __name__ == "__main__":
     if args.train:
         train(epochs, batch_size, architecture, input, classes, name)
 
-    # test()
+    if args.test:
+        test(name, input, classes)
+
 
 
 
