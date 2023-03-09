@@ -32,11 +32,11 @@ if __name__ == "__main__":
 
 
 
-    epochs = 20
-    batch_size = 32
+    epochs = 10
+    batch_size = 16
     architecture = 'vgg_16'
 
-    dataset = 'iplab'
+    dataset = 'fodb'
 
     if dataset=='fodb':
         dset = load_fodb(classes, os.getcwd(), dataset)

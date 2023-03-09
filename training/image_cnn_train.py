@@ -41,7 +41,7 @@ def main(epochs, batch_size, architecture, input, classes, name):
         train_gen,
         epochs=epochs,
         validation_data=val_gen,
-        callbacks=[csv_logger],
+        callbacks=[csv_logger, earlystop],
         use_multiprocessing=True,
         workers=6
     )

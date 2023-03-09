@@ -5,10 +5,14 @@ from regulariser import add_regularization
 def vgg_16(input_shape, output_shape):
     input_shape = (*input_shape, 3)
     input = layers.Input(shape=input_shape)
-    base = applications.ResNet50(include_top=False,input_shape=input_shape, weights='imagenet')(input)
+    base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
     # base.trainable = False
     # avg = layers.MaxPooling2D()(base)
     flat = layers.Flatten()(base)
+    # dense = layers.Dense(512, activation='relu')(flat)
+    # dense = layers.Dense(4096, activation='relu')(dense)
+
+
     output = layers.Dense(output_shape, activation="softmax")(flat)
 
 

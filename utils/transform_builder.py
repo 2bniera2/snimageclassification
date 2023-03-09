@@ -12,6 +12,9 @@ from jpeg2dct.numpy import load
 def normalise(arr):
     return (arr-np. min(arr))/(np. max(arr)-np.min(arr))
 
+
+
+
 def to_2D(image):
     n_rows = image.shape[0]
     n_cols = image.shape[1]
@@ -21,18 +24,33 @@ def to_2D(image):
     
 
 def to_dct_domain(path, input_shape):
-   
-    freq1, _,_ = load(path)
 
-    freq1 = to_2D(freq1)
+    image = cv2.imread(path, 0)
+
+    image = cv2.dct(np.float32(image))
+
+    image = cv2.resize(image, input_shape)
+
+
+    # dct_r = cv2.resize(dct_r, (input_shape))
+    # dct_g = cv2.resize(dct_g, (input_shape))
+    # dct_b = cv2.resize(dct_b, (input_shape))
+
+
+  
+
+
+    # freq1, freq2, freq3 = load(path)
+
+    # freq1 = to_2D(freq1)
     # freq2 = to_2D(freq2)
     # freq3 = to_2D(freq3)
 
-    freq1 = cv2.resize(freq1, input_shape)
-    # freq2 = cv2.resize(freq2, (224, 224))
-    # freq3 = cv2.resize(freq3, (224, 224))
+    # freq1 = cv2.resize(freq1, input_shape)
+    # freq2 = cv2.resize(freq2, input_shape)
+    # freq3 = cv2.resize(freq3, input_shape)
 
-    dct = np.stack((freq1, freq1, freq1)).reshape((*input_shape, 3))
+    dct = np.stack((image, image, image)).reshape((*input_shape, 3))
 
     return dct
 
