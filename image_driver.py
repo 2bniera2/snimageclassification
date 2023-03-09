@@ -32,8 +32,8 @@ if __name__ == "__main__":
 
 
 
-    epochs = 50
-    batch_size = 20
+    epochs = 20
+    batch_size = 32
     architecture = 'vgg_16'
 
     dataset = 'iplab'
@@ -43,11 +43,11 @@ if __name__ == "__main__":
     elif dataset=='iplab':
         dset = load_iplab(classes, os.getcwd(), dataset)
 
-    
+    input_shape = (224, 224)
 
-    d_input = TransformedInput(input_shape=(224,224,3), dset_name=dataset, domain="DCT")
+    d_input = TransformedInput(input_shape=input_shape, dset_name=dataset, domain="DCT")
 
-    w_input = TransformedInput(input_shape=(224,224,3), dset_name=dataset, domain="DWT")
+    w_input = TransformedInput(input_shape=input_shape, dset_name=dataset, domain="DWT")
 
     input = d_input
     

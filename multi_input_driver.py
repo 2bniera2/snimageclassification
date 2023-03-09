@@ -8,6 +8,13 @@ path.append(f'{os.getcwd()}/training')
 from training.multi_input_train import main as train
 from training.multi_input_test import main as test
 
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--train", help="train model", action='store_true')
+parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
+
+args = parser.parse_args()
 
 
 path.append(f'{os.getcwd()}/training')
@@ -22,10 +29,13 @@ if __name__ == "__main__":
     batch_size = 32
     architecture = 'FusionNET'
 
-    name = f"model/FusionNET"
-    train(epochs, batch_size, architecture, h_input, n_input, classes, name)
+    name = "models/FusionNET"
 
-    test(name, h_input, n_input, classes)
+    if args.train:
+        train(epochs, batch_size, architecture, h_input, n_input, classes, name)
+
+    if args.test:
+        test(name, h_input, n_input, classes)
 
 
 

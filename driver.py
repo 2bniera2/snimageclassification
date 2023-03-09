@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     n_input = NoiseInput(patch_size=64, domain="Noise")
 
-    epochs = 20
+    epochs = 10
     batch_size = 20
     architecture = 'dct_cnn_2017'
     location = 'dct_models'

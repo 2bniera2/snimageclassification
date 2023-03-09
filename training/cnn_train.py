@@ -21,7 +21,8 @@ def main(epochs, batch_size, architecture, location, input, classes, name):
         f'{path[0]}/processed/{input.dset_name}_val.h5',
         'examples',
         classes,
-        batch_size
+        batch_size,
+        shuffle=False
     )
     module = importlib.import_module(location)
     model = getattr(module, architecture)(input.input_shape, len(classes))
@@ -39,7 +40,7 @@ def main(epochs, batch_size, architecture, location, input, classes, name):
         train_gen,
         epochs=epochs,
         validation_data=val_gen,
-        callbacks=[csv_logger],
+        callbacks=[csv_logger, earlystop],
         use_multiprocessing=True,
         workers=6
     )

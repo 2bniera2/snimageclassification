@@ -20,19 +20,19 @@ def to_2D(image):
     return blocks.reshape(n_rows * 8, n_cols * 8)
     
 
-def to_dct_domain(path):
+def to_dct_domain(path, input_shape):
    
-    freq1, freq2, freq3 = load(path)
+    freq1, _,_ = load(path)
 
     freq1 = to_2D(freq1)
-    freq2 = to_2D(freq2)
-    freq3 = to_2D(freq3)
+    # freq2 = to_2D(freq2)
+    # freq3 = to_2D(freq3)
 
-    freq1 = cv2.resize(freq1, (224, 224))
-    freq2 = cv2.resize(freq2, (224, 224))
-    freq3 = cv2.resize(freq3, (224, 224))
+    freq1 = cv2.resize(freq1, input_shape)
+    # freq2 = cv2.resize(freq2, (224, 224))
+    # freq3 = cv2.resize(freq3, (224, 224))
 
-    dct = np.stack((freq1, freq2, freq3)).reshape((224, 224, 3))
+    dct = np.stack((freq1, freq1, freq1)).reshape((*input_shape, 3))
 
     return dct
 
@@ -49,21 +49,21 @@ def to_dwt_domain(path):
 
 def transform_builder(input, task, examples, labels):
     with h5py.File(f'processed/{input.dset_name}_{task}.h5', 'w') as f:
-        _ = f.create_dataset('examples', shape=(0, 224, 224, 3), maxshape=(None, 224, 224, 3))
+        _ = f.create_dataset('examples', shape=(0, *input.input_shape, 3), maxshape=(None, *input.input_shape, 3))
         _ = f.create_dataset('labels', shape=(0, 1), maxshape=(None, 1))
 
 
         for im_num, (path, label) in enumerate(zip(examples, labels)):
             print(f'{im_num+1}/{len(examples)}')
-
+            
             if input.domain == "DCT":
-                im = to_dct_domain(path)
+                im = to_dct_domain(path, input.input_shape)
             elif input.domain == "DWT":
                 im = to_dwt_domain(path)
 
 
             dct_dset = f['examples']
-            dct_dset.resize((dct_dset.shape[0] + 1, 224, 224, 3))
+            dct_dset.resize((dct_dset.shape[0] + 1, *input.input_shape, 3))
             dct_dset[-1] = im
                     
             labels_dset = f['labels']

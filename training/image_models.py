@@ -3,18 +3,18 @@ from regulariser import add_regularization
 
 
 def vgg_16(input_shape, output_shape):
+    input_shape = (*input_shape, 3)
     input = layers.Input(shape=input_shape)
-    base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
+    base = applications.ResNet50(include_top=False,input_shape=input_shape, weights='imagenet')(input)
     # base.trainable = False
+    # avg = layers.MaxPooling2D()(base)
     flat = layers.Flatten()(base)
-    # dense = layers.Dense(512, activation="relu")(flat)
-    # dropout = layers.Dropout(0.3)(flat)
     output = layers.Dense(output_shape, activation="softmax")(flat)
 
 
 
     model = models.Model(inputs=input, outputs=output)
-    model = add_regularization(model, regularizers.l2(0.0001))
+    # model = add_regularization(model, regularizers.l2(0.001))
 
     model.summary()
 
@@ -28,111 +28,6 @@ def vgg_16(input_shape, output_shape):
 
     return model
 
-
-def vgg_19(input_shape, output_shape):
-    input = layers.Input(shape=input_shape)
-    base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
-    # base.trainable = False
-    flat = layers.Flatten()(base)
-    # dense = layers.Dense(512, activation="relu")(flat)
-    dropout = layers.Dropout(0.5)(flat)
-    output = layers.Dense(output_shape, activation="softmax")(dropout)
-
-
-
-    model = models.Model(inputs=input, outputs=output)
-    model = add_regularization(model, regularizers.l2(0.0001))
-
-    model.summary()
-
-    adam = optimizers.Adam(learning_rate=0.0001)
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=adam,
-        metrics=['accuracy']
-    )
-
-    return model
-
-def resnet50(input_shape, output_shape):
-    input = layers.Input(shape=input_shape)
-    base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
-    # base.trainable = False
-    flat = layers.Flatten()(base)
-    # dense = layers.Dense(512, activation="relu")(flat)
-    dropout = layers.Dropout(0.5)(flat)
-    output = layers.Dense(output_shape, activation="softmax")(dropout)
-
-
-
-    model = models.Model(inputs=input, outputs=output)
-    model = add_regularization(model, regularizers.l2(0.001))
-
-    model.summary()
-
-    adam = optimizers.Adam(learning_rate=0.0001)
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=adam,
-        metrics=['accuracy']
-    )
-
-    return model
-
-def resnet101(input_shape, output_shape):
-    input = layers.Input(shape=input_shape)
-    base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
-    # base.trainable = False
-    flat = layers.Flatten()(base)
-    # dense = layers.Dense(512, activation="relu")(flat)
-    dropout = layers.Dropout(0.5)(flat)
-    output = layers.Dense(output_shape, activation="softmax")(dropout)
-
-
-
-    model = models.Model(inputs=input, outputs=output)
-    model = add_regularization(model, regularizers.l2(0.001))
-
-    model.summary()
-
-    adam = optimizers.Adam(learning_rate=0.0001)
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=adam,
-        metrics=['accuracy']
-    )
-
-    return model
-
-
-def inception(input_shape, output_shape):
-    input = layers.Input(shape=input_shape)
-    base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
-    # base.trainable = False
-    flat = layers.Flatten()(base)
-    # dense = layers.Dense(512, activation="relu")(flat)
-    dropout = layers.Dropout(0.5)(flat)
-    output = layers.Dense(output_shape, activation="softmax")(dropout)
-
-
-
-    model = models.Model(inputs=input, outputs=output)
-    model = add_regularization(model, regularizers.l2(0.001))
-
-    model.summary()
-
-    adam = optimizers.Adam(learning_rate=0.0001)
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=adam,
-        metrics=['accuracy']
-    )
-
-    return model
 
 def msf_cnn(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
