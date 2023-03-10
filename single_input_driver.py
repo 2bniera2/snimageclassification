@@ -4,11 +4,12 @@ from sys import path
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
-from training.cnn_test import main as test
-from training.cnn_train import main as train
+path.append(f'{os.getcwd()}/single_input')
 from utils.load_iplab import load_iplab
 from utils.load_fodb import load_fodb
 from utils.preprocessor import builder
+from single_input.cnn_train import train
+from single_input.cnn_test import test
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--process", help="preprocess flag", action='store_true')

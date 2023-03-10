@@ -1,10 +1,11 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup messages
-
+from sys import path
+path.append(f'{os.getcwd()}/utils')
 import numpy as np
 from keras import models
 from sys import path
-from multi_input_data_generator import multi_input_data_generator
+from utils.multi_input_data_generator import multi_input_data_generator
 from test_utils import get_labels, get_indices, patch_truth, image_truth, tuple_gen, viewer
 
 

@@ -2,8 +2,8 @@ from input import Input
 import os, argparse
 from sys import path
 path.append(f'{os.getcwd()}/training')
-from training.multi_input_train import main as train
-from training.multi_input_test import main as test
+from multi_input_cnn.cnn_train import main as train
+from multi_input_cnn.cnn_test import main as test
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--train", help="train model", action='store_true')

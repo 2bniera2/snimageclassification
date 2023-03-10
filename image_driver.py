@@ -3,8 +3,10 @@ import os, argparse
 from sys import path
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
-from training.image_cnn_test import main as test
-from training.image_cnn_train import main as train
+path.append(f'{os.getcwd()}/image_cnn')
+
+from image_cnn.cnn_test import main as test
+from image_cnn.cnn_train import main as train
 from utils.load_iplab import load_iplab
 from utils.load_fodb import load_fodb
 from utils.preprocessor import builder
@@ -18,7 +20,7 @@ args = parser.parse_args()
 Input = namedtuple("Input", "input_shape dset_name domain")
 
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
-dataset = 'iplab'
+dataset = 'fodb'
 epochs = 10
 batch_size = 16
 architecture = 'vgg_16'

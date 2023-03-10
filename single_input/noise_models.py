@@ -1,5 +1,6 @@
 from keras import layers, models
 
+
 def noise_cnn(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
     conv1 = layers.Conv2D(16, (3,3), activation='relu')(input)

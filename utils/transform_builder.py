@@ -2,56 +2,15 @@ import cv2
 import numpy as np
 import pywt
 import h5py
-from scipy.fftpack import dctn
-from skimage.io import imread
-from skimage.color import rgb2gray
-from skimage.transform import resize
-from jpeg2dct.numpy import load
-
 
 def normalise(arr):
     return (arr-np. min(arr))/(np. max(arr)-np.min(arr))
 
-
-
-
-def to_2D(image):
-    n_rows = image.shape[0]
-    n_cols = image.shape[1]
-    image_4d = image.reshape((n_rows,n_cols,8,8))
-    blocks = image_4d.transpose(0,2,1,3)
-    return blocks.reshape(n_rows * 8, n_cols * 8)
-    
-
 def to_dct_domain(path, input_shape):
-
     image = cv2.imread(path, 0)
-
     image = cv2.dct(np.float32(image))
-
     image = cv2.resize(image, input_shape)
-
-
-    # dct_r = cv2.resize(dct_r, (input_shape))
-    # dct_g = cv2.resize(dct_g, (input_shape))
-    # dct_b = cv2.resize(dct_b, (input_shape))
-
-
-  
-
-
-    # freq1, freq2, freq3 = load(path)
-
-    # freq1 = to_2D(freq1)
-    # freq2 = to_2D(freq2)
-    # freq3 = to_2D(freq3)
-
-    # freq1 = cv2.resize(freq1, input_shape)
-    # freq2 = cv2.resize(freq2, input_shape)
-    # freq3 = cv2.resize(freq3, input_shape)
-
     dct = np.stack((image, image, image)).reshape((*input_shape, 3))
-
     return dct
 
 def to_dwt_domain(path):

@@ -10,7 +10,7 @@ from keras import callbacks
 
 
 
-def main(epochs, batch_size, architecture, input, classes, name):
+def train(epochs, batch_size, architecture, location, input, classes, name):
     train_gen = data_generator(
         f'{path[0]}/processed/{input.dset_name}_train.h5',
         'examples',
@@ -21,11 +21,10 @@ def main(epochs, batch_size, architecture, input, classes, name):
         f'{path[0]}/processed/{input.dset_name}_val.h5',
         'examples',
         classes,
-        batch_size
+        batch_size,
+        shuffle=False
     )
-
-    module = importlib.import_module('image_models')
-
+    module = importlib.import_module(location)
     model = getattr(module, architecture)(input.input_shape, len(classes))
 
     earlystop = callbacks.EarlyStopping(

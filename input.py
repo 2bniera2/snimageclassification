@@ -13,9 +13,9 @@ class Input:
 
     def get_input_shape(self):
         if self.domain == "Histogram":
-            return ((len(range(*self.his_range)) + 1) * len(range(*self.sf)),)
+            return ((len(range(*self.his_range)) + 1) * len(range(*self.sf)), 1)
         elif self.domain == "Noise":
-            return (self.patch_size, self.patch_size, ) 
+            return (self.patch_size, self.patch_size, 1) 
             
     def get_name(self, dset):
         if self.domain == 'Histogram':

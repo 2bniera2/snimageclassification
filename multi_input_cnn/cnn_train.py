@@ -1,9 +1,9 @@
 from sys import path 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
-import training.multi_input_models as multi_input_models
+import multi_input_cnn.multi_input_models as multi_input_models
 
-from multi_input_data_generator import multi_input_data_generator
+from utils.multi_input_data_generator import multi_input_data_generator
 from keras import callbacks
 
 

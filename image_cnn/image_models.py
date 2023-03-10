@@ -7,16 +7,9 @@ def vgg_16(input_shape, output_shape):
     input = layers.Input(shape=input_shape)
     base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
     # base.trainable = False
-    # avg = layers.MaxPooling2D()(base)
+
     flat = layers.Flatten()(base)
-    # dense = layers.Dense(512, activation='relu')(flat)
-    # dense = layers.Dense(4096, activation='relu')(dense)
-
-
     output = layers.Dense(output_shape, activation="softmax")(flat)
-
-
-
     model = models.Model(inputs=input, outputs=output)
     # model = add_regularization(model, regularizers.l2(0.001))
 

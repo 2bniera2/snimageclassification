@@ -22,7 +22,7 @@ def get_predictions(input, classes, model):
     return np.argmax(pred, axis=1), pred
 
 
-def main(model_name, input, classes):
+def test(model_name, input, classes):
     model = models.load_model(model_name)
 
     # predictions represented as integer representation of classes
