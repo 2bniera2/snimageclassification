@@ -102,3 +102,5 @@ def viewer(results, classes, index):
 
     # show plot
     plt.show()
+
+

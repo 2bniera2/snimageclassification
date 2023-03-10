@@ -4,8 +4,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup
 import numpy as np
 from keras import models
 from sys import path
-from data_generator import data_generator
-from test_utils import get_labels, get_indices, patch_truth, image_truth, tuple_gen, viewer
+from utils.data_generator import data_generator
+from utils.test_utils import get_labels, get_indices, patch_truth, image_truth, tuple_gen, viewer
 
 
 # get predictions and convert numerical values to class name
@@ -22,6 +22,8 @@ def get_predictions(input, classes, model):
     return np.argmax(pred, axis=1), pred
 
 
+
+
 def test(model_name, input, classes):
     model = models.load_model(model_name)
 
@@ -34,11 +36,18 @@ def test(model_name, input, classes):
 
     indices = get_indices(input)
     
-    patch_truth(labels, best, classes)
+    # patch_truth(labels, best, classes)
 
-    image_truth(labels, best, classes)
+    # image_truth(labels, best, classes)
 
 
     results = tuple_gen(labels, probs, indices)
 
-    viewer(results, classes, 85)
+    viewer(results, classes, 0)
+
+    def update(index):
+        viewer(results, classes, index)
+
+    from ipywidgets import interact, IntSlider
+
+    interact(update, index=IntSlider(min=0, max=len(results)-1, step=1, value=0))

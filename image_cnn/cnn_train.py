@@ -6,7 +6,7 @@ path.append(f'{os.getcwd()}/utils')
 
 import importlib
 
-from data_generator import data_generator
+from utils.data_generator import data_generator
 from keras import callbacks
 
 

@@ -2,10 +2,9 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup messages
 import numpy as np
 from keras import models
-from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 from sys import path
-from data_generator import data_generator
-from test_utils import get_labels, patch_truth as truth
+from utils.data_generator import data_generator
+from utils.test_utils import get_labels, patch_truth as truth
 
 
 
