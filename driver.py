@@ -1,16 +1,14 @@
-import os
+from input import Input
+import os, argparse
 from sys import path
-from input import NoiseInput, HistInput
-
 path.append(f'{os.getcwd()}/training')
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/noiseprint2')
-
 from training.cnn_test import main as test
 from training.cnn_train import main as train
 from utils.load_iplab import load_iplab
+from utils.load_fodb import load_fodb
 from utils.preprocessor import builder
-import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--process", help="preprocess flag", action='store_true')
@@ -19,47 +17,26 @@ parser.add_argument("-d", "--histogram", help="dct histogram", action='store_con
 parser.add_argument("-t", "--train", help="train model", action='store_true')
 parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
 
-
 args = parser.parse_args()
 
-def make_name(architecture, input_shape, epochs, batch_size):
-    return f'models/cnn_{architecture}_{input_shape}_{epochs}_{batch_size}'
+classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
+dataset = 'iplab'
+epochs = 10
+batch_size = 20
+architecture = 'dct_cnn_2017'
+location = 'dct_models'
+h_input = Input(dataset, patch_size=64, sf=[1, 10], his_range=[-50, 50], domain="Histogram")
+n_input = Input(dataset, domain="Noise", patch_size=64)
 
-if __name__ == "__main__":
-    classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
+arguments = {args.histogram: h_input, args.noise: n_input}
 
-    h_input = HistInput(hist_rep="hist_1D", patch_size=64, sf=[1, 10], his_range=[-50, 50], domain="Histogram")
-
-    n_input = NoiseInput(patch_size=64, domain="Noise")
-
-    epochs = 10
-    batch_size = 20
-    architecture = 'dct_cnn_2017'
-    location = 'dct_models'
-
-    arguments = {args.histogram: h_input, args.noise: n_input}
-
-    dataset = 'iplab'
-
-    dset = load_iplab(classes, os.getcwd(), dataset)
-
-    for argument in arguments.items():
-        if argument[0]:
-            name = make_name(architecture, argument[1].input_shape, epochs, batch_size)
-            if args.process:
-                builder(argument[1], dset)
-            elif args.train:
-                train(epochs, batch_size, architecture, location, argument[1], classes, name)
-            elif args.test:
-                test(name, argument[1], classes)
-
-
-
-
-   
-
-
-
-
-
-
+for argument in arguments.items():
+    if argument[0]:
+        name = f'models/cnn_{architecture}_{argument[1].input_shape}_{epochs}_{batch_size}'
+        if args.process:
+            dset = {'fodb': load_fodb, 'iplab': load_iplab}.get(dataset, load_iplab)(classes, os.getcwd())
+            builder(argument[1], dset)
+        elif args.train:
+            train(epochs, batch_size, architecture, location, argument[1], classes, name)
+        elif args.test:
+            test(name, argument[1], classes)

@@ -4,22 +4,21 @@ from sklearn.model_selection import train_test_split
 
 
 # append paths to images into a list
-def load_iplab(classes, path, dataset):  
+def load_iplab(classes, path):  
     examples = []
     labels = []
-
     label_map = {c: i for i, c in enumerate(classes)}
 
     # iterate over each class and in each class iterate over each device and within each device get the image path
-    for CLASS in os.listdir(f'{path}/{dataset}'):
+    for CLASS in os.listdir(f'{path}/iplab'):
         if CLASS in classes:
-            devices = f'{path}/{dataset}/{CLASS}'
+            devices = f'{path}/iplab/{CLASS}'
             for DEVICE in os.listdir(devices):
                 if '.DS_Store' not in DEVICE:
-                    images = f'{path}/{dataset}/{CLASS}/{DEVICE}'
+                    images = f'{path}/iplab/{CLASS}/{DEVICE}'
                     for IMAGE in os.listdir(images):
                         if '.DS_Store' not in IMAGE:
-                            examples.append(f'{path}/{dataset}/{CLASS}/{DEVICE}/{IMAGE}')
+                            examples.append(f'{path}/iplab/{CLASS}/{DEVICE}/{IMAGE}')
                             labels.append(label_map[CLASS])
         
     train_X, test_X, train_y, test_y = train_test_split(
