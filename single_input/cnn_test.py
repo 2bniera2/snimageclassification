@@ -24,8 +24,8 @@ def get_predictions(input, classes, model):
 
 
 
-def test(model_name, input, classes):
-    model = models.load_model(model_name)
+def test(name, input, classes):
+    model = models.load_model(name)
 
     # predictions represented as integer representation of classes
     best, probs = get_predictions(input, classes, model)
@@ -36,18 +36,8 @@ def test(model_name, input, classes):
 
     indices = get_indices(input)
     
-    # patch_truth(labels, best, classes)
 
-    # image_truth(labels, best, classes)
+    image_truth(labels, best, classes, name)
 
 
-    results = tuple_gen(labels, probs, indices)
-
-    viewer(results, classes, 0)
-
-    def update(index):
-        viewer(results, classes, index)
-
-    from ipywidgets import interact, IntSlider
-
-    interact(update, index=IntSlider(min=0, max=len(results)-1, step=1, value=0))
+    

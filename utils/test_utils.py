@@ -4,6 +4,7 @@ import h5py
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from IPython import display
 
 
 def get_labels(input):
@@ -14,7 +15,7 @@ def get_indices(input):
     with h5py.File(f'processed/{input.dset_name}_test.h5', 'r') as f:
         return np.array(f['indices'][()])
 
-def to_confusion_matrix(truth, predictions, classes):
+def to_confusion_matrix(truth, predictions, classes, name):
     t = np.select([truth==i for i in np.unique(truth)],classes, truth)
     p = np.select([predictions==i for i in np.unique(predictions)],classes, predictions)
 
@@ -25,15 +26,16 @@ def to_confusion_matrix(truth, predictions, classes):
     disp.plot()
     plt.show()
 
+    disp.figure_.savefig(f'{name}.png')
+
 # get accuracy at patch level
 def patch_truth(labels, predictions, classes):
     l = labels[:, 0]
     print(classification_report(l, predictions, target_names=classes, digits=4))
 
-    to_confusion_matrix(l, predictions, classes)
 
 # get accuracy at image level
-def image_truth(labels, predictions, classes):
+def image_truth(labels, predictions, classes, name):
     df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'predictions']).T
     df = df.groupby(['truth','image_num'])['predictions'].agg(pd.Series.mode).reset_index()
     df = df[pd.notna(pd.to_numeric(df['predictions'], errors='coerce'))]
@@ -42,9 +44,12 @@ def image_truth(labels, predictions, classes):
     image_truth = df['truth'].to_numpy().astype(np.uint8)
     image_predictions = df['predictions'].to_numpy().astype(np.uint8)
 
-    print(classification_report(image_truth, image_predictions, target_names=classes, digits=4))
+    cr = classification_report(image_truth, image_predictions, target_names=classes, digits=4, output_dict=True)
 
-    to_confusion_matrix(image_truth, image_predictions, classes)
+
+    # classification_report_to_csv(cr, name)
+
+    to_confusion_matrix(image_truth, image_predictions, classes, name)
 
 
 def tuple_gen(labels, predictions, indices):
@@ -103,4 +108,8 @@ def viewer(results, classes, index):
     # show plot
     plt.show()
 
+
+def classification_report_to_barchart(report, name):
+    df = pd.DataFrame(report).transpose()
+    df.to_csv(f'{name}_report.csv')
 

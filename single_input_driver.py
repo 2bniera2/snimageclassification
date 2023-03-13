@@ -23,10 +23,10 @@ args = parser.parse_args()
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 dataset = 'iplab'
 epochs = 10
-batch_size = 20
+batch_size = 32
 architecture = 'dct_cnn_2017'
-location = 'dct_models'
-h_input = Input(dataset, patch_size=64, sf=[1, 10], his_range=[-50, 50], domain="Histogram")
+location = 'noise_models'
+h_input = Input(dataset, patch_size=64, sf=[1,10], his_range=[-50, 50], domain="Histogram")
 n_input = Input(dataset, domain="Noise", patch_size=64)
 
 arguments = {args.histogram: h_input, args.noise: n_input}

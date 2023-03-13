@@ -3,6 +3,8 @@ import h5py
 import utils.extract_histograms as extract_histograms 
 import io
 from PIL import Image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 # convert patch to bytes so jpeg2dct can load it

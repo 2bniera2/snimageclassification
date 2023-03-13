@@ -21,12 +21,13 @@ Input = namedtuple("Input", "input_shape dset_name domain")
 
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 dataset = 'fodb'
-epochs = 10
-batch_size = 16
+epochs = 20
+batch_size = 32
 architecture = 'vgg_16'
 input_shape = (224, 224)
-d_input = Input(input_shape, dataset, "DCT")
-w_input = Input(input_shape, dataset, "DWT")
+dset_name = f'{dataset}_{input_shape}'
+d_input = Input(input_shape, dset_name, "DCT")
+w_input = Input(input_shape, dset_name, "DWT")
 input = d_input
 name = f'models/cnn_{architecture}_{input.input_shape}_{epochs}_{batch_size}'
 
