@@ -44,10 +44,25 @@ def image_truth(labels, predictions, classes, name):
     image_truth = df['truth'].to_numpy().astype(np.uint8)
     image_predictions = df['predictions'].to_numpy().astype(np.uint8)
 
+    # cr = classification_report(image_truth, image_predictions, target_names=classes, digits=4)
+
+    # print(cr)
+
+
     cr = classification_report(image_truth, image_predictions, target_names=classes, digits=4, output_dict=True)
 
+    metrics_df = pd.DataFrame(cr).transpose()[['precision', 'recall', 'f1-score']]
 
-    # classification_report_to_csv(cr, name)
+    # Create bar chart using matplotlib
+    metrics_df.plot(kind='bar')
+    plt.xticks(rotation=0)
+    plt.xlabel('Class')
+    plt.ylabel('Score')
+    plt.legend(loc='lower right')
+    plt.show()
+
+
+    classification_report_to_csv(cr, name)
 
     to_confusion_matrix(image_truth, image_predictions, classes, name)
 
@@ -109,7 +124,7 @@ def viewer(results, classes, index):
     plt.show()
 
 
-def classification_report_to_barchart(report, name):
+def classification_report_to_csv(report, name):
     df = pd.DataFrame(report).transpose()
     df.to_csv(f'{name}_report.csv')
 

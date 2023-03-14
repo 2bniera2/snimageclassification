@@ -37,17 +37,8 @@ def main(model_name, input1, input2, classes):
     # labels with class and image number
     labels = get_labels(input1)
 
-    indices = get_indices(input1)
 
-    patch_truth(labels, predictions, classes)
-
-    image_truth(labels, predictions, classes)
-
-    results = tuple_gen(labels, probs, indices)
-
-    from ipywidgets import interact, IntSlider
-
-    interact(viewer, index=IntSlider(min=0, max=len(results)-1, step=1, value=0))
+    image_truth(labels, predictions, classes,model_name)
 
    
 

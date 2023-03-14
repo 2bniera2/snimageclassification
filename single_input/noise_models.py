@@ -1,34 +1,34 @@
 from keras import layers, models
 
 
-def noise_cnn(input_shape, output_shape):
-    input = layers.Input(shape=input_shape)
-    conv1 = layers.Conv2D(16, (3,3), activation='relu')(input)
-    max_pool1 = layers.MaxPooling2D()(conv1)
-    conv2 = layers.Conv2D(32, (3,3), activation='relu')(max_pool1)
-    max_pool2 = layers.MaxPooling2D()(conv2)
-    conv3 = layers.Conv2D(16, (3,3), activation='relu')(max_pool2)
-    flat = layers.Flatten()(conv3)
-    dense1 = layers.Dense(256, activation='swish')(flat)
-    dropout1 = layers.Dropout(rate=0.8)(dense1)
-    dense2 = layers.Dense(256, activation='swish')(dropout1)
-    dropout2 = layers.Dropout(rate=0.8)(dense2)
-    dense3 = layers.Dense(256, activation='swish')(dropout2)
-    dropout3 = layers.Dropout(rate=0.8)(dense3)
-    dense4 = layers.Dense(256, activation='swish')(dropout3)
-    output = layers.Dense(units=output_shape, activation='softmax')(dense4)
+# def noise_cnn(input_shape, output_shape):
+#     input = layers.Input(shape=input_shape)
+#     conv1 = layers.Conv2D(16, (3,3), activation='relu')(input)
+#     max_pool1 = layers.MaxPooling2D()(conv1)
+#     conv2 = layers.Conv2D(32, (3,3), activation='relu')(max_pool1)
+#     max_pool2 = layers.MaxPooling2D()(conv2)
+#     conv3 = layers.Conv2D(16, (3,3), activation='relu')(max_pool2)
+#     flat = layers.Flatten()(conv3)
+#     dense1 = layers.Dense(256, activation='swish')(flat)
+#     dropout1 = layers.Dropout(rate=0.8)(dense1)
+#     dense2 = layers.Dense(256, activation='swish')(dropout1)
+#     dropout2 = layers.Dropout(rate=0.8)(dense2)
+#     dense3 = layers.Dense(256, activation='swish')(dropout2)
+#     dropout3 = layers.Dropout(rate=0.8)(dense3)
+#     dense4 = layers.Dense(256, activation='swish')(dropout3)
+#     output = layers.Dense(units=output_shape, activation='softmax')(dense4)
 
-    model = models.Model(inputs=input, outputs=output)
+#     model = models.Model(inputs=input, outputs=output)
 
-    model.summary()
+#     model.summary()
 
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer='Nadam',
-        metrics=['accuracy']
-    )
+#     model.compile(
+#         loss='categorical_crossentropy',
+#         optimizer='Nadam',
+#         metrics=['accuracy']
+#     )
 
-    return model
+#     return model
 
 def prnu_cnn(input_shape, output_shape):
     input = layers.Input(shape=input_shape)

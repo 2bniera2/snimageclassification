@@ -21,8 +21,8 @@ Input = namedtuple("Input", "input_shape dset_name domain")
 
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 dataset = 'fodb'
-epochs = 20
-batch_size = 32
+epochs = 10
+batch_size = 20
 architecture = 'vgg_16'
 input_shape = (224, 224)
 dset_name = f'{dataset}_{input_shape}'

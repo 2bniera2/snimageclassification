@@ -34,7 +34,6 @@ def test(name, input, classes):
     # labels with class and image number
     labels = get_labels(input)
 
-    indices = get_indices(input)
     
 
     image_truth(labels, best, classes, name)
