@@ -24,8 +24,8 @@ classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 dataset = 'iplab'
 epochs = 10
 batch_size = 32
-architecture = 'prnu_cnn'
-location = 'noise_models'
+architecture = 'dct_cnn_hi_dropout'
+location = 'dct_models'
 h_input = Input(dataset, patch_size=64, sf=[1,10], his_range=[-50, 50], domain="Histogram")
 n_input = Input(dataset, domain="Noise", patch_size=64)
 

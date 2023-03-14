@@ -29,9 +29,22 @@ def to_confusion_matrix(truth, predictions, classes, name):
     disp.figure_.savefig(f'{name}.png')
 
 # get accuracy at patch level
-def patch_truth(labels, predictions, classes):
+def patch_truth(labels, predictions, classes, name):
     l = labels[:, 0]
     print(classification_report(l, predictions, target_names=classes, digits=4))
+    cr = classification_report(l, predictions, target_names=classes, digits=4, output_dict=True)
+    metrics_df = pd.DataFrame(cr).transpose()[['precision', 'recall', 'f1-score']]
+
+    # Create bar chart using matplotlib
+    metrics_df.plot(kind='bar')
+    plt.xticks(rotation=0)
+    plt.xlabel('Class')
+    plt.ylabel('Score')
+    plt.legend(loc='lower right')
+    plt.show()
+
+    to_confusion_matrix(l, predictions, classes, name)
+
 
 
 # get accuracy at image level
@@ -44,9 +57,9 @@ def image_truth(labels, predictions, classes, name):
     image_truth = df['truth'].to_numpy().astype(np.uint8)
     image_predictions = df['predictions'].to_numpy().astype(np.uint8)
 
-    # cr = classification_report(image_truth, image_predictions, target_names=classes, digits=4)
+    cr = classification_report(image_truth, image_predictions, target_names=classes, digits=4)
 
-    # print(cr)
+    print(cr)
 
 
     cr = classification_report(image_truth, image_predictions, target_names=classes, digits=4, output_dict=True)

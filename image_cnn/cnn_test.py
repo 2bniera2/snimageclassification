@@ -33,7 +33,7 @@ def main(model_name, input, classes):
 
 
     
-    truth(labels, predictions, classes)
+    truth(labels, predictions, classes, model_name)
 
    
 
