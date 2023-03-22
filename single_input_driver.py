@@ -33,11 +33,12 @@ arguments = {args.histogram: h_input, args.noise: n_input}
 
 for argument in arguments.items():
     if argument[0]:
-        name = f'models/cnn_{architecture}_{argument[1].input_shape}_{epochs}_{batch_size}'
+        name = f'cnn_{architecture}_{argument[1].input_shape}_{epochs}_{batch_size}'
+        path = f'models/{name}/{name}'
         if args.process:
             dset = {'fodb': load_fodb, 'iplab': load_iplab}.get(dataset, load_iplab)(classes, os.getcwd())
             builder(argument[1], dset)
         elif args.train:
-            train(epochs, batch_size, architecture, location, argument[1], classes, name)
+            train(epochs, batch_size, architecture, location, argument[1], classes, path)
         elif args.test:
-            test(name, argument[1], classes)
+            test(path, argument[1], classes)
