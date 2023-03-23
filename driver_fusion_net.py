@@ -1,9 +1,7 @@
 from input import Input
-import os, argparse
-from sys import path
-path.append(f'{os.getcwd()}/training')
-from multi_input_cnn.cnn_train import main as train
-from multi_input_cnn.cnn_test import main as test
+import argparse
+from cnn_fusion_net.cnn_train import main as train
+from cnn_fusion_net.cnn_test import main as test
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--train", help="train model", action='store_true')
@@ -17,7 +15,7 @@ n_input = Input(dataset, domain="Noise", patch_size=64)
 epochs = 10
 batch_size = 32
 architecture = 'FusionNET'
-name = "models/FusionNET"
+name = "models/FusionNET/FusionNET"
 
 if args.train:
     train(epochs, batch_size, architecture, h_input, n_input, classes, name)

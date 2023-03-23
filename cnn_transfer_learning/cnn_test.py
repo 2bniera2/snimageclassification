@@ -1,12 +1,10 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup messages
-
 import numpy as np
 from keras import models
 from sys import path
 from utils.data_generator import data_generator
-from utils.test_utils import get_labels, get_indices, patch_truth, image_truth, tuple_gen, viewer
-
+from utils.test_utils import get_labels, patch_truth as truth
 
 # get predictions and convert numerical values to class name
 def get_predictions(input, classes, model):
@@ -18,25 +16,18 @@ def get_predictions(input, classes, model):
     )
 
     pred = model.predict(gen, use_multiprocessing=True, workers=8)
+    return np.argmax(pred, axis=1)
 
-    return np.argmax(pred, axis=1), pred
-
-
-
-
-def test(name, input, classes):
-    model = models.load_model(name)
+def main(model_name, input, classes):
+    model = models.load_model(model_name)
 
     # predictions represented as integer representation of classes
-    best, probs = get_predictions(input, classes, model)
-
+    predictions = get_predictions(input, classes, model)
 
     # labels with class and image number
     labels = get_labels(input)
 
-    
+    truth(labels, predictions, classes, model_name)
 
-    image_truth(labels, best, classes, name)
+   
 
-
-    

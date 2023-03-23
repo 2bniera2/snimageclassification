@@ -6,7 +6,7 @@ import numpy as np
 from keras import models
 from sys import path
 from utils.multi_input_data_generator import multi_input_data_generator
-from utils.test_utils import get_labels, get_indices, patch_truth, image_truth, tuple_gen, viewer
+from utils.test_utils import get_labels, image_truth
 
 
 

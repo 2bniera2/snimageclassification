@@ -1,5 +1,10 @@
-from keras import layers, models
+from sys import path 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
+import multi_input_cnn.multi_input_models as multi_input_models
 
+from utils.multi_input_data_generator import multi_input_data_generator
+from keras import callbacks, layers, models
 
 def FusionNET(input1_shape, input2_shape, output_shape):
 
@@ -44,10 +49,40 @@ def FusionNET(input1_shape, input2_shape, output_shape):
 
     return model
 
+def main(epochs, batch_size, architecture, h_input, n_input, classes, name):
+    train_gen = multi_input_data_generator(
+        f'{path[0]}/processed/{h_input.dset_name}_train.h5',
+        f'{path[0]}/processed/{n_input.dset_name}_train.h5',
+        'examples',
+        'examples',
+        classes,
+        batch_size
+    )
+    val_gen = multi_input_data_generator(
+        f'{path[0]}/processed/{h_input.dset_name}_val.h5',
+        f'{path[0]}/processed/{n_input.dset_name}_val.h5',
+        'examples',
+        'examples',
+        classes,
+        batch_size
+    )
+   
+    model = FusionNET(h_input.input_shape, n_input.input_shape, len(classes))
 
-    
+    earlystop = callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=3,
+        restore_best_weights=True
+    )
 
+    csv_logger = callbacks.CSVLogger(f'{name}.log')
 
-
-
-
+    history = model.fit(
+        train_gen,
+        epochs=epochs,
+        validation_data=val_gen,
+        callbacks=[earlystop, csv_logger],
+        use_multiprocessing=True,
+        workers=6
+    )
+    model.save(name)

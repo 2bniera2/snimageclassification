@@ -1,12 +1,12 @@
 from collections import namedtuple
 import os, argparse
 from sys import path
-path.append(f'{os.getcwd()}/training')
-path.append(f'{os.getcwd()}/utils')
-path.append(f'{os.getcwd()}/image_cnn')
 
-from image_cnn.cnn_test import main as test
-from image_cnn.cnn_train import main as train
+path.append(f'{os.getcwd()}/utils')
+path.append(f'{os.getcwd()}/cnn_transfer_learning')
+
+from cnn_transfer_learning.cnn_test import main as test
+from cnn_transfer_learning.cnn_train import main as train
 from utils.load_iplab import load_iplab
 from utils.load_fodb import load_fodb
 from utils.preprocessor import builder
@@ -24,18 +24,22 @@ dataset = 'fodb'
 epochs = 10
 batch_size = 32
 architecture = 'resnet50'
-input_shape = (201, 62)
-dset_name = f'{dataset}_{input_shape}'
-d_input = Input(input_shape, dset_name, "DCT")
-w_input = Input(input_shape, dset_name, "DWT")
-input = d_input
-name = f'models/cnn_{architecture}_{input.input_shape}_{epochs}_{batch_size}'
+d_input = Input((224, 224), " ", "DCT")
+h_input = Input((201, 62), " ", "2DHist")
+input = h_input
+
+dset_name = f'{dataset}_{input.input_shape}'
+
+input._replace(dset_name=dset_name)
+
+name = f'cnn_{architecture}_{input.input_shape}_{epochs}_{batch_size}'
+path = f'model/{name}/{name}'
 
 if args.process:
-    dset = {'fodb': load_fodb, 'iplab': load_iplab}.get(dataset, load_iplab)(classes, os.getcwd())
+    dset = {'fodb': load_fodb, 'iplab': load_iplab}.get(dataset, load_fodb)(classes, os.getcwd())
     builder(input, dset)
 
 if args.train:
-    train(epochs, batch_size, architecture, input, classes, name)
+    train(epochs, batch_size, architecture, input, classes, path)
 if args.test:
-    test(name, input, classes)
+    test(path, input, classes)

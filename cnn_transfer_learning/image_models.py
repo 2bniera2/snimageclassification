@@ -95,29 +95,6 @@ def inception(input_shape, output_shape):
 
     return model
 
-def efficientnet(input_shape, output_shape):
-    input_shape = (*input_shape, 3)
-    input = layers.Input(shape=input_shape)
-    base = applications.EfficientNetB5(include_top=False,input_shape=input_shape, weights='imagenet')(input)
-    # base.trainable = False
-
-    flat = layers.Flatten()(base)
-    output = layers.Dense(output_shape, activation="softmax")(flat)
-    model = models.Model(inputs=input, outputs=output)
-    # model = add_regularization(model, regularizers.l2(0.001))
-
-    model.summary()
-
-    optimizer = optimizers.Adam(learning_rate=0.0001)
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=optimizer,
-        metrics=['accuracy']
-    )
-
-    return model
-
 
 def msf_cnn(input_shape, output_shape):
     input = layers.Input(shape=input_shape)

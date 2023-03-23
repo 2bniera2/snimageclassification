@@ -1,6 +1,6 @@
 import numpy as np
 import h5py
-import utils.extract_histograms as extract_histograms 
+import utils._1d_histograms as _1d_histograms
 import io
 from PIL import Image
 from PIL import ImageFile
@@ -49,7 +49,7 @@ def histogram_extractor(input, task, examples, labels):
                     patches, indices = make_patches(image, input.patch_size, qtable, True)
 
                 # extract dct histograms from each patch 
-                patch_histograms = extract_histograms.process(patches, input)
+                patch_histograms = _1d_histograms.process(patches, input)
 
                 #iterate over all patches and save to dataset
                 for i, patch_histogram in enumerate(patch_histograms):
