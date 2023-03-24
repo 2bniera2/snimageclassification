@@ -39,8 +39,9 @@ def hist(dct, sf, his_range):
 
     return his.flatten()
 
-
-def process(patches, input):
+# input a list of patches 
+# output a list of histograms
+def process_patches(patches, input):
     histograms = []
 
     for p in patches:
@@ -57,6 +58,16 @@ def process(patches, input):
             
     return histograms
 
+# input a image
+# output a single histogram
+def process(image, input):
+    dct, _, _ = loads(image)
 
-   
+    # this is just to stop numba complaining 
+    his_range = (input.his_range[0], input.his_range[1])
+    sf = (input.sf[0], input.sf[1])
+
+    return hist(dct, sf, his_range)
+
+
             

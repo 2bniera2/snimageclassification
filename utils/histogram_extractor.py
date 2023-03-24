@@ -28,7 +28,7 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
 
 
 def histogram_extractor(input, task, examples, labels):
-    # initialise dataset 
+    # initialise hdf5 file with example, labels and indices dataset where indices is just for visualising after testing.
     with h5py.File(f'processed/{input.dset_name}_{task}.h5', 'w') as f:
         _ = f.create_dataset('examples', shape=(0, input.his_shape), maxshape=(None, input.his_shape))
         _ = f.create_dataset('labels', shape=(0, 2), maxshape=(None, 2))
@@ -38,29 +38,41 @@ def histogram_extractor(input, task, examples, labels):
         for im_num, (path, label) in enumerate(zip(examples, labels)):
                 print(f'{im_num+1}/{len(examples)}')
 
-                # load image
-                image = Image.open(path)
-
-                # get q tables
-                qtable = image.quantization
-
                 # break down image to patches
                 if input.patch_size:
+                    # load image
+                    image = Image.open(path)
+
+                    # get q tables
+                    qtable = image.quantization
+
                     patches, indices = make_patches(image, input.patch_size, qtable, True)
 
-                # extract dct histograms from each patch 
-                patch_histograms = _1d_histograms.process(patches, input)
+                    # extract dct histograms from each patch 
+                    patch_histograms = _1d_histograms.process_patches(patches, input)
 
-                #iterate over all patches and save to dataset
-                for i, patch_histogram in enumerate(patch_histograms):
+                    #iterate over all patches and save to dataset
+                    for i, patch_histogram in enumerate(patch_histograms):
+                        dct_dset = f['examples']
+                        dct_dset.resize((dct_dset.shape[0] + 1, input.his_shape))
+                        dct_dset[-1] = patch_histogram
+                        
+                        labels_dset = f['labels']
+                        labels_dset.resize((labels_dset.shape[0] + 1, 2))
+                        labels_dset[-1] = np.array([label, im_num])
+
+                        vis_dset = f['indices']
+                        vis_dset.resize((vis_dset.shape[0] + 1, 2))
+                        vis_dset[-1] = np.array([indices[i][0], indices[i][1]])
+
+                # if patch_size = 0, this means we don't break down images into patches, instead we take the histogram from the entire image.
+                else:   
+                    histogram = _1d_histograms.process(path, input)
                     dct_dset = f['examples']
                     dct_dset.resize((dct_dset.shape[0] + 1, input.his_shape))
-                    dct_dset[-1] = patch_histogram
+                    dct_dset[-1] = histogram
                     
                     labels_dset = f['labels']
                     labels_dset.resize((labels_dset.shape[0] + 1, 2))
                     labels_dset[-1] = np.array([label, im_num])
 
-                    vis_dset = f['indices']
-                    vis_dset.resize((vis_dset.shape[0] + 1, 2))
-                    vis_dset[-1] = np.array([indices[i][0], indices[i][1]])
