@@ -7,8 +7,8 @@ from PIL import Image
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-patch_size = 64
-his_range = [-50, 50]
+patch_size = 0
+his_range = [-100, 100]
 sf_range = [1, 63]
 
 class_dict = {
@@ -92,10 +92,10 @@ for CLASS in os.listdir(f'{os.getcwd()}/sample'):
                 class_dict[CLASS] += histogram
         else:
             dct, _, _ = load(path) 
-            histogram = hist(dct, sf, his_range)
+            histogram = hist(dct, sf, his_range)9
             class_dict[CLASS] += histogram
        
 for class_hist in class_dict.items():
-    np.save(f'{os.getcwd()}/{class_hist[0]}', class_hist[1])
+    np.save(f'{os.getcwd()}/histogram_processed/{class_hist[0]}_{patch_size}', class_hist[1])
 
 

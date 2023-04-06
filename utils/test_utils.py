@@ -26,7 +26,7 @@ def to_confusion_matrix(truth, predictions, classes, name):
     disp.plot()
     plt.show()
 
-    disp.figure_.savefig(f'{name}.png')
+    disp.figure_.savefig(f'confusion_matrices/{name}.png')
 
 # get accuracy at patch level
 def patch_truth(labels, predictions, classes, name):
@@ -139,5 +139,5 @@ def viewer(results, classes, index):
 
 def classification_report_to_csv(report, name):
     df = pd.DataFrame(report).transpose()
-    df.to_csv(f'{name}_report.csv')
+    df.to_csv(f'reports/{name}_report.csv')
 

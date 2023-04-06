@@ -10,6 +10,7 @@ class Input:
 
         self.input_shape = self.get_input_shape()
         self.dset_name = self.get_name(dset)
+        self.model_name = self.get_model_name(dset)
 
     def get_input_shape(self):
         if self.domain == "Histogram":
@@ -20,6 +21,12 @@ class Input:
     def get_name(self, dset):
         if self.domain == 'Histogram':
             return f'{dset}_{self.domain}_{self.patch_size}_{self.his_range}_{self.sf}'
+        elif self.domain == 'Noise':
+            return f'{dset}_{self.domain}_{self.patch_size}'
+
+    def get_model_name(self, dset):
+        if self.domain == 'Histogram':
+            return f'{dset}_{self.domain}_{self.patch_size}_{self.his_range[0]},{self.his_range[1]}_{self.sf[0]},{self.sf[1]}'
         elif self.domain == 'Noise':
             return f'{dset}_{self.domain}_{self.patch_size}'
 

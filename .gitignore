@@ -5,4 +5,7 @@ models/
 others/
 processed/
 noiseprint2/
-
+data_analysis/sample/
+data_analysis/histogram_processed/
+data_analysis/noiseprint_extracted/
+data_analysis/transformed/

@@ -1,4 +1,4 @@
-from jpeg2dct.numpy import loads
+from jpeg2dct.numpy import loads, load
 import numpy as np
 from numba import jit
 
@@ -58,10 +58,10 @@ def process_patches(patches, input):
             
     return histograms
 
-# input a image
+# input a image path
 # output a single histogram
 def process(image, input):
-    dct, _, _ = loads(image)
+    dct, _, _ = load(image)
 
     # this is just to stop numba complaining 
     his_range = (input.his_range[0], input.his_range[1])

@@ -1,9 +1,10 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # don't show all the tensorflow startup messages
+from sys import path
+
 
 import numpy as np
 from keras import models
-from sys import path
 from utils.data_generator import data_generator
 from utils.test_utils import get_labels, image_truth
 
@@ -22,7 +23,9 @@ def get_predictions(input, classes, model):
     return np.argmax(pred, axis=1), pred
 
 def test(name, input, classes):
-    model = models.load_model(name)
+    model_name = f'models/{name}'
+    # print(os.getcwd())
+    model = models.load_model(model_name)
 
     # predictions represented as integer representation of classes
     best, probs = get_predictions(input, classes, model)
