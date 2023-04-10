@@ -24,10 +24,10 @@ args = parser.parse_args()
 # input variables
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 dataset = 'fodb'
-h_input = Input(dataset, patch_size=64, sf=[1,44], his_range=[-50, 50], domain="Histogram")
+h_input = Input(dataset, patch_size=64, sf=[1,10], his_range=[-50, 50], domain="Histogram")
 n_input = Input(dataset, domain="Noise", patch_size=64)
 
-input = h_input
+input = n_input
 
 
 if args.process:
@@ -38,8 +38,8 @@ if args.process:
 
 epochs = 10
 batch_size = 32
-architecture = 'dct_cnn'
-location = 'dct_models'
+architecture = 'prnu_cnn'
+location = 'noise_models'
 name = f'{architecture}_{input.model_name}_{epochs}_{batch_size}'
 
 if args.train:

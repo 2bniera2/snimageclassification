@@ -1,10 +1,36 @@
 from sys import path 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
-import multi_input_cnn.multi_input_models as multi_input_models
+from time_callback import time_logger
+
 
 from utils.multi_input_data_generator import multi_input_data_generator
 from keras import callbacks, layers, models
+from matplotlib import pyplot as plt
+
+
+
+def plot_acc_loss(history, name):
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.savefig(f'training_accuracy/{name}.png')
+    plt.show()
+
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.savefig(f'training_loss/{name}.png')
+    plt.show()
+
+
+
 
 def FusionNET(input1_shape, input2_shape, output_shape):
 
@@ -56,7 +82,7 @@ def main(epochs, batch_size, architecture, h_input, n_input, classes, name):
         'examples',
         'examples',
         classes,
-        batch_size
+        batch_size 
     )
     val_gen = multi_input_data_generator(
         f'{path[0]}/processed/{h_input.dset_name}_val.h5',
@@ -71,18 +97,22 @@ def main(epochs, batch_size, architecture, h_input, n_input, classes, name):
 
     earlystop = callbacks.EarlyStopping(
         monitor='val_loss',
-        patience=3,
+        patience=0,
         restore_best_weights=True
     )
 
-    csv_logger = callbacks.CSVLogger(f'{name}.log')
+    csv_logger = callbacks.CSVLogger(f'logs/{name}.log')
+    time_log = time_logger(f'train_times/{name}.csv')
 
     history = model.fit(
         train_gen,
         epochs=epochs,
         validation_data=val_gen,
-        callbacks=[earlystop, csv_logger],
+        callbacks=[earlystop, csv_logger, time_log],
         use_multiprocessing=True,
-        workers=6
+        workers=16
     )
-    model.save(name)
+
+    model.save(f'models/{name}')
+    plot_acc_loss(history, name)
+
