@@ -20,7 +20,7 @@ h_input = Input(dataset, patch_size=64, sf=[1, 10], his_range=[-50, 50], domain=
 n_input = Input(dataset, domain="Noise", patch_size=64)
 
 epochs = 10
-batch_size = 32
+batch_size = 16
 architecture = 'FusionNET'
 
 name = f'{architecture}_{epochs}_{batch_size}'

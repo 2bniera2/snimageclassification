@@ -24,11 +24,10 @@ def get_predictions(input, classes, model):
 
 def test(name, input, classes):
     model_name = f'models/{name}'
-    # print(os.getcwd())
     model = models.load_model(model_name)
 
     # predictions represented as integer representation of classes
-    best, probs = get_predictions(input, classes, model)
+    best = get_predictions(input, classes, model)
 
 
     # labels with class and image number

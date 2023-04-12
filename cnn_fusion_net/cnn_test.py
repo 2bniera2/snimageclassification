@@ -27,7 +27,8 @@ def get_predictions(input1, input2, classes, model):
     
 
 
-def main(model_name, input1, input2, classes):
+def main(name, input1, input2, classes):
+    model_name = f'models/{name}'
     model = models.load_model(model_name)
 
     # predictions represented as integer representation of classes
@@ -38,7 +39,7 @@ def main(model_name, input1, input2, classes):
     labels = get_labels(input1)
 
 
-    image_truth(labels, predictions, classes,model_name)
+    image_truth(labels, predictions, classes, name)
 
    
 
