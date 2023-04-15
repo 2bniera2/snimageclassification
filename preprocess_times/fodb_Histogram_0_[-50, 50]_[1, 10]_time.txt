@@ -1,3 +1,3 @@
-train: Elapsed time: 2198.916355 seconds
-val: Elapsed time: 276.218072 seconds
-test: Elapsed time: 267.729060 seconds
+train: Elapsed time: 2133.751431 seconds
+val: Elapsed time: 262.243274 seconds
+test: Elapsed time: 258.401426 seconds

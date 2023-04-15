@@ -4,7 +4,6 @@ import h5py
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
-from IPython import display
 
 
 def get_labels(input):
@@ -46,7 +45,6 @@ def patch_truth(labels, predictions, classes, name):
     to_confusion_matrix(l, predictions, classes, name)
 
 
-
 # get accuracy at image level
 def image_truth(labels, predictions, classes, name):
     df = pd.DataFrame([labels[:, 0], labels[:, 1], predictions], index=['truth', 'image_num', 'predictions']).T
@@ -78,6 +76,11 @@ def image_truth(labels, predictions, classes, name):
     classification_report_to_csv(cr, name)
 
     to_confusion_matrix(image_truth, image_predictions, classes, name)
+
+
+def classification_report_to_csv(report, name):
+    df = pd.DataFrame(report).transpose()
+    df.to_csv(f'reports/{name}_report.csv')
 
 
 def tuple_gen(labels, predictions, indices):
@@ -135,9 +138,4 @@ def viewer(results, classes, index):
 
     # show plot
     plt.show()
-
-
-def classification_report_to_csv(report, name):
-    df = pd.DataFrame(report).transpose()
-    df.to_csv(f'reports/{name}_report.csv')
 
