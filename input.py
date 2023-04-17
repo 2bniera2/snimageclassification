@@ -1,10 +1,9 @@
 class Input:
-    def __init__(self, dset, trained_on, domain, patch_size, sf=None, his_range=None):
+    def __init__(self, dset, domain, patch_size, sf=None, his_range=None):
         self.domain = domain
         self.patch_size = patch_size
         self.sf = sf
         self.his_range = his_range
-        self.trained_on = trained_on
         self.dset = dset
 
         if his_range is not None:
@@ -28,8 +27,8 @@ class Input:
 
     def get_model_name(self):
         if self.domain == 'Histogram':
-            return f'{self.trained_on}_{self.domain}_{self.patch_size}_{self.his_range[0]},{self.his_range[1]}_{self.sf[0]},{self.sf[1]}'
+            return f'{self.dset}_{self.domain}_{self.patch_size}_{self.his_range[0]},{self.his_range[1]}_{self.sf[0]},{self.sf[1]}'
         elif self.domain == 'Noise':
-            return f'{self.trained_on}_{self.domain}_{self.patch_size}'
+            return f'{self.dset}_{self.domain}_{self.patch_size}'
 
 

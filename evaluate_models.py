@@ -5,11 +5,17 @@ from keras import models
 from sys import path
 from utils.data_generator import data_generator
 from utils.multi_input_data_generator import multi_input_data_generator
-from utils.test_utils import get_labels, patch_truth as truth
+from utils.test_utils import truth, image_truth
+import h5py
+
+def get_labels(input):
+    file = f'processed/{input.dset_name}_test.h5'
+    with h5py.File(file, 'r') as f:
+        return np.array(f['labels'][()])
 
 # get predictions and convert numerical values to class name
 def get_predictions(input, classes, model):
-    file = f'processed/{input.dset_name}_full.h5' if input.dset == 'iplab' else f'processed/{input.dset_name}_test.h5'
+    file =  f'processed/{input.dset_name}_test.h5'
     gen = data_generator(
         file,
         'examples',
@@ -21,8 +27,8 @@ def get_predictions(input, classes, model):
     return np.argmax(pred, axis=1)
 
 def get_fusion_predictions(input1, input2, classes, model):   
-    file1 = f'processed/{input1.dset_name}_full.h5' if input1.dset == 'iplab' else f'processed/{input1.dset_name}_test.h5' 
-    file2 = f'processed/{input2.dset_name}_full.h5' if input2.dset == 'iplab' else f'processed/{input2.dset_name}_test.h5' 
+    file1 = f'processed/{input1.dset_name}_test.h5' 
+    file2 = f'processed/{input2.dset_name}_test.h5' 
 
     gen = multi_input_data_generator(
         file1,
@@ -46,7 +52,9 @@ def test(name, input1, input2, classes):
     
     # labels with class and image number
     labels = get_labels(input1)
-
-    truth(labels, predictions, classes, f'{name}_{input1.dset_name}')
+    if input.domain in ('DCT', '2DHist', 'Patchless')
+        truth(labels, predictions, classes, f'{name}_{input1.dset_name}')
+    else: 
+        image_truth(labels, predictions, classes, f'{name}_{input1.dset_name}')
 
    

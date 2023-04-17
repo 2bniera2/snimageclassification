@@ -8,10 +8,8 @@ path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/training')
 
 from utils.load_fodb import load_fodb
-from utils.load_iplab import load_iplab
 
-from utils.preprocessor import builder, builder_iplab
-
+from utils.preprocessor import builder
 
 from training._1d_hist_train import train as _1d_train
 from training._1d_hist_alt_train import train as _1d_alt_train
@@ -37,7 +35,7 @@ args = parser.parse_args()
 
 # list of classes and dataset choice
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
-dataset = 'iplab'
+dataset = 'fodb'
 
 # model hyperparameters
 epochs = 10
@@ -53,15 +51,11 @@ model_input = ModelInput(architecture, trainable, regularize, optimizer, weights
 
 def _1D_input():
     # preprocessing parameters
-    input = Input(dataset, 'fodb', patch_size=64, sf=[1,10], his_range=[-50, 50], domain="Histogram")
+    input = Input(dataset, patch_size=64, sf=[1,10], his_range=[-50, 50], domain="Histogram")
 
     if args.process:
-        if dataset == 'iplab': 
-            dset = load_iplab(classes, os.getcwd())
-            builder_iplab(input, dset)
-        elif dataset == 'fodb': 
-            dset = load_fodb(classes, os.getcwd())
-            builder(input, dset)
+        dset = load_fodb(classes, os.getcwd())
+        builder(input, dset)
 
 
     architecture = 'dct_cnn'
@@ -74,15 +68,11 @@ def _1D_input():
         test(name, input, None, classes)
 
 def noise_input():
-    input = Input(dataset, 'fodb', domain="Noise", patch_size=64)
+    input = Input(dataset, domain="Noise", patch_size=64)
 
     if args.process:
-        if dataset == 'iplab': 
-            dset = load_iplab(classes, os.getcwd())
-            builder_iplab(input, dset)
-        elif dataset == 'fodb': 
-            dset = load_fodb(classes, os.getcwd())
-            builder(input, dset)
+        dset = load_fodb(classes, os.getcwd())
+        builder(input, dset)
 
     # model hyperparameters
     epochs = 10
@@ -98,8 +88,8 @@ def noise_input():
 
 
 def fusion_input():
-    h_input = Input(dataset, 'fodb', patch_size=64, sf=[1, 10], his_range=[-50, 50], domain="Histogram")
-    n_input = Input(dataset, 'fodb', domain="Noise", patch_size=64)
+    h_input = Input(dataset, patch_size=64, sf=[1, 10], his_range=[-50, 50], domain="Histogram")
+    n_input = Input(dataset, domain="Noise", patch_size=64)
 
     architecture = 'FusionNET'
 
@@ -120,12 +110,8 @@ def _1D_input_alt():
     input = input._replace(dset_name=dset_name, input_shape=input_shape)
    
     if args.process:
-        if dataset == 'iplab': 
-            dset = load_iplab(classes, os.getcwd())
-            builder_iplab(input, dset)
-        elif dataset == 'fodb': 
-            dset = load_fodb(classes, os.getcwd())
-            builder(input, dset)
+        dset = load_fodb(classes, os.getcwd())
+        builder(input, dset)
 
     name = f'{architecture}_patchless_{epochs}_{batch_size}_{trainable}_{regularize}_{optimizer._name}_{weights}'
 
@@ -146,12 +132,8 @@ def _2D_input():
     input = input._replace(dset_name=dset_name)
 
     if args.process:
-        if dataset == 'iplab': 
-            dset = load_iplab(classes, os.getcwd())
-            builder_iplab(input, dset)
-        elif dataset == 'fodb': 
-            dset = load_fodb(classes, os.getcwd())
-            builder(input, dset)
+        dset = load_fodb(classes, os.getcwd())
+        builder(input, dset)
 
   
     name = f'{architecture}_{input.input_shape}_{epochs}_{batch_size}_{trainable}_{regularize}_{optimizer._name}_{weights}'
@@ -172,12 +154,8 @@ def dct_transform():
     input = input._replace(dset_name=dset_name)
 
     if args.process:
-        if dataset == 'iplab': 
-            dset = load_iplab(classes, os.getcwd())
-            builder_iplab(input, dset)
-        else: 
-            dset = load_fodb(classes, os.getcwd())
-            builder(input, dset)
+        dset = load_fodb(classes, os.getcwd())
+        builder(input, dset)
 
     name = f'{architecture}_{input.input_shape}_{epochs}_{batch_size}_{trainable}_{regularize}_{optimizer._name}_{weights}'
 

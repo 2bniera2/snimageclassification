@@ -6,10 +6,7 @@ import matplotlib.patches as mpatches
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 
 
-def get_labels(input):
-    file = f'processed/{input.dset_name}_full.h5' if input.dset == 'iplab' else f'processed/{input.dset_name}_test.h5'
-    with h5py.File(file, 'r') as f:
-        return np.array(f['labels'][()])
+
 
 def get_indices(input):
     with h5py.File(f'processed/{input.dset_name}_test.h5', 'r') as f:
@@ -29,7 +26,7 @@ def to_confusion_matrix(truth, predictions, classes, name):
     disp.figure_.savefig(f'confusion_matrices/{name}.png')
 
 # get accuracy at patch level
-def patch_truth(labels, predictions, classes, name):
+def truth(labels, predictions, classes, name):
     l = labels[:, 0]
     print(classification_report(l, predictions, target_names=classes, digits=4))
     cr = classification_report(l, predictions, target_names=classes, digits=4, output_dict=True)
