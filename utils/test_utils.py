@@ -7,7 +7,8 @@ from sklearn.metrics import classification_report, confusion_matrix, ConfusionMa
 
 
 def get_labels(input):
-    with h5py.File(f'processed/{input.dset_name}_test.h5', 'r') as f:
+    file = f'processed/{input.dset_name}_full.h5' if input.dset == 'iplab' else f'processed/{input.dset_name}_test.h5'
+    with h5py.File(file, 'r') as f:
         return np.array(f['labels'][()])
 
 def get_indices(input):

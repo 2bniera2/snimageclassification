@@ -25,6 +25,11 @@ def builder(input, dset):
         with open(f"preprocess_times/{input.dset_name}_time.txt", "a") as f:
             f.write(f"{task}: Elapsed time: {end-start:.6f} seconds\n")
 
+def builder_iplab(input, dset):
+    options.get(input.domain)(input, 'full', dset[0], dset[1])
+
+
+
 
 
 

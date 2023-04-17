@@ -14,12 +14,12 @@ from utils.regulariser import add_regularization
 from utils.plot_acc_loss import plot_acc_loss
 
 
-def vgg16(input_shape, output_shape, model_input):
+def inception(input_shape, output_shape, model_input):
     input_shape = (input_shape, 2)
     input = layers.Input(shape=input_shape)
 
-    VGG16, _ = Classifiers.get('vgg16')
-    base = VGG16(include_top=False, input_shape=input_shape, weights=model_input.weights)(input)
+    inception, _ = Classifiers.get('inceptionv3')
+    base = inception(include_top=False, input_shape=input_shape, weights=model_input.weights)(input)
     return compile_model(base, input, output_shape, model_input)
 
 
@@ -33,13 +33,13 @@ def resnet50(input_shape, output_shape, model_input):
 
 # compile model with optimiser, as well as deciding if to freeze weights and add regularisation
 def compile_model(base, input, output_shape, model_input):
-    if not model_input.trainable: base.trainable = False
+    if not model_input.trainable: base.trainable = True
       
     flat = layers.Flatten()(base)
     output = layers.Dense(output_shape, activation="softmax")(flat)
     model = models.Model(inputs=input, outputs=output)
 
-    if model_input.regularize: model = add_regularization(model, regularizers.l2(0.001))
+    if model_input.regularize: model = add_regularization(model, regularizers.l2(0.1))
 
     model.summary()
 

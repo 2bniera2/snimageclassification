@@ -9,8 +9,9 @@ from utils.test_utils import get_labels, patch_truth as truth
 
 # get predictions and convert numerical values to class name
 def get_predictions(input, classes, model):
+    file = f'processed/{input.dset_name}_full.h5' if input.dset == 'iplab' else f'processed/{input.dset_name}_test.h5'
     gen = data_generator(
-        f'{path[0]}/processed/{input.dset_name}_test.h5',
+        file,
         'examples',
         classes,
         shuffle=False
@@ -19,10 +20,13 @@ def get_predictions(input, classes, model):
     pred = model.predict(gen, use_multiprocessing=True, workers=8)
     return np.argmax(pred, axis=1)
 
-def get_fusion_predictions(input1, input2, classes, model):    
+def get_fusion_predictions(input1, input2, classes, model):   
+    file1 = f'processed/{input1.dset_name}_full.h5' if input1.dset == 'iplab' else f'processed/{input1.dset_name}_test.h5' 
+    file2 = f'processed/{input2.dset_name}_full.h5' if input2.dset == 'iplab' else f'processed/{input2.dset_name}_test.h5' 
+
     gen = multi_input_data_generator(
-        f'{path[0]}/processed/{input1.dset_name}_test.h5',
-        f'{path[0]}/processed/{input2.dset_name}_test.h5',
+        file1,
+        file2,
         'examples',
         'examples',
         classes,
@@ -38,12 +42,11 @@ def test(name, input1, input2, classes):
     if not input2:
         predictions = get_predictions(input1, classes, model)
     elif input2:
-        predictions = get_predictions(input1, input2, classes, model)
+        predictions = get_fusion_predictions(input1, input2, classes, model)
     
     # labels with class and image number
     labels = get_labels(input1)
 
-    truth(labels, predictions, classes, name)
+    truth(labels, predictions, classes, f'{name}_{input1.dset_name}')
 
    
-

@@ -19,6 +19,30 @@ def vgg16(input_shape, output_shape, model_input):
     base = applications.VGG16(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
     return compile_model(base, input, output_shape, model_input)
 
+def vgg19(input_shape, output_shape, model_input):
+    input_shape = (*input_shape, 3)
+    input = layers.Input(shape=input_shape)
+    
+    base = applications.VGG19(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
+    return compile_model(base, input, output_shape, model_input)
+
+def resnet50(input_shape, output_shape, model_input):
+    input_shape = (*input_shape, 3)
+    input = layers.Input(shape=input_shape)
+    
+    base = applications.ResNet50(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
+
+    return compile_model(base, input, output_shape, model_input)
+
+
+def inception(input_shape, output_shape, model_input):
+    input_shape = (*input_shape, 3)
+    input = layers.Input(shape=input_shape)
+    
+    base = applications.InceptionV3(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
+   
+    return compile_model(base, input, output_shape, model_input)
+
 
 # compile model with optimiser, as well as deciding if to freeze weights and add regularisation
 def compile_model(base, input, output_shape, model_input):
@@ -28,7 +52,6 @@ def compile_model(base, input, output_shape, model_input):
     model = models.Model(inputs=input, outputs=output)
     if model_input.regularize: model = add_regularization(model, regularizers.l2(0.001))
 
-    model.summary()
 
     model.compile(
         loss='categorical_crossentropy',
@@ -36,6 +59,7 @@ def compile_model(base, input, output_shape, model_input):
         metrics=['accuracy']
     )
 
+    model.summary()
     return model
 
 # main training function that initialises generators and calls the model fitting 
@@ -56,7 +80,7 @@ def main(input, model_input, classes, name):
     )
 
     # get model architecture
-    module = importlib.import_module('cnn_train')
+    module = importlib.import_module('_2d_train')
     model = getattr(module, model_input.architecture)(input.input_shape, len(classes), model_input)
 
     # callbacks for logging and early stopping

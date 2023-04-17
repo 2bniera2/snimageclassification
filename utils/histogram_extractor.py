@@ -2,8 +2,7 @@ import numpy as np
 import h5py
 import utils._1d_histograms as _1d_histograms
 import io
-from PIL import Image
-from PIL import ImageFile
+from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 

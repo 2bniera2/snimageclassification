@@ -10,14 +10,16 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 patch_size = 0
 his_range = [-100, 100]
 sf_range = [1, 63]
+patch_counter = 0
+
 
 class_dict = {
-    'facebook': np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1)),
-    'instagram':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1)),
-    'orig':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1)),
-    'telegram':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1)),
-    'twitter':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1)),
-    'whatsapp':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1))
+    ['facebook': np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1))],
+    ['instagram':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1))],
+    ['orig':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1))],
+    ['telegram':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1))],
+    ['twitter':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1))],
+    ['whatsapp':np.zeros((len(range(*sf_range)), len(range(*his_range)) + 1))]
 }
 
 @jit(nopython=True)
@@ -75,6 +77,7 @@ def make_patches(image, patch_size, q=None, to_bytes=True):
 
 # iterate over each image per class and 
 for CLASS in os.listdir(f'{os.getcwd()}/sample'):
+    patch_counter = 0
     for IMAGE in os.listdir(f'{os.getcwd()}/sample/{CLASS}'):
         path = f'{os.getcwd()}/sample/{CLASS}/{IMAGE}'
 
@@ -92,10 +95,10 @@ for CLASS in os.listdir(f'{os.getcwd()}/sample'):
                 class_dict[CLASS] += histogram
         else:
             dct, _, _ = load(path) 
-            histogram = hist(dct, sf, his_range)9
+            histogram = hist(dct, sf, his_range)
             class_dict[CLASS] += histogram
        
 for class_hist in class_dict.items():
-    np.save(f'{os.getcwd()}/histogram_processed/{class_hist[0]}_{patch_size}', class_hist[1])
+    np.save(f'{os.getcwd()}/histogram_processed/{class_hist[0]}_{patch_size}_avg', class_hist[1])
 
 
