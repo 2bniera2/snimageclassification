@@ -52,7 +52,7 @@ def test(name, input1, input2, classes):
     
     # labels with class and image number
     labels = get_labels(input1)
-    if input.domain in ('DCT', '2DHist', 'Patchless')
+    if input1.domain in ('DCT', '2DHist', 'Patchless'):
         truth(labels, predictions, classes, f'{name}_{input1.dset_name}')
     else: 
         image_truth(labels, predictions, classes, f'{name}_{input1.dset_name}')

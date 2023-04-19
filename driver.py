@@ -2,12 +2,14 @@ from collections import namedtuple
 from input import Input
 
 import os, argparse
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
 from sys import path
 
 path.append(f'{os.getcwd()}/utils')
 path.append(f'{os.getcwd()}/training')
 
 from utils.load_fodb import load_fodb
+from utils.load_iplab import load_iplab
 
 from utils.preprocessor import builder
 
@@ -21,7 +23,7 @@ from keras import optimizers
 
 # parse cli arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--process", help="preprocess flag", action='store_true')
+parser.add_argument("--process", help="preprocess flag", action='store_true')
 parser.add_argument("-t", "--train", help="train model", action='store_true')
 parser.add_argument("-e", "--test", help="evaluate model", action='store_true')
 
@@ -35,16 +37,17 @@ args = parser.parse_args()
 
 # list of classes and dataset choice
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
-dataset = 'fodb'
+dataset = 'iplab'
 
 # model hyperparameters
-epochs = 10
+epochs = 20
+
 batch_size = 16
-trainable = False
-regularize = True
+trainable = True
+regularize = False
 optimizer = optimizers.Adam(learning_rate=0.0001)
 weights = None
-architecture = 'vgg16'
+architecture = 'resnet50'
 
 ModelInput = namedtuple("ModelInput", "architecture trainable regularize optimizer weights epochs batch_size")
 model_input = ModelInput(architecture, trainable, regularize, optimizer, weights, epochs, batch_size)
@@ -54,9 +57,10 @@ def _1D_input():
     input = Input(dataset, patch_size=64, sf=[1,10], his_range=[-50, 50], domain="Histogram")
 
     if args.process:
-        dset = load_fodb(classes, os.getcwd())
+        # dset = load_fodb(classes, os.getcwd())
+        # builder(input, dset)
+        dset = load_iplab(classes, os.getcwd())
         builder(input, dset)
-
 
     architecture = 'dct_cnn'
     location = 'dct_models'
@@ -104,13 +108,15 @@ def fusion_input():
 def _1D_input_alt():
     # named tuple to store input state
     PInput = namedtuple("PInput", "sf his_range domain dset_name input_shape dset")
-    input = PInput(sf=[1,10], his_range=[-50, 50], domain="Patchless", dset_name=None, input_shape=None, dset=dataset)
+    input = PInput(sf=[1,10], his_range=[-100, 100], domain="Patchless", dset_name=None, input_shape=None, dset=dataset)
     dset_name = f'{dataset}_patchless_{input.sf[0]},{input.sf[1]}_{input.his_range[0]},{input.his_range[1]}'
     input_shape = ((input.his_range[1] - input.his_range[0] + 1) * (input.sf[1] - input.sf[0]))
     input = input._replace(dset_name=dset_name, input_shape=input_shape)
    
     if args.process:
-        dset = load_fodb(classes, os.getcwd())
+        # dset = load_fodb(classes, os.getcwd())
+        # builder(input, dset)
+        dset = load_iplab(classes, os.getcwd())
         builder(input, dset)
 
     name = f'{architecture}_patchless_{epochs}_{batch_size}_{trainable}_{regularize}_{optimizer._name}_{weights}'
@@ -132,7 +138,7 @@ def _2D_input():
     input = input._replace(dset_name=dset_name)
 
     if args.process:
-        dset = load_fodb(classes, os.getcwd())
+        dset = load_iplab(classes, os.getcwd())
         builder(input, dset)
 
   

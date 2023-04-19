@@ -1,26 +1,11 @@
 from sys import path 
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # get rid of the tf startup messages
-
 import importlib
-
 from keras import callbacks, layers, models, regularizers
 from classification_models_1D.tfkeras import Classifiers
-
-path.append(f'{os.getcwd()}/utils')
 from utils.data_generator import data_generator
 from utils.time_callback import time_logger
 from utils.regulariser import add_regularization
 from utils.plot_acc_loss import plot_acc_loss
-
-
-def inception(input_shape, output_shape, model_input):
-    input_shape = (input_shape, 2)
-    input = layers.Input(shape=input_shape)
-
-    inception, _ = Classifiers.get('inceptionv3')
-    base = inception(include_top=False, input_shape=input_shape, weights=model_input.weights)(input)
-    return compile_model(base, input, output_shape, model_input)
 
 
 def resnet50(input_shape, output_shape, model_input):
@@ -31,11 +16,31 @@ def resnet50(input_shape, output_shape, model_input):
     base = resnet50(include_top=False, input_shape=input_shape, weights=model_input.weights)(input)
     return compile_model(base, input, output_shape, model_input)
 
+
+def vgg16(input_shape, output_shape, model_input):
+    input_shape = (input_shape, 2)
+    input = layers.Input(shape=input_shape)
+
+    vgg16, _ = Classifiers.get('vgg16')
+    base = vgg16(include_top=False, input_shape=input_shape, weights=model_input.weights)(input)
+    return compile_model(base, input, output_shape, model_input)
+
+
+def vgg19(input_shape, output_shape, model_input):
+    input_shape = (input_shape, 2)
+    input = layers.Input(shape=input_shape)
+
+    vgg19, _ = Classifiers.get('vgg19')
+    base = vgg19(include_top=False, input_shape=input_shape, weights=model_input.weights)(input)
+    return compile_model(base, input, output_shape, model_input)
+
 # compile model with optimiser, as well as deciding if to freeze weights and add regularisation
 def compile_model(base, input, output_shape, model_input):
     if not model_input.trainable: base.trainable = True
       
     flat = layers.Flatten()(base)
+    # dense = layers.Dense(128, activation='relu')(flat)
+    # dropout = layers.Dropout(0.5)(dense)
     output = layers.Dense(output_shape, activation="softmax")(flat)
     model = models.Model(inputs=input, outputs=output)
 
@@ -76,7 +81,7 @@ def train(input, model_input, classes, name):
     csv_logger = callbacks.CSVLogger(f'logs/{name}.csv')
     earlystop = callbacks.EarlyStopping(
         monitor='val_loss',
-        patience=10,
+        patience=50,
         restore_best_weights=True
     )
     time_log = time_logger(f'train_times/{name}.csv')
@@ -86,7 +91,7 @@ def train(input, model_input, classes, name):
         train_gen,
         epochs=model_input.epochs,
         validation_data=val_gen,
-        callbacks=[csv_logger, earlystop, time_log],
+        callbacks=[earlystop, csv_logger, time_log],
         use_multiprocessing=True,
         workers=8
     )

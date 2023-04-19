@@ -35,13 +35,7 @@ def resnet50(input_shape, output_shape, model_input):
     return compile_model(base, input, output_shape, model_input)
 
 
-def inception(input_shape, output_shape, model_input):
-    input_shape = (*input_shape, 3)
-    input = layers.Input(shape=input_shape)
-    
-    base = applications.InceptionV3(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
-   
-    return compile_model(base, input, output_shape, model_input)
+
 
 
 # compile model with optimiser, as well as deciding if to freeze weights and add regularisation
@@ -87,7 +81,7 @@ def main(input, model_input, classes, name):
     csv_logger = callbacks.CSVLogger(f'logs/{name}.csv')
     earlystop = callbacks.EarlyStopping(
         monitor='val_loss',
-        patience=10,
+        patience=1000,
         restore_best_weights=True
     )
     time_log = time_logger(f'train_times/{name}.csv')
