@@ -5,9 +5,13 @@ import h5py
 
 def to_dct_domain(path, input_shape):
     image = cv2.imread(path, 0)
-    image = cv2.dct(np.float32(image))
-    image = cv2.resize(image, input_shape)
-    dct = np.stack((image, image, image)).reshape((*input_shape, 3))
+    image = np.uint8((cv2.dct(np.float32(image), cv2.DCT_INVERSE)))
+    image = cv2.resize(image, input_shape, cv2.INTER_CUBIC)
+    il = [image for _ in range(3)]
+
+   
+    dct = np.stack(il)
+    dct = dct.reshape(*input_shape, 3)
     return dct
 
 def transform_builder(input, task, examples, labels):

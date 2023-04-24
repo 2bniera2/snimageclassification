@@ -40,6 +40,8 @@ def truth(labels, predictions, classes, name):
     plt.legend(loc='lower right')
     plt.show()
 
+    classification_report_to_csv(cr, name)
+
     to_confusion_matrix(l, predictions, classes, name)
 
 

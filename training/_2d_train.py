@@ -7,45 +7,40 @@ import importlib
 path.append(f'{os.getcwd()}/utils')
 from utils.data_generator import data_generator
 from utils.time_callback import time_logger
-from keras import callbacks, layers, models, applications, regularizers
-from utils.regulariser import add_regularization
+from keras import callbacks, layers, models, applications
 from utils.plot_acc_loss import plot_acc_loss
 
 
 def vgg16(input_shape, output_shape, model_input):
-    input_shape = (*input_shape, 3)
+    input_shape = (*input_shape, 1)
     input = layers.Input(shape=input_shape)
-    
-    base = applications.VGG16(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
+
+    base = applications.VGG16(include_top=False,input_shape=input_shape, weights=None)(input)
+
     return compile_model(base, input, output_shape, model_input)
 
 def vgg19(input_shape, output_shape, model_input):
-    input_shape = (*input_shape, 3)
+    input_shape = (*input_shape, 1)
     input = layers.Input(shape=input_shape)
     
-    base = applications.VGG19(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
+    base = applications.VGG19(include_top=False,input_shape=input_shape, weights=None)(input)
+
     return compile_model(base, input, output_shape, model_input)
 
 def resnet50(input_shape, output_shape, model_input):
-    input_shape = (*input_shape, 3)
+    input_shape = (*input_shape, 1)
     input = layers.Input(shape=input_shape)
     
-    base = applications.ResNet50(include_top=False,input_shape=input_shape, weights=model_input.weights)(input)
+    base = applications.ResNet50(include_top=False,input_shape=input_shape, weights=None)(input)
 
     return compile_model(base, input, output_shape, model_input)
 
-
-
-
-
 # compile model with optimiser, as well as deciding if to freeze weights and add regularisation
 def compile_model(base, input, output_shape, model_input):
-    if not model_input.trainable: base.trainable = False
     flat = layers.Flatten()(base)
     output = layers.Dense(output_shape, activation="softmax")(flat)
-    model = models.Model(inputs=input, outputs=output)
-    if model_input.regularize: model = add_regularization(model, regularizers.l2(0.001))
 
+    model = models.Model(inputs=input, outputs=output)
 
     model.compile(
         loss='categorical_crossentropy',
@@ -53,7 +48,6 @@ def compile_model(base, input, output_shape, model_input):
         metrics=['accuracy']
     )
 
-    model.summary()
     return model
 
 # main training function that initialises generators and calls the model fitting 
@@ -81,7 +75,7 @@ def main(input, model_input, classes, name):
     csv_logger = callbacks.CSVLogger(f'logs/{name}.csv')
     earlystop = callbacks.EarlyStopping(
         monitor='val_loss',
-        patience=1000,
+        patience=20,
         restore_best_weights=True
     )
     time_log = time_logger(f'train_times/{name}.csv')
@@ -95,6 +89,7 @@ def main(input, model_input, classes, name):
         use_multiprocessing=True,
         workers=16
     )
+
 
     # save model training and validation accuracy and loss
     plot_acc_loss(history, name)

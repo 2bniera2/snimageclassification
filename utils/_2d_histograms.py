@@ -11,13 +11,13 @@ def _2d_hist(path, input):
     sf = (input.sf[0], input.sf[1])
 
     his =  histogram_extract(dct, sf, his_range)
-    his = np.stack((his, his, his)).reshape((*input.input_shape, 3))
+    # his = np.stack((his, his, his)).reshape((*input.input_shape, 1))
 
     return his
 
 def hist_builder(input, task, examples, labels):
     with h5py.File(f'processed/{input.dset_name}_{task}.h5', 'w') as f:
-        _ = f.create_dataset('examples', shape=(0, *input.input_shape, 3), maxshape=(None, *input.input_shape, 3))
+        _ = f.create_dataset('examples', shape=(0, *input.input_shape), maxshape=(None, *input.input_shape))
         _ = f.create_dataset('labels', shape=(0, 1), maxshape=(None, 1))
 
         for im_num, (path, label) in enumerate(zip(examples, labels)):
@@ -27,7 +27,7 @@ def hist_builder(input, task, examples, labels):
             im = _2d_hist(path, input)
 
             dct_dset = f['examples']
-            dct_dset.resize((dct_dset.shape[0] + 1, *input.input_shape, 3))
+            dct_dset.resize((dct_dset.shape[0] + 1, *input.input_shape))
             dct_dset[-1] = im
                     
             labels_dset = f['labels']

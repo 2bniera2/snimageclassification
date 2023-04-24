@@ -5,13 +5,15 @@ from utils.noise_extractor import noise_extractor
 from utils.transform_builder import transform_builder
 from utils._2d_histograms import hist_builder
 from utils._patchless_1d_hist import hist_builder_p
+from utils.noiseprint_extractor_alt import noise_extractor as noise_extractor_alt
 
 options = {
     'Histogram': histogram_extractor,
     'Noise':    noise_extractor,
     '2DHist': hist_builder,
     'Patchless': hist_builder_p,
-    "DCT" : transform_builder
+    "DCT" : transform_builder,
+    "Noise_alt" : noise_extractor_alt
 }
 
 # iterate over every subset of dataset and preprocess each subset

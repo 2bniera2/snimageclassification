@@ -97,7 +97,7 @@ def main(epochs, batch_size, architecture, h_input, n_input, classes, name):
 
     earlystop = callbacks.EarlyStopping(
         monitor='val_loss',
-        patience=0,
+        patience=10,       
         restore_best_weights=True
     )
 

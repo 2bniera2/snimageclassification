@@ -1,27 +1,9 @@
 import numpy as np
 import h5py
 import utils._1d_histograms as _1d_histograms
-import io
 from PIL import Image, ImageFile
+from utils.make_patches import make_patches
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-
-
-# convert patch to bytes so jpeg2dct can load it
-def im_to_bytes(patch, q):
-    buf = io.BytesIO()
-    patch.save(buf, format='JPEG', qtables=q)
-    return buf.getvalue()
-
-# from image, create a list of patches of defined size
-def make_patches(image, patch_size, q=None, to_bytes=True):
-    patches = []
-    for i in range(0, image.width-patch_size+1, patch_size):
-        for j in range(0, image.height-patch_size+1, patch_size):
-            patch = image.crop((i, j, i+patch_size, j+patch_size))
-            if to_bytes:
-                patch = im_to_bytes(patch, q)
-            patches.append(patch)
-    return patches
 
 
 def histogram_extractor(input, task, examples, labels):

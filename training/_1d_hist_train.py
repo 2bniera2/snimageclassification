@@ -32,7 +32,7 @@ def train(epochs, batch_size, architecture, location, input, classes, name):
     earlystop = callbacks.EarlyStopping(
         monitor='val_loss',
         patience=10,
-        # restore_best_weights=True,
+        restore_best_weights=True,
         # verbose=1
     )
 

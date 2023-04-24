@@ -39,13 +39,12 @@ def dct_cnn_adam(input_shape, output_shape):
     output = layers.Dense(units=output_shape, activation='softmax')(dropout2)
     model = models.Model(inputs=input, outputs=output) 
 
-    optimizer = optimizers.Adam(0.001)
 
     model.summary()
 
     model.compile(
         loss='categorical_crossentropy',
-        optimizer=optimizer,
+        optimizer='Adam',
         metrics=['accuracy']
     )
 
