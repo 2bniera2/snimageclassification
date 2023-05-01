@@ -7,7 +7,7 @@ import importlib
 path.append(f'{os.getcwd()}/utils')
 from utils.data_generator import data_generator
 from utils.time_callback import time_logger
-from keras import callbacks, layers, models, applications, regularizers, optimizers
+from keras import callbacks, layers, models, applications, regularizers
 from utils.plot_acc_loss import plot_acc_loss
 
 
@@ -15,40 +15,42 @@ def vgg16(input_shape, output_shape, model_input):
     input_shape = (*input_shape, 3)
     input = layers.Input(shape=input_shape)
     
+    weights = None if model_input.setup == 'notl' else 'imagenet' 
 
-    base = applications.VGG16(include_top=False,input_shape=input_shape, weights='imagenet')(input)
+    base = applications.VGG16(include_top=False,input_shape=input_shape, weights=weights)(input)
 
-    return compile_model(base, input, output_shape)
+    return compile_model(base, input, output_shape, model_input)
 
 
 def resnet50(input_shape, output_shape, model_input):
     input_shape = (*input_shape, 3)
     input = layers.Input(shape=input_shape)
-    preprocess = applications.resnet.preprocess_input(input)
-    base = applications.ResNet50(include_top=False,input_shape=input_shape, weights='imagenet')(preprocess)
 
-    return compile_model(base, input, output_shape)
+    weights = None if model_input.setup == 'notl' else 'imagenet' 
+
+    base = applications.ResNet50(include_top=False,input_shape=input_shape, weights=weights)(input)
+
+    return compile_model(base, input, output_shape, model_input)
 
 # compile model with optimiser, as well as deciding if to freeze weights and add regularisation
-def compile_model(base, input, output_shape):
+def compile_model(base, input, output_shape, model_input):
     flat = layers.Flatten()(base)
-    dense1 = layers.Dense(4096, activation="relu")(flat)
 
-    output = layers.Dense(output_shape, activation="softmax")(dense1)
-
+    output = layers.Dense(output_shape, activation="softmax")(flat)
     model = models.Model(inputs=input, outputs=output)
 
-    model = add_regularization(model, regularizers.l2(0.1))
+    # model = add_regularization(model, regularizers.l2(0.001))
 
 
     model.compile(
         loss='categorical_crossentropy',
-        optimizer=optimizers.Adam(0.00001),
+        optimizer=model_input.optimizer,
         metrics=['accuracy']
     )
 
-    # for layer in model.layers[:-3]:
-    #     layer.trainable = False
+    if model_input.setup == "tl+ft":
+        for layer in model.layers[:-2]:
+            layer.trainable = False
 
     model.summary()
 
@@ -56,6 +58,7 @@ def compile_model(base, input, output_shape):
 
 # main training function that initialises generators and calls the model fitting 
 def main(input, model_input, classes, name):
+
 
     # generator functions 
     train_gen = data_generator(
@@ -84,34 +87,26 @@ def main(input, model_input, classes, name):
     )
     time_log = time_logger(f'train_times/{name}.csv')
 
+    if model_input.setup == 'tl+ft':
+        
+        # fit frozen model with unfrozen classification layers
+        history = model.fit(
+            train_gen,
+            epochs=model_input.epochs,
+            validation_data=val_gen,
+            callbacks=[csv_logger, earlystop, time_log],
+            use_multiprocessing=True,
+            workers=16
+        )
 
-    # fit frozen model with unfrozen classification layers
-    history = model.fit(
-        train_gen,
-        epochs=model_input.epochs,
-        validation_data=val_gen,
-        callbacks=[csv_logger, earlystop, time_log],
-        use_multiprocessing=True,
-        workers=16
-    )
+    
+        # # # fit unfrozen model (fine tuning)
 
-    # save frozen model training and validation accuracy and loss
-    # plot_acc_loss(history, f'{name}_frozen')
+        # unfreeze layers
+        for layer in model.layers[:-2]:
+            layer.trainable = True
 
-
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=optimizers.Adam(0.00001),
-        metrics=['accuracy']
-    )
-    print(model.losses)
-
-    # # fit unfrozen model (fine tuning)
-    for layer in model.layers[:-2]:
-        layer.trainable = True
-
-    model.summary()
+        model.summary()
 
     history = model.fit(
         train_gen,
@@ -123,7 +118,7 @@ def main(input, model_input, classes, name):
     )
 
     # save finetuned model training and validation accuracy and loss
-    # plot_acc_loss(history, f'{name}_finetuned')
+    plot_acc_loss(history, name)
 
 
     # save the model with all its trained weights

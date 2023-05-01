@@ -19,13 +19,7 @@ def vgg16(input_shape, output_shape, model_input):
 
     return compile_model(base, input, output_shape, model_input)
 
-def vgg19(input_shape, output_shape, model_input):
-    input_shape = (*input_shape, 1)
-    input = layers.Input(shape=input_shape)
-    
-    base = applications.VGG19(include_top=False,input_shape=input_shape, weights=None)(input)
 
-    return compile_model(base, input, output_shape, model_input)
 
 def resnet50(input_shape, output_shape, model_input):
     input_shape = (*input_shape, 1)

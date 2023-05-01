@@ -17,7 +17,7 @@ def noise_extractor(input, task, examples, labels):
             print(f'{im_num+1}/{len(examples)}')
             noiseprint = normalize_noiseprint(gen_noiseprint(path, quality=101))
             
-            image = cv2.resize(noiseprint, (224, 224), cv2.INTER_CUBIC)
+            image = cv2.resize(noiseprint, (224, 224))
 
             il = [image for _ in range(3)]
 

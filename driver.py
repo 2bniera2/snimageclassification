@@ -44,19 +44,24 @@ args = parser.parse_args()
 # list of classes and dataset choice
 classes = ['facebook', 'instagram', 'orig', 'telegram', 'twitter',  'whatsapp']
 
-dataset = 'iplab'
+dataset = 'fodb'
 
-# model hyperparameters
-epochs = 20
-batch_size = 16
-
+# model hyperparameters that can be modified for training
+epochs = 10
+batch_size = 32
 learning_rate = 0.0001
 optimizer = optimizers.Adam(learning_rate=learning_rate)
-architecture = 'vgg16'
+architecture = 'resnet50'
+
+# out of 'notl' for no transfer learning, 'tl' for just transfer learning and 'tl+ft' for transfer learning and finetuning
+# if using transfer learning, imageNET weights are used.
+# if also using finetuning, there is initial finetuning session which freezes pretrained model and trains only dense layers
+# then we train again but unfreeze everything  
+setup = 'notl'
 
 # build a tuple for storing model hyperparameters
-ModelInput = namedtuple("ModelInput", "architecture optimizer epochs batch_size")
-model_input = ModelInput(architecture, optimizer, epochs, batch_size)
+ModelInput = namedtuple("ModelInput", "architecture optimizer epochs batch_size setup")
+model_input = ModelInput(architecture, optimizer, epochs, batch_size, setup)
 
 
 def _1D_input_alt(dset):
@@ -121,7 +126,7 @@ def dct_transform(dset):
     """
         Function responsible for the processing, training or testing of the DCT transform scheme,
         each image is transformed into the DCT domain.
-        Hyper parameters are tuned at the top with the following being the epochs, batch size, optimizer, imageNET weights 
+        Hyper parameters are tuned at the top with the following being the epochs, batch size, optimizer, setup
         and model.
 
     Args:
@@ -139,7 +144,7 @@ def dct_transform(dset):
     if args.process:
         builder(input, dset)
 
-    name = f'{architecture}_dct_{epochs}_{batch_size}_{optimizer._name}_{learning_rate}_{dataset}'
+    name = f'{architecture}_dct_{epochs}_{batch_size}_{optimizer._name}_{learning_rate}_{dataset}_{setup}'
 
     if args.train:
         transfer_train(input, model_input, classes, name)
@@ -149,7 +154,14 @@ def dct_transform(dset):
 
 
 def noise_alt_input(dset):
-    
+    """
+        Function responsible for the processing, training or testing of the alternative Noiseprint scheme, where we
+        extract the noiseprint from each image and resize before storing.
+        Hyper parameters are tuned at the top with the following being the epochs, batch size, optimizer, setup, 
+
+    Args:
+        dset (_type_): A dictionary of subsets of the dataset (training, test and split)
+    """
 
     # named tuples to store input state
     NoiseInput = namedtuple("NoiseInput", "input_shape dset_name domain")
@@ -162,7 +174,7 @@ def noise_alt_input(dset):
     if args.process:
         builder(input, dset)
 
-    name = f'{architecture}_noise_{epochs}_{batch_size}_{optimizer._name}_{learning_rate}_{dataset}'
+    name = f'{architecture}_noise_{epochs}_{batch_size}_{optimizer._name}_{learning_rate}_{dataset}_{setup}'
 
     if args.train:
         transfer_train(input, model_input, classes, name)
@@ -180,7 +192,7 @@ def _1D_input(dset):
     """
 
     # preprocessing parameters
-    input = Input(dataset, patch_size=64, sf=[1,10], his_range=[-100, 100], domain="Histogram")
+    input = Input(dataset, patch_size=0, sf=[1,10], his_range=[-50, 50], domain="Histogram")
 
     if args.process:
         builder(input, dset)

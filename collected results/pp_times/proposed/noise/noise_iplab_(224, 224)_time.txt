@@ -1,0 +1,12 @@
+train: Elapsed time: 931.644762 seconds
+val: Elapsed time: 118.067033 seconds
+test: Elapsed time: 121.075495 seconds
+train: Elapsed time: 923.594494 seconds
+val: Elapsed time: 110.378751 seconds
+test: Elapsed time: 117.297842 seconds
+train: Elapsed time: 876.195378 seconds
+val: Elapsed time: 110.032724 seconds
+test: Elapsed time: 112.511715 seconds
+train: Elapsed time: 874.350779 seconds
+val: Elapsed time: 110.499130 seconds
+test: Elapsed time: 113.374595 seconds

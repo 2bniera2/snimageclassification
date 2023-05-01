@@ -5,8 +5,10 @@ import h5py
 
 def to_dct_domain(path, input_shape):
     image = cv2.imread(path, 0)
-    image = np.uint8((cv2.dct(np.float32(image), cv2.DCT_INVERSE)))
-    image = cv2.resize(image, input_shape, cv2.INTER_CUBIC)
+    image = cv2.dct(np.float32(image))
+    image = cv2.normalize(image, None, 255, 0, cv2.NORM_MINMAX)
+    # print(image.max())
+    image = cv2.resize(image, input_shape)
     il = [image for _ in range(3)]
 
    
